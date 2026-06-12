@@ -8,37 +8,37 @@ const MOBILE_QUERY = '(max-width: 960px)'
 function buildOptions(mobile: boolean): ISourceOptions {
   return {
     fullScreen: { enable: false },
-    fpsLimit: mobile ? 30 : 60,
+    fpsLimit: mobile ? 45 : 60,
     particles: {
-      number: { value: mobile ? 18 : 70, density: { enable: true } },
+      number: { value: mobile ? 95 : 70, density: { enable: true } },
       color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#5bb5e8'] },
       links: {
-        enable: !mobile,
+        enable: true,
         color: '#f5a623',
-        opacity: 0.18,
-        distance: 140,
-        width: 1,
+        opacity: mobile ? 0.28 : 0.18,
+        distance: mobile ? 110 : 140,
+        width: mobile ? 1.2 : 1,
       },
       move: {
         enable: true,
-        speed: mobile ? 0.35 : 0.6,
+        speed: mobile ? 0.75 : 0.6,
         direction: 'none',
         random: true,
         outModes: { default: 'bounce' },
       },
-      opacity: { value: { min: mobile ? 0.15 : 0.25, max: mobile ? 0.35 : 0.55 } },
-      size: { value: { min: 1, max: mobile ? 2.5 : 3.5 } },
+      opacity: { value: { min: mobile ? 0.35 : 0.25, max: mobile ? 0.75 : 0.55 } },
+      size: { value: { min: mobile ? 1.5 : 1, max: mobile ? 4.5 : 3.5 } },
     },
     interactivity: {
       detectsOn: 'window',
       events: {
         onHover: { enable: !mobile, mode: 'grab' },
-        onClick: { enable: !mobile, mode: 'push' },
+        onClick: { enable: mobile, mode: 'push' },
         resize: { enable: true },
       },
       modes: {
         grab: { distance: 160, links: { opacity: 0.35 } },
-        push: { quantity: 3 },
+        push: { quantity: mobile ? 4 : 3 },
       },
     },
     detectRetina: true,

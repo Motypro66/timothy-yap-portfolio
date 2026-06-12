@@ -40,7 +40,10 @@
 }
 
 .particle-bg--mobile {
-  opacity: 0.55;
+  opacity: 1;
+  mask-image: none;
+  pointer-events: auto;
+  z-index: 2;
 }
 
 .floating-orbs canvas {
@@ -1108,12 +1111,12 @@ a.contact__value:hover {
     width: 14rem;
     height: 14rem;
     border-radius: 50%;
-    z-index: 2;
+    z-index: 1;
     pointer-events: none;
     background: radial-gradient(
       circle,
-      rgba(255, 209, 102, 0.42) 0%,
-      rgba(245, 166, 35, 0.16) 38%,
+      rgba(255, 209, 102, 0.28) 0%,
+      rgba(245, 166, 35, 0.1) 38%,
       transparent 72%
     );
     animation: hero-mobile-glow 5s ease-in-out infinite;
@@ -1129,21 +1132,21 @@ a.contact__value:hover {
     border-radius: 50%;
     background: #f5a623;
     box-shadow:
-      0 0 0 6px rgba(245, 166, 35, 0.12),
-      0 0 24px rgba(245, 166, 35, 0.45);
+      0 0 0 6px rgba(245, 166, 35, 0.1),
+      0 0 18px rgba(245, 166, 35, 0.35);
   }
 
   .hero__scrim {
     background: linear-gradient(
       180deg,
-      rgba(255, 248, 240, 0.88) 0%,
-      rgba(255, 248, 240, 0.72) 55%,
-      rgba(255, 248, 240, 0.35) 100%
+      rgba(255, 248, 240, 0.78) 0%,
+      rgba(255, 248, 240, 0.55) 50%,
+      rgba(255, 248, 240, 0.22) 100%
     );
   }
 
   .sun-rays {
-    opacity: 0.65;
+    opacity: 0.45;
   }
 
   @keyframes hero-mobile-glow {
