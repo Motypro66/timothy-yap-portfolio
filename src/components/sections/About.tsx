@@ -4,6 +4,7 @@ import ScrollRevealSection from '../effects/ScrollRevealSection'
 import SectionHeading from '../ui/SectionHeading'
 import GlassCard from '../ui/GlassCard'
 import PersonIllustration from '../ui/PersonIllustration'
+import AboutIllustrations from '../ui/AboutIllustrations'
 import SkillPill from '../ui/SkillPill'
 
 export default function About() {
@@ -22,7 +23,10 @@ export default function About() {
         <div className="about__grid">
           <GlassCard className="about__main reveal-item">
             <div className="about__main-inner">
-              <PersonIllustration />
+              <div className="about__illus-col">
+                <PersonIllustration />
+                <AboutIllustrations />
+              </div>
               <p className="about__text">{summary}</p>
             </div>
           </GlassCard>

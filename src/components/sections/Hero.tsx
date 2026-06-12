@@ -6,6 +6,21 @@ import ParticleBackground from '../effects/ParticleBackground'
 import SunRays from '../effects/SunRays'
 import StaggeredText from '../ui/StaggeredText'
 import MagneticButton from '../ui/MagneticButton'
+import CountUp from '../ui/CountUp'
+import InteractiveBox from '../ui/InteractiveBox'
+
+function MetricValue({ metric }: { metric: { type: string; value?: string; count?: number; suffix?: string } }) {
+  if (metric.type === 'count' && metric.count != null) {
+    return (
+      <CountUp
+        end={metric.count}
+        suffix={metric.suffix ?? ''}
+        className="hero__metric-value"
+      />
+    )
+  }
+  return <span className="hero__metric-value">{metric.value}</span>
+}
 
 export default function Hero() {
   const { t, lang } = useLanguage()
@@ -17,11 +32,11 @@ export default function Hero() {
       <SunRays />
       <ParticleBackground />
       <FloatingOrbs />
-
+      <div className="hero__scrim" aria-hidden="true" />
       <div className="hero__grid" aria-hidden="true" />
 
       <div className="container hero__content">
-        <div className="hero__panel">
+        <div className="hero__copy">
           <motion.div
             className="hero__badge"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -62,10 +77,10 @@ export default function Hero() {
             transition={{ delay: 1.4, duration: 0.7 }}
           >
             {t.hero.metrics.map((m) => (
-              <div key={m.label} className="hero__metric">
-                <span className="hero__metric-value">{m.value}</span>
+              <InteractiveBox key={m.label} className="hero__metric">
+                <MetricValue metric={m} />
                 <span className="hero__metric-label">{m.label}</span>
-              </div>
+              </InteractiveBox>
             ))}
           </motion.div>
 
