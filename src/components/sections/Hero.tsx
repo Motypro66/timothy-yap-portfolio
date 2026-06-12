@@ -69,6 +69,7 @@ export default function Hero() {
       <SunRays />
       <ParticleBackground />
       <FloatingOrbs />
+      <div className="hero__mobile-glow" aria-hidden="true" />
       <div className="hero__scrim" aria-hidden="true" />
       <div className="hero__grid" aria-hidden="true" />
 
