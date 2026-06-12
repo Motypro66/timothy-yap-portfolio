@@ -35,13 +35,17 @@ export default function MagneticButton({
   const classes = `magnetic-btn magnetic-btn--${variant} ${className}`
 
   if (href) {
+    const isExternal = href.startsWith('http')
+    const isDownload = href.endsWith('.pdf')
+
     return (
       <motion.a
         ref={ref as React.RefObject<HTMLAnchorElement>}
         href={href}
         className={classes}
-        target={href.startsWith('http') ? '_blank' : undefined}
-        rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+        target={isExternal ? '_blank' : undefined}
+        rel={isExternal ? 'noopener noreferrer' : undefined}
+        download={isDownload ? true : undefined}
         whileTap={{ scale: 0.96 }}
         onMouseMove={handleMove}
         onMouseLeave={handleLeave}

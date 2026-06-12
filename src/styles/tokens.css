@@ -1,20 +1,28 @@
 :root {
-  --bg-deep: #06080f;
-  --bg-surface: #0d1117;
-  --accent-cyan: #00e5ff;
-  --accent-coral: #ff6b4a;
-  --accent-violet: #8b5cf6;
-  --text-primary: #f0f4f8;
-  --text-muted: #94a3b8;
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+  /* Sunny personal palette — warm, approachable, optimistic */
+  --bg-deep: #fff8f0;
+  --bg-surface: #fffdf9;
+  --bg-warm: #fff0e0;
+  --accent-sun: #f5a623;
+  --accent-peach: #ff8c69;
+  --accent-sky: #5bb5e8;
+  --accent-honey: #ffd166;
+  --text-primary: #3d2e2a;
+  --text-muted: #7a6560;
+  --glass-border: rgba(61, 46, 42, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --shadow-soft: 0 8px 32px rgba(245, 166, 35, 0.12);
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --section-padding: clamp(4rem, 10vw, 7rem);
   --container-max: 72rem;
   --radius-lg: 1.25rem;
   --radius-md: 0.75rem;
-  --glow-cyan: 0 0 40px rgba(0, 229, 255, 0.25);
-  --glow-coral: 0 0 40px rgba(255, 107, 74, 0.2);
+  --glow-sun: 0 0 48px rgba(245, 166, 35, 0.35);
+  --glow-peach: 0 0 40px rgba(255, 140, 105, 0.25);
+  /* legacy aliases used in gradient-text */
+  --accent-cyan: var(--accent-sky);
+  --accent-coral: var(--accent-peach);
+  --accent-violet: #e8a838;
 }

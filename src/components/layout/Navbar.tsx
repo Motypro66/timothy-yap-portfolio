@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { navLinks } from '../../data/resume'
+import { navLinks, profile } from '../../data/resume'
+import { useLanguage } from '../../i18n/LanguageContext'
+import Logo from '../ui/Logo'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const { t, lang, setLang } = useLanguage()
+  const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -20,21 +24,42 @@ export default function Navbar() {
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="container navbar__inner">
-        <a href="#" className="navbar__logo">
-          <span className="gradient-text">TY</span>
+        <a href="#" className="navbar__logo-link" aria-label={profile.name}>
+          <Logo variant="dark" />
         </a>
 
         <nav className="navbar__nav" aria-label="Main">
           {navLinks.map((link) => (
             <a key={link.href} href={link.href} className="navbar__link">
-              {link.label}
+              {t.nav[link.key]}
             </a>
           ))}
         </nav>
 
-        <a href="#contact" className="navbar__cta">
-          Hire Me
-        </a>
+        <div className="navbar__actions">
+          <div className="lang-toggle" role="group" aria-label="Language">
+            <button
+              type="button"
+              className={`lang-toggle__btn ${lang === 'en' ? 'lang-toggle__btn--active' : ''}`}
+              onClick={() => setLang('en')}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              className={`lang-toggle__btn ${lang === 'zh' ? 'lang-toggle__btn--active' : ''}`}
+              onClick={() => setLang('zh')}
+            >
+              中文
+            </button>
+          </div>
+          <a href={cvUrl} className="navbar__cv" download>
+            {t.nav.downloadCv}
+          </a>
+          <a href="#contact" className="navbar__cta">
+            {t.nav.cta}
+          </a>
+        </div>
 
         <button
           className="navbar__burger"
@@ -56,14 +81,17 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0 }}
           >
             {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-              >
-                {link.label}
+              <a key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>
+                {t.nav[link.key]}
               </a>
             ))}
+            <a href={cvUrl} download onClick={() => setMenuOpen(false)}>
+              {t.nav.downloadCv}
+            </a>
+            <div className="lang-toggle lang-toggle--mobile">
+              <button type="button" className={lang === 'en' ? 'lang-toggle__btn--active' : ''} onClick={() => setLang('en')}>EN</button>
+              <button type="button" className={lang === 'zh' ? 'lang-toggle__btn--active' : ''} onClick={() => setLang('zh')}>中文</button>
+            </div>
           </motion.nav>
         )}
       </AnimatePresence>

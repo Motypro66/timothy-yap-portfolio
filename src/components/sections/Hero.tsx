@@ -1,13 +1,20 @@
 import { motion } from 'framer-motion'
 import { profile } from '../../data/resume'
+import { useLanguage } from '../../i18n/LanguageContext'
 import FloatingOrbs from '../effects/FloatingOrbs'
 import ParticleBackground from '../effects/ParticleBackground'
+import SunRays from '../effects/SunRays'
 import StaggeredText from '../ui/StaggeredText'
 import MagneticButton from '../ui/MagneticButton'
 
 export default function Hero() {
+  const { t, lang } = useLanguage()
+  const title = lang === 'zh' ? profile.titleZh : profile.title
+  const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
+
   return (
     <section className="hero" id="hero">
+      <SunRays />
       <ParticleBackground />
       <FloatingOrbs />
 
@@ -21,7 +28,7 @@ export default function Hero() {
           transition={{ delay: 0.2, duration: 0.5 }}
         >
           <span className="hero__badge-dot" />
-          Open to opportunities
+          {t.hero.badge}
         </motion.div>
 
         <h1 className="hero__title">
@@ -34,7 +41,7 @@ export default function Hero() {
             {profile.name}
           </motion.span>
           <span className="hero__role">
-            <StaggeredText text={profile.title} delay={0.5} />
+            <StaggeredText text={title} delay={0.5} />
           </span>
         </h1>
 
@@ -44,7 +51,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.8 }}
         >
-          {profile.tagline}
+          {t.hero.tagline}
         </motion.p>
 
         <motion.div
@@ -53,7 +60,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4, duration: 0.7 }}
         >
-          {profile.metrics.map((m) => (
+          {t.hero.metrics.map((m) => (
             <div key={m.label} className="hero__metric">
               <span className="hero__metric-value">{m.value}</span>
               <span className="hero__metric-label">{m.label}</span>
@@ -68,10 +75,13 @@ export default function Hero() {
           transition={{ delay: 1.6, duration: 0.7 }}
         >
           <MagneticButton href="#contact" variant="primary">
-            Get in Touch
+            {t.hero.getInTouch}
           </MagneticButton>
           <MagneticButton href="#experience" variant="secondary">
-            View Experience
+            {t.hero.viewExperience}
+          </MagneticButton>
+          <MagneticButton href={cvUrl} variant="ghost">
+            {t.nav.downloadCv}
           </MagneticButton>
         </motion.div>
 
@@ -81,7 +91,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 0.8 }}
         >
-          <span>Scroll</span>
+          <span>{t.hero.scroll}</span>
           <motion.div
             className="hero__scroll-line"
             animate={{ scaleY: [0, 1, 0] }}

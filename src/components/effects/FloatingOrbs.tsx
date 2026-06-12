@@ -31,10 +31,10 @@ function Orb({
           attach="material"
           distort={0.35}
           speed={2}
-          roughness={0.2}
-          metalness={0.8}
+          roughness={0.15}
+          metalness={0.6}
           transparent
-          opacity={0.55}
+          opacity={0.5}
         />
       </mesh>
     </Float>
@@ -44,12 +44,12 @@ function Orb({
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.4} />
-      <pointLight position={[10, 10, 10]} intensity={1.2} color="#00e5ff" />
-      <pointLight position={[-10, -5, -5]} intensity={0.8} color="#8b5cf6" />
-      <Orb position={[-2.5, 1.2, -3]} color="#00e5ff" scale={0.9} speed={0.8} />
-      <Orb position={[3, -0.8, -4]} color="#8b5cf6" scale={0.7} speed={1.1} />
-      <Orb position={[0.5, 2, -5]} color="#ff6b4a" scale={0.5} speed={0.6} />
+      <ambientLight intensity={0.6} />
+      <pointLight position={[10, 10, 10]} intensity={1.4} color="#ffd166" />
+      <pointLight position={[-10, -5, -5]} intensity={0.9} color="#ff8c69" />
+      <Orb position={[-2.5, 1.2, -3]} color="#f5a623" scale={0.9} speed={0.8} />
+      <Orb position={[3, -0.8, -4]} color="#ff8c69" scale={0.7} speed={1.1} />
+      <Orb position={[0.5, 2, -5]} color="#5bb5e8" scale={0.5} speed={0.6} />
     </>
   )
 }
