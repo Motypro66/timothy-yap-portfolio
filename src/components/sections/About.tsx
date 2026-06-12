@@ -27,20 +27,20 @@ export default function About() {
                 <PersonIllustration />
                 <AboutIllustrations />
               </div>
-              <p className="about__text">{summary}</p>
+              <p className="about__text type-body">{summary}</p>
             </div>
           </GlassCard>
 
           <div className="about__side">
             <GlassCard className="about__info reveal-item" delay={0.1}>
-              <h3 className="about__info-title">{t.about.location}</h3>
-              <p>{profile.location}</p>
-              <h3 className="about__info-title">{t.about.focus}</h3>
-              <p>{t.about.focusValue}</p>
+              <h3 className="about__info-title type-label">{t.about.location}</h3>
+              <p className="type-body">{profile.location}</p>
+              <h3 className="about__info-title type-label">{t.about.focus}</h3>
+              <p className="type-body">{t.about.focusValue}</p>
             </GlassCard>
 
             <GlassCard className="about__interests reveal-item" delay={0.15}>
-              <h3 className="about__info-title">{t.about.interests}</h3>
+              <h3 className="about__info-title type-label">{t.about.interests}</h3>
               <div className="about__chips">
                 {t.interests.map((item, i) => (
                   <SkillPill key={item} label={item} index={i} />

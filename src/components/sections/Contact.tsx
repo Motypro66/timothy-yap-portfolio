@@ -4,6 +4,7 @@ import ScrollRevealSection from '../effects/ScrollRevealSection'
 import SectionHeading from '../ui/SectionHeading'
 import MagneticButton from '../ui/MagneticButton'
 import GlassCard from '../ui/GlassCard'
+import SocialIcons from '../ui/SocialIcons'
 
 export default function Contact() {
   const { t } = useLanguage()
@@ -21,31 +22,28 @@ export default function Contact() {
         <GlassCard className="contact__card reveal-item">
           <div className="contact__grid">
             <div className="contact__item">
-              <span className="contact__label">{t.contact.email}</span>
-              <a href={`mailto:${profile.email}`} className="contact__value">
+              <span className="contact__label type-label">{t.contact.email}</span>
+              <a href={`mailto:${profile.email}`} className="contact__value type-body">
                 {profile.email}
               </a>
             </div>
             <div className="contact__item">
-              <span className="contact__label">{t.contact.phone}</span>
-              <a href={`tel:${profile.phone.replace(/\s/g, '')}`} className="contact__value">
+              <span className="contact__label type-label">{t.contact.phone}</span>
+              <a href={`tel:${profile.phone.replace(/\s/g, '')}`} className="contact__value type-body">
                 {profile.phone}
               </a>
             </div>
             <div className="contact__item">
-              <span className="contact__label">{t.contact.linkedin}</span>
-              <a
-                href={profile.linkedin}
-                className="contact__value"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                linkedin.com/in/timothy-yap-74005a282
-              </a>
+              <span className="contact__label type-label">{t.contact.social}</span>
+              <SocialIcons
+                linkedin={profile.linkedin}
+                instagram={profile.instagram || undefined}
+                size="lg"
+              />
             </div>
             <div className="contact__item">
-              <span className="contact__label">{t.contact.location}</span>
-              <span className="contact__value">{profile.address}</span>
+              <span className="contact__label type-label">{t.contact.location}</span>
+              <span className="contact__value type-body">{profile.address}</span>
             </div>
           </div>
 
@@ -54,7 +52,7 @@ export default function Contact() {
               {t.contact.sendEmail}
             </MagneticButton>
             <MagneticButton href={profile.linkedin} variant="secondary">
-              {t.contact.viewLinkedin}
+              {t.contact.viewSocial}
             </MagneticButton>
             <MagneticButton href={cvUrl} variant="ghost">
               {t.nav.downloadCv}

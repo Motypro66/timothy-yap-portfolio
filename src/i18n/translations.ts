@@ -19,7 +19,7 @@ export const translations = {
       metrics: [
         { type: 'count', count: 30, suffix: '+', label: 'Active Campaigns' },
         { type: 'text', value: 'Full-Funnel', label: 'Tracking Setup' },
-        { type: 'text', value: 'RM 10K', label: 'Peak Live Revenue (6h)' },
+        { type: 'count', count: 10, prefix: 'RM ', suffix: 'K', label: 'Peak Live Revenue (6h)' },
         { type: 'count', count: 3, suffix: '', label: 'Languages Spoken' },
       ],
     },
@@ -34,7 +34,7 @@ export const translations = {
     },
     skills: {
       eyebrow: 'Skills',
-      title: 'Tools & expertise',
+      title: 'Tools  expertise',
       subtitle: 'From campaign management to AI-assisted workflows',
       marketing: 'Marketing Analytics',
       ai: 'AI Automation',
@@ -55,9 +55,9 @@ export const translations = {
       email: 'Email',
       phone: 'Phone',
       location: 'Location',
-      linkedin: 'LinkedIn',
+      social: 'Social',
       sendEmail: 'Send Email',
-      viewLinkedin: 'View LinkedIn',
+      viewSocial: 'Follow on Social',
     },
     footer: {
       built: 'Built with React, Three.js & GSAP.',
@@ -114,7 +114,16 @@ export const translations = {
         'AI Image & Video Generation',
         'MCP Tool Integration',
       ],
-      creative: ['Photography', 'Lightroom', 'Canva', 'CapCut'],
+      creative: [
+        'Photography',
+        'Lightroom',
+        'Canva',
+        'CapCut',
+        'Premiere Pro',
+        'Short-form Video',
+        'Social Content',
+        'Live Stream Visuals',
+      ],
     },
     interests: [
       'Live Commerce',
@@ -143,7 +152,7 @@ export const translations = {
       metrics: [
         { type: 'count', count: 30, suffix: '+', label: '活跃广告活动' },
         { type: 'text', value: '全漏斗', label: '转化追踪' },
-        { type: 'text', value: 'RM 10K', label: '直播峰值收入 (6h)' },
+        { type: 'count', count: 10, prefix: 'RM ', suffix: 'K', label: '直播峰值收入 (6h)' },
         { type: 'count', count: 3, suffix: '', label: '语言能力' },
       ],
     },
@@ -158,7 +167,7 @@ export const translations = {
     },
     skills: {
       eyebrow: '技能',
-      title: '工具与专长',
+      title: '工具 专长',
       subtitle: '从 campaign 管理到 AI 辅助工作流',
       marketing: '营销分析',
       ai: 'AI 自动化',
@@ -179,9 +188,9 @@ export const translations = {
       email: '邮箱',
       phone: '电话',
       location: '地址',
-      linkedin: 'LinkedIn',
+      social: '社交',
       sendEmail: '发送邮件',
-      viewLinkedin: '查看 LinkedIn',
+      viewSocial: '关注社交账号',
     },
     footer: {
       built: '使用 React、Three.js & GSAP 构建。',
@@ -238,7 +247,7 @@ export const translations = {
         'AI 图片 & 视频生成',
         'MCP 工具集成',
       ],
-      creative: ['摄影', 'Lightroom', 'Canva', 'CapCut'],
+      creative: ['摄影', 'Lightroom', 'Canva', 'CapCut', 'Premiere Pro', '短视频', '社交内容', '直播视觉'],
     },
     interests: [
       '直播电商',

@@ -257,11 +257,8 @@
 }
 
 .hero__name {
-  font-family: var(--font-display);
   font-size: clamp(3rem, 10vw, 5rem);
-  font-weight: 800;
   line-height: 1.05;
-  letter-spacing: -0.03em;
   color: var(--text-primary);
   text-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9),
@@ -270,9 +267,7 @@
 }
 
 .hero__role {
-  font-family: var(--font-body);
   font-size: clamp(1.15rem, 3.5vw, 1.75rem);
-  font-weight: 600;
   color: var(--text-primary);
   text-shadow: 0 2px 16px rgba(255, 248, 240, 0.8);
 }
@@ -386,22 +381,21 @@
 
 .hero__metric-value {
   display: block;
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 3vw, 1.75rem);
-  font-weight: 700;
-  color: var(--accent-sun);
   margin-bottom: 0.15rem;
+  min-height: 1.15em;
+}
+
+.hero__metric-value--text {
+  font-size: clamp(1.2rem, 3vw, 1.55rem);
+  color: var(--accent-sun);
   line-height: 1.1;
 }
 
 .hero__metric-label {
   display: block;
   font-size: 0.68rem;
-  font-weight: 500;
   color: var(--text-muted);
   line-height: 1.35;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .hero__actions {
@@ -514,19 +508,13 @@
 
 .section-heading__eyebrow {
   display: inline-block;
-  font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--accent-sun);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
   margin-bottom: 0.75rem;
 }
 
 .section-heading__title {
-  font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 2.75rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
 }
@@ -602,10 +590,7 @@
 }
 
 .about__info-title {
-  font-family: var(--font-mono);
   font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   color: var(--accent-sun);
   margin-bottom: 0.35rem;
   margin-top: 1.25rem;
@@ -644,9 +629,45 @@
 }
 
 .skills__group--unified .skills__pills,
-.skills__group--unified .skills__langs {
+.skills__group--unified .skills__langs,
+.skills__group--unified .skills__creative {
   flex: 1;
   align-content: flex-start;
+}
+
+.skills__creative {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  justify-content: space-between;
+}
+
+.creative-mini-wrap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.creative-mini {
+  width: 100%;
+  max-width: 72px;
+  margin-inline: auto;
+  opacity: 0.9;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.skills__group--unified:hover .creative-mini {
+  opacity: 1;
+}
+
+.skills__group--unified:hover .creative-mini:nth-child(odd) {
+  transform: translateY(-3px);
+}
+
+.skills__group--unified:hover .creative-mini:nth-child(even) {
+  transform: translateY(3px);
 }
 
 .skills__group-head {
@@ -666,9 +687,7 @@
 }
 
 .skills__group--featured .skills__group-title {
-  font-family: var(--font-display);
   font-size: 1.45rem;
-  font-weight: 700;
   margin-bottom: 0.35rem;
   color: var(--text-primary);
 }
@@ -684,11 +703,7 @@
 }
 
 .skills__group-title--compact {
-  font-family: var(--font-body);
   font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   color: var(--accent-sun);
   margin-bottom: 0.35rem;
 }
@@ -714,6 +729,8 @@
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
   font-size: 0.85rem;
+  font-family: var(--font-body);
+  font-weight: 500;
   border: 1px solid rgba(245, 166, 35, 0.2);
   background: rgba(255, 255, 255, 0.8);
   color: var(--text-primary);
@@ -835,22 +852,18 @@
 
 .experience__eyebrow {
   display: inline-block;
-  font-family: var(--font-mono);
   font-size: 0.65rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
   color: var(--accent-sun);
   margin-bottom: 0.4rem;
 }
 
 .experience__role {
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 3vw, 1.65rem);
-  font-weight: 700;
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
   margin-bottom: 0.2rem;
   color: var(--text-primary);
-  line-height: 1.2;
+  line-height: 1.25;
+  font-style: normal;
+  letter-spacing: -0.01em;
 }
 
 .experience__company {
@@ -860,7 +873,6 @@
 }
 
 .experience__period {
-  font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--text-muted);
   white-space: nowrap;
@@ -883,6 +895,7 @@
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.6;
+  font-family: var(--font-body);
 }
 
 .experience__list li::before {
@@ -899,8 +912,9 @@
 }
 
 .experience__tag {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.7rem;
+  font-weight: 500;
   padding: 0.3rem 0.65rem;
   border-radius: 4px;
   background: rgba(91, 181, 232, 0.15);
@@ -926,10 +940,7 @@
 
 .contact__label {
   display: block;
-  font-family: var(--font-mono);
   font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
   color: var(--accent-sun);
   margin-bottom: 0.35rem;
 }
@@ -949,6 +960,65 @@ a.contact__value:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 0.85rem;
+}
+
+/* ===== Social icons ===== */
+.social-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.social-icons--lg {
+  gap: 0.85rem;
+}
+
+.social-icons__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--text-primary);
+  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.social-icons--lg .social-icons__link {
+  width: 2.85rem;
+  height: 2.85rem;
+}
+
+.social-icons__link svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.social-icons--lg .social-icons__link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.social-icons__link--linkedin:hover {
+  color: #0a66c2;
+  border-color: rgba(10, 102, 194, 0.35);
+  box-shadow: 0 6px 18px rgba(10, 102, 194, 0.15);
+  transform: translateY(-2px);
+}
+
+.social-icons__link--instagram:hover {
+  color: #e4405f;
+  border-color: rgba(228, 64, 95, 0.35);
+  box-shadow: 0 6px 18px rgba(228, 64, 95, 0.15);
+  transform: translateY(-2px);
+}
+
+.social-icons__link--muted {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
 }
 
 /* ===== Footer ===== */
@@ -973,6 +1043,7 @@ a.contact__value:hover {
 
 .footer__links {
   display: flex;
+  align-items: center;
   gap: 1.5rem;
 }
 

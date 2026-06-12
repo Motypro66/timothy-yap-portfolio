@@ -64,6 +64,95 @@ img {
   -webkit-text-fill-color: transparent;
 }
 
+/* Typography system — title vs content */
+.type-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.type-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+
+.type-body-strong {
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+.type-label {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.type-caption {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Odometer / slot roll numbers */
+.rolling-number {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.02em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  line-height: 1.1;
+  color: var(--accent-sun);
+}
+
+.rolling-number__digits {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.rolling-number__affix {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.slot-digit {
+  --slot-height: 1.15em;
+  display: inline-block;
+  height: var(--slot-height);
+  overflow: hidden;
+  vertical-align: baseline;
+  min-width: 0.55em;
+  text-align: center;
+}
+
+.slot-digit__strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0);
+  will-change: transform;
+}
+
+.slot-digit__num {
+  display: block;
+  height: var(--slot-height);
+  line-height: var(--slot-height);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

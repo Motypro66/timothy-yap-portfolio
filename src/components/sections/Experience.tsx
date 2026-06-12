@@ -35,16 +35,16 @@ export default function Experience() {
                   <div className="experience__body">
                     <div className="experience__header">
                       <div className="experience__header-main">
-                        <span className="experience__eyebrow">
+                        <span className="experience__eyebrow type-label">
                           {isCurrent ? t.experience.currentRole : t.experience.pastRole}
                         </span>
-                        <h3 className="experience__role">{job.role}</h3>
-                        <p className="experience__company">{job.company}</p>
+                        <h3 className="experience__role type-body-strong">{job.role}</h3>
+                        <p className="experience__company type-body">{job.company}</p>
                       </div>
-                      <span className="experience__period">{job.period}</span>
+                      <span className="experience__period type-caption">{job.period}</span>
                     </div>
 
-                    <ul className="experience__list">
+                    <ul className="experience__list type-body">
                       {job.highlights.map((h) => (
                         <li key={h}>{h}</li>
                       ))}
@@ -52,7 +52,7 @@ export default function Experience() {
 
                     <div className="experience__tags">
                       {job.tags.map((tag) => (
-                        <span key={tag} className="experience__tag">
+                        <span key={tag} className="experience__tag type-caption">
                           {tag}
                         </span>
                       ))}

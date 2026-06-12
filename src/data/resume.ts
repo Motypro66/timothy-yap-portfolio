@@ -13,6 +13,7 @@ export const profile = {
   phone: '+60 11-1678 2333',
   email: 'Timmotim66@gmail.com',
   linkedin: 'https://www.linkedin.com/in/timothy-yap-74005a282/',
+  instagram: 'https://www.instagram.com/momopromax123?igsh=ZnpkbGRkbHp3OGRt',
   resumePdf: 'Timothy-Yap-Resume-2026.pdf',
 }
 

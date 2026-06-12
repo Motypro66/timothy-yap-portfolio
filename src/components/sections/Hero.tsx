@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { profile } from '../../data/resume'
 import { useLanguage } from '../../i18n/LanguageContext'
@@ -6,26 +7,62 @@ import ParticleBackground from '../effects/ParticleBackground'
 import SunRays from '../effects/SunRays'
 import StaggeredText from '../ui/StaggeredText'
 import MagneticButton from '../ui/MagneticButton'
-import CountUp from '../ui/CountUp'
+import RollingNumber from '../ui/RollingNumber'
 import InteractiveBox from '../ui/InteractiveBox'
 
-function MetricValue({ metric }: { metric: { type: string; value?: string; count?: number; suffix?: string } }) {
+type Metric = {
+  type: string
+  value?: string
+  count?: number
+  prefix?: string
+  suffix?: string
+  label: string
+}
+
+function MetricValue({ metric, rollStarted }: { metric: Metric; rollStarted: boolean }) {
   if (metric.type === 'count' && metric.count != null) {
     return (
-      <CountUp
-        end={metric.count}
+      <RollingNumber
+        value={metric.count}
+        prefix={metric.prefix ?? ''}
         suffix={metric.suffix ?? ''}
         className="hero__metric-value"
+        start={rollStarted}
+        startDelay={120}
       />
     )
   }
-  return <span className="hero__metric-value">{metric.value}</span>
+  return <span className="hero__metric-value hero__metric-value--text type-display">{metric.value}</span>
 }
 
 export default function Hero() {
+  const [rollStarted, setRollStarted] = useState(false)
   const { t, lang } = useLanguage()
   const title = lang === 'zh' ? profile.titleZh : profile.title
   const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
+
+  useEffect(() => {
+    let cancelled = false
+
+    const beginRoll = () => {
+      if (!cancelled) setRollStarted(true)
+    }
+
+    const timer = window.setTimeout(beginRoll, 1500)
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        setRollStarted(false)
+        window.setTimeout(beginRoll, 300)
+      }
+    }
+
+    window.addEventListener('pageshow', onPageShow)
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+      window.removeEventListener('pageshow', onPageShow)
+    }
+  }, [])
 
   return (
     <section className="hero" id="hero">
@@ -49,20 +86,20 @@ export default function Hero() {
 
           <h1 className="hero__title">
             <motion.span
-              className="hero__name"
+              className="hero__name type-display"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               {profile.displayName}
             </motion.span>
-            <span className="hero__role">
+            <span className="hero__role type-body-strong">
               <StaggeredText text={title} delay={0.5} />
             </span>
           </h1>
 
           <motion.p
-            className="hero__tagline"
+            className="hero__tagline type-body"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.8 }}
@@ -78,8 +115,8 @@ export default function Hero() {
           >
             {t.hero.metrics.map((m) => (
               <InteractiveBox key={m.label} className="hero__metric">
-                <MetricValue metric={m} />
-                <span className="hero__metric-label">{m.label}</span>
+                <MetricValue metric={m} rollStarted={rollStarted} />
+                <span className="hero__metric-label type-label">{m.label}</span>
               </InteractiveBox>
             ))}
           </motion.div>
@@ -103,7 +140,7 @@ export default function Hero() {
         </div>
 
         <motion.div
-          className="hero__scroll"
+          className="hero__scroll type-label"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 0.8 }}
