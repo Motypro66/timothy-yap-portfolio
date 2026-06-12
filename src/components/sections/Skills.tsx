@@ -4,7 +4,7 @@ import ScrollRevealSection from '../effects/ScrollRevealSection'
 import SectionHeading from '../ui/SectionHeading'
 import SkillPill from '../ui/SkillPill'
 import GlassCard from '../ui/GlassCard'
-import CreativeIllustrations from '../ui/CreativeIllustrations'
+import SkillIllustrations from '../ui/SkillIllustrations'
 
 const skillGroups = [
   { key: 'marketing' as const, num: '01', descEn: 'Campaigns, tracking and optimization', descZh: '广告投放、追踪与优化' },
@@ -42,35 +42,29 @@ export default function Skills() {
                 </div>
               </div>
 
-              {group.key === 'languages' ? (
-                <div className="skills__langs">
-                  {languages.map((langItem) => (
-                    <div key={langItem.name} className="skills__lang">
-                      <span className="skills__lang-name type-body-strong">
-                        {lang === 'zh' ? langItem.nameZh : langItem.name}
-                      </span>
-                      <span className="skills__lang-level type-caption">
-                        {t.langLevels[langItem.name as keyof typeof t.langLevels]}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : group.key === 'creative' ? (
-                <div className="skills__creative">
+              <div className="skills__card-body">
+                {group.key === 'languages' ? (
+                  <div className="skills__langs">
+                    {languages.map((langItem) => (
+                      <div key={langItem.name} className="skills__lang">
+                        <span className="skills__lang-name type-body-strong">
+                          {lang === 'zh' ? langItem.nameZh : langItem.name}
+                        </span>
+                        <span className="skills__lang-level type-caption">
+                          {t.langLevels[langItem.name as keyof typeof t.langLevels]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
                   <div className="skills__pills">
-                    {t.skillLabels.creative.map((s: string, idx: number) => (
+                    {t.skillLabels[group.key].map((s: string, idx: number) => (
                       <SkillPill key={s} label={s} index={idx} />
                     ))}
                   </div>
-                  <CreativeIllustrations />
-                </div>
-              ) : (
-                <div className="skills__pills">
-                  {t.skillLabels[group.key].map((s: string, idx: number) => (
-                    <SkillPill key={s} label={s} index={idx} />
-                  ))}
-                </div>
-              )}
+                )}
+                <SkillIllustrations variant={group.key} />
+              </div>
             </GlassCard>
           ))}
         </div>

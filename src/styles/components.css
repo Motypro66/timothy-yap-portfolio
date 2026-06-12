@@ -628,45 +628,50 @@
   flex-direction: column;
 }
 
+.skills__group--unified .skills__card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .skills__group--unified .skills__pills,
-.skills__group--unified .skills__langs,
-.skills__group--unified .skills__creative {
+.skills__group--unified .skills__langs {
   flex: 1;
   align-content: flex-start;
 }
 
-.skills__creative {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+.skills__card-body {
   justify-content: space-between;
+  min-height: 0;
 }
 
-.creative-mini-wrap {
+.skill-mini-wrap {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.65rem;
   margin-top: auto;
-  padding-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(245, 166, 35, 0.12);
 }
 
-.creative-mini {
+.skill-mini {
   width: 100%;
   max-width: 72px;
   margin-inline: auto;
-  opacity: 0.9;
+  opacity: 0.88;
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
-.skills__group--unified:hover .creative-mini {
+.skills__group--unified:hover .skill-mini {
   opacity: 1;
 }
 
-.skills__group--unified:hover .creative-mini:nth-child(odd) {
+.skills__group--unified:hover .skill-mini:nth-child(odd) {
   transform: translateY(-3px);
 }
 
-.skills__group--unified:hover .creative-mini:nth-child(even) {
+.skills__group--unified:hover .skill-mini:nth-child(even) {
   transform: translateY(3px);
 }
 
