@@ -45,6 +45,8 @@ export const translations = {
       eyebrow: 'Experience',
       title: "Where I've made impact",
       subtitle: 'Campaign optimization & live commerce',
+      currentRole: 'Current Role',
+      pastRole: 'Past Role',
     },
     contact: {
       eyebrow: 'Contact',
@@ -167,6 +169,8 @@ export const translations = {
       eyebrow: '经历',
       title: '我做出过影响的地方',
       subtitle: 'Campaign 优化 & 直播电商',
+      currentRole: '现任',
+      pastRole: '过往',
     },
     contact: {
       eyebrow: '联系',

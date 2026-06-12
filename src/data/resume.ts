@@ -1,5 +1,6 @@
 export const profile = {
   name: 'Timothy Yap',
+  displayName: 'Timothy',
   fullName: 'Timothy Yap Wei Zhong',
   title: 'Performance Marketing Specialist',
   titleZh: 'Performance Marketing 专员',

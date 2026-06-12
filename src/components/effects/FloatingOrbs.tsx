@@ -47,16 +47,16 @@ function Scene() {
       <ambientLight intensity={0.6} />
       <pointLight position={[10, 10, 10]} intensity={1.4} color="#ffd166" />
       <pointLight position={[-10, -5, -5]} intensity={0.9} color="#ff8c69" />
-      <Orb position={[-2.5, 1.2, -3]} color="#f5a623" scale={0.9} speed={0.8} />
-      <Orb position={[3, -0.8, -4]} color="#ff8c69" scale={0.7} speed={1.1} />
-      <Orb position={[0.5, 2, -5]} color="#5bb5e8" scale={0.5} speed={0.6} />
+      <Orb position={[2.8, 0.5, -3]} color="#f5a623" scale={0.85} speed={0.8} />
+      <Orb position={[4.2, -1.2, -4]} color="#ff8c69" scale={0.65} speed={1.1} />
+      <Orb position={[3.5, 2, -5]} color="#5bb5e8" scale={0.45} speed={0.6} />
     </>
   )
 }
 
 export default function FloatingOrbs() {
   return (
-    <div className="floating-orbs" aria-hidden="true">
+    <div className="floating-orbs floating-orbs--side" aria-hidden="true">
       <Canvas
         camera={{ position: [0, 0, 6], fov: 50 }}
         dpr={[1, 1.5]}

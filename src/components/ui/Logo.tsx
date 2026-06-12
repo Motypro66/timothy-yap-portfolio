@@ -11,13 +11,12 @@ export default function Logo({ className = '', variant = 'dark' }: Props) {
   return (
     <svg
       className={`logo-mark ${className}`}
-      viewBox="0 0 180 40"
+      viewBox="0 0 130 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="Timothy Yap"
+      aria-label="Timothy"
       role="img"
     >
-      {/* Sun arc mark — warm, personal, not TY block */}
       <circle cx="18" cy="20" r="7" fill={sunCore} opacity="0.95" />
       {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
         const rad = (deg * Math.PI) / 180
@@ -38,28 +37,16 @@ export default function Logo({ className = '', variant = 'dark' }: Props) {
           />
         )
       })}
-      {/* Wordmark */}
       <text
         x="38"
-        y="26"
+        y="26.5"
         fill={textFill}
         fontFamily="'Fraunces', Georgia, serif"
-        fontSize="18"
+        fontSize="20"
         fontWeight="700"
         letterSpacing="-0.02em"
       >
         Timothy
-      </text>
-      <text
-        x="128"
-        y="26"
-        fill={sunCore}
-        fontFamily="'Outfit', system-ui, sans-serif"
-        fontSize="14"
-        fontWeight="500"
-        opacity="0.85"
-      >
-        Yap
       </text>
     </svg>
   )

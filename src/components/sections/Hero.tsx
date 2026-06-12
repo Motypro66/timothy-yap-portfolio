@@ -21,69 +21,71 @@ export default function Hero() {
       <div className="hero__grid" aria-hidden="true" />
 
       <div className="container hero__content">
-        <motion.div
-          className="hero__badge"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <span className="hero__badge-dot" />
-          {t.hero.badge}
-        </motion.div>
-
-        <h1 className="hero__title">
-          <motion.span
-            className="hero__name gradient-text"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        <div className="hero__panel">
+          <motion.div
+            className="hero__badge"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
           >
-            {profile.name}
-          </motion.span>
-          <span className="hero__role">
-            <StaggeredText text={title} delay={0.5} />
-          </span>
-        </h1>
+            <span className="hero__badge-dot" />
+            {t.hero.badge}
+          </motion.div>
 
-        <motion.p
-          className="hero__tagline"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-        >
-          {t.hero.tagline}
-        </motion.p>
+          <h1 className="hero__title">
+            <motion.span
+              className="hero__name"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {profile.displayName}
+            </motion.span>
+            <span className="hero__role">
+              <StaggeredText text={title} delay={0.5} />
+            </span>
+          </h1>
 
-        <motion.div
-          className="hero__metrics"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4, duration: 0.7 }}
-        >
-          {t.hero.metrics.map((m) => (
-            <div key={m.label} className="hero__metric">
-              <span className="hero__metric-value">{m.value}</span>
-              <span className="hero__metric-label">{m.label}</span>
-            </div>
-          ))}
-        </motion.div>
+          <motion.p
+            className="hero__tagline"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+          >
+            {t.hero.tagline}
+          </motion.p>
 
-        <motion.div
-          className="hero__actions"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.6, duration: 0.7 }}
-        >
-          <MagneticButton href="#contact" variant="primary">
-            {t.hero.getInTouch}
-          </MagneticButton>
-          <MagneticButton href="#experience" variant="secondary">
-            {t.hero.viewExperience}
-          </MagneticButton>
-          <MagneticButton href={cvUrl} variant="ghost">
-            {t.nav.downloadCv}
-          </MagneticButton>
-        </motion.div>
+          <motion.div
+            className="hero__metrics"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4, duration: 0.7 }}
+          >
+            {t.hero.metrics.map((m) => (
+              <div key={m.label} className="hero__metric">
+                <span className="hero__metric-value">{m.value}</span>
+                <span className="hero__metric-label">{m.label}</span>
+              </div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            className="hero__actions"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.7 }}
+          >
+            <MagneticButton href="#contact" variant="primary">
+              {t.hero.getInTouch}
+            </MagneticButton>
+            <MagneticButton href="#experience" variant="secondary">
+              {t.hero.viewExperience}
+            </MagneticButton>
+            <MagneticButton href={cvUrl} variant="ghost">
+              {t.nav.downloadCv}
+            </MagneticButton>
+          </motion.div>
+        </div>
 
         <motion.div
           className="hero__scroll"
