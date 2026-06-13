@@ -28,23 +28,23 @@ export function normalizeRoom(root: THREE.Object3D, targetSize = 6.2) {
   root.rotation.y = Math.PI
 }
 
-/** Interior director shots — camera stays INSIDE the room so scroll feels like walking through. */
+/** Interior / threshold shots — same orientation as exported GLB (Y rotated π). */
 export function roomCameraPath(): {
   pos: [number, number, number]
   target: [number, number, number]
   fov: number
 }[] {
   return [
-    { pos: [0, 1.62, 2.35], target: [0, 1.18, -0.85], fov: 58 },
-    { pos: [0, 1.54, 1.05], target: [0, 1.1, -1.38], fov: 52 },
-    { pos: [0.95, 1.48, 0.25], target: [-0.45, 1.12, -1.58], fov: 48 },
-    { pos: [1.28, 1.42, -0.35], target: [-1.85, 1.32, -2.12], fov: 44 },
-    { pos: [0.48, 1.3, -0.42], target: [0, 1.02, -1.62], fov: 40 },
-    { pos: [0.15, 1.22, -0.82], target: [0, 0.98, -1.68], fov: 36 },
-    { pos: [-0.85, 1.36, -0.62], target: [-2.08, 1.28, -2.38], fov: 38 },
-    { pos: [-1.18, 1.32, -1.05], target: [-2.08, 1.34, -2.45], fov: 34 },
-    { pos: [1.35, 1.4, -0.52], target: [2.12, 1.52, -1.28], fov: 36 },
-    { pos: [0.32, 1.56, 0.95], target: [0, 1.15, -0.55], fov: 32 },
+    { pos: [0, 1.72, 3.55], target: [0, 1.35, -0.55], fov: 56 },
+    { pos: [0, 1.62, 2.45], target: [0, 1.28, -0.95], fov: 50 },
+    { pos: [0.95, 1.5, 1.55], target: [0, 1.14, -1.32], fov: 46 },
+    { pos: [1.38, 1.44, 0.95], target: [-0.15, 1.1, -1.42], fov: 44 },
+    { pos: [0.45, 1.34, 0.75], target: [0, 1.02, -1.58], fov: 40 },
+    { pos: [0.12, 1.24, 0.35], target: [0, 0.98, -1.65], fov: 36 },
+    { pos: [-1.05, 1.38, 0.55], target: [-2.05, 1.32, -2.35], fov: 38 },
+    { pos: [-1.32, 1.34, 0.05], target: [-2.05, 1.36, -2.42], fov: 34 },
+    { pos: [1.72, 1.46, 0.25], target: [2.12, 1.58, -1.45], fov: 36 },
+    { pos: [0.28, 1.54, 1.35], target: [0, 1.16, -0.75], fov: 32 },
   ]
 }
 

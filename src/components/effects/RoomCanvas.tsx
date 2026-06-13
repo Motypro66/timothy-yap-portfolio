@@ -169,7 +169,7 @@ function WebGLCanvas({ dpr, quality }: { dpr: number; quality: ReturnType<typeof
       style={{ width: '100%', height: '100%', display: 'block' }}
       shadows={quality !== 'low'}
       dpr={dpr}
-      camera={{ fov: 58, near: 0.05, far: 40, position: [0, 1.62, 2.35] }}
+      camera={{ fov: 56, near: 0.05, far: 40, position: [0, 1.72, 3.55] }}
       gl={{ antialias: quality !== 'low', powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.setClearColor('#e8dfd4')
