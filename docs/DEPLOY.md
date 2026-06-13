@@ -10,16 +10,19 @@
 
 已连接 GitHub 仓库 `Motypro66/timothy-yap-portfolio`，推送到 `main` 后自动部署。
 
-### Cloudflare 构建设置
+### Cloudflare 构建设置（重要 — 空白页通常是这里没填对）
 
 | 项目 | 值 |
 |------|-----|
 | Production branch | `main` |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Environment variable | `NODE_VERSION` = `20`（或用仓库里的 `.node-version`） |
+| **Build command** | **`npm run build:cf`** |
+| **Build output directory** | **`dist`** |
+| Root directory | 留空（`/） |
+| Environment variable | `NODE_VERSION` = `20`（可选，已有 `.node-version`） |
 
-Cloudflare 构建时会自动设置 `CF_PAGES=1`，Vite 使用根路径 `base: '/'`。
+> 若 Build command 留空，Cloudflare 只会上传源码，`index.html` 会指向 `/src/main.tsx`，页面就会**一片空白**。
+
+Cloudflare 构建时会自动设置 `CF_PAGES=1`；`build:cf` 也会强制 `base: /`。
 
 ### 以后每次改完
 
@@ -70,6 +73,7 @@ $env:CF_PAGES='1'; npm run build; npm run preview
 
 | 问题 | 处理 |
 |------|------|
+| **Cloudflare 空白页** | Settings → Builds：Build command 填 **`npm run build:cf`**，Output 填 **`dist`**，然后 **Retry deployment** |
 | Cloudflare 白屏 / 404 | 确认 Build output 是 `dist`，且 Cloudflare 已连对仓库 |
 | GitHub Pages 白屏 | 确认 `vite.config.ts` 在非 CF 环境用 `base: '/timothy-yap-portfolio/'` |
 | Favicon 仍是旧的 | 浏览器 **Ctrl+Shift+R** 硬刷新 |
