@@ -54,34 +54,20 @@ export function useScrollJourney() {
         const inner = el.querySelector('.journey-station__inner')
         if (inner) {
           gsap.fromTo(
-            inner,
-            { opacity: 0.25, y: 60, scale: 0.96 },
+            '.journey-overlay__body',
+            { opacity: 0, y: 24 },
             {
               opacity: 1,
               y: 0,
-              scale: 1,
               ease: 'power2.out',
               scrollTrigger: {
                 trigger: el,
                 start: 'top top',
-                end: `+=${pin}`,
-                scrub: 0.75,
+                end: `+=${Math.max(80, parseInt(pin, 10) * 0.6)}%`,
+                scrub: 0.65,
               },
             },
           )
-        }
-
-        if (id === 'hero') {
-          gsap.to('.journey-overlay', {
-            opacity: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top top',
-              end: `+=${pin}`,
-              scrub: 0.6,
-            },
-          })
         }
       })
 

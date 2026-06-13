@@ -1,0 +1,30 @@
+---
+description: Portfolio is personal brand identity — not a generic marketing landing page
+alwaysApply: true
+---
+
+# timothy-yap-portfolio — identity constraints
+
+This repo is **Timothy Yap's personal brand portfolio (形象)**, not a marketing SaaS landing page.
+
+## Before UI, layout, copy tone, or redesign
+
+1. Run BrainVault: `python "C:\Users\timot\Documents\Obsidian\BrainVault\.pipeline\search_brain.py" --json "portfolio personal brand Timothy identity"`
+2. Read `BrainVault/10-Brain/08-Project-Portfolio-个人作品集.md` if hits are thin.
+
+## Do
+
+- Personal, editorial, identity-first design (`design-taste-frontend`, `high-end-visual-design`)
+- Show Timothy's craft and story — premium and intentional
+- Anti-generic-AI landing patterns
+
+## Do not (unless user explicitly requests again)
+
+- Generic marketing landing / conversion funnel / SaaS hero templates
+- `marketing-skills` or `marketing-psychology` as **primary visual direction**
+- "Campaign Command", war room, or HR-funnel tropes from past brainstorms
+
+## Skills
+
+Primary: `design-taste-frontend`, `high-end-visual-design`, `redesign-existing-projects`  
+Marketing skills: ad copy compliance only — not whole-site design.

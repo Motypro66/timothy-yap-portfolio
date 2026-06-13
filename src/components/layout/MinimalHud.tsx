@@ -21,7 +21,7 @@ export default function MinimalHud() {
     <>
       <header className="minimal-hud">
         <a href="#hero" className="minimal-hud__brand" aria-label={profile.name}>
-          <Logo variant="command" showSignal />
+          <Logo variant="dark" showSignal />
         </a>
         <div className="minimal-hud__actions">
           <div className="lang-toggle lang-toggle--cmd" role="group" aria-label="Language">
@@ -63,19 +63,24 @@ export default function MinimalHud() {
 }
 
 export function JourneyOverlay() {
-  const { activeSection, sectionProgress, bootComplete } = useCommand()
+  const { activeSection, sectionProgress, bootComplete, journeyProgress } = useCommand()
   const { lang } = useLanguage()
 
   if (!bootComplete) return null
 
   const local = sectionProgress[activeSection] ?? 0
-  const opacity = Math.min(1, Math.max(0, (local - 0.15) * 2.2))
+  const opacity =
+    activeSection === 'hero' && journeyProgress < 0.08
+      ? 1
+      : Math.min(1, Math.max(0.55, local * 1.15))
   const beat = getSectionBeat(activeSection, lang)
 
   return (
     <div className="journey-overlay" style={{ opacity }}>
       <p className="journey-overlay__beat type-label">{beat}</p>
-      <OverlayBody section={activeSection} />
+      <div className="journey-overlay__body">
+        <OverlayBody section={activeSection} />
+      </div>
     </div>
   )
 }

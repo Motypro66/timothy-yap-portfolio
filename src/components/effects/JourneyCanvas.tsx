@@ -41,10 +41,10 @@ function CameraRig() {
     cam.updateProjectionMatrix()
 
     if (state.scene.fog && state.scene.fog instanceof THREE.Fog) {
-      fogColor.current.set(sample.fogColor)
+      fogColor.current.set('#070b12')
       state.scene.fog.color.lerp(fogColor.current, 1 - Math.pow(0.02, delta))
-      state.scene.fog.near = THREE.MathUtils.lerp(state.scene.fog.near, sample.fogNear, 0.08)
-      state.scene.fog.far = THREE.MathUtils.lerp(state.scene.fog.far, sample.fogFar, 0.08)
+      state.scene.fog.near = THREE.MathUtils.lerp(state.scene.fog.near, 14, 0.08)
+      state.scene.fog.far = THREE.MathUtils.lerp(state.scene.fog.far, 42, 0.08)
     }
   })
 

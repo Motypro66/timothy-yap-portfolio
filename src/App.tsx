@@ -15,8 +15,7 @@ function RoomApp() {
   const { setBootComplete } = useCommand()
 
   useEffect(() => {
-    const t = window.setTimeout(() => setBootComplete(true), 400)
-    return () => window.clearTimeout(t)
+    setBootComplete(true)
   }, [setBootComplete])
 
   return (
