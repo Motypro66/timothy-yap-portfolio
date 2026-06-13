@@ -111,8 +111,8 @@ export function analyzeRoomLayout(root: THREE.Object3D, box: THREE.Box3): RoomLa
     new THREE.Vector3(box.min.x + size.x * 0.18, floor + interiorHeight * 0.38, box.min.z + size.z * 0.28),
   )
 
-  const eye = floor + interiorHeight * 0.58
-  const look = floor + interiorHeight * 0.4
+  const eye = floor + interiorHeight * 0.62
+  const look = floor + interiorHeight * 0.44
   const entranceZ = box.min.z + size.z * 0.14
   const backZ = box.max.z - size.z * 0.12
 
@@ -176,12 +176,12 @@ export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
   const intoRoom = new THREE.Vector3(0, 0, 1)
 
   const heroTarget = new THREE.Vector3(
-    shelf.x,
-    look + (layout.ceiling - layout.floor) * 0.08,
-    shelf.z,
+    center.x - size.x * 0.12,
+    look + (layout.ceiling - layout.floor) * 0.16,
+    backZ - size.z * 0.1,
   )
   const heroPos = ensureMinDistance(
-    new THREE.Vector3(xR, eye, entranceZ + size.z * 0.06),
+    new THREE.Vector3(center.x + size.x * 0.1, eye + (layout.ceiling - layout.floor) * 0.03, entranceZ + size.z * 0.1),
     heroTarget,
     minTravel,
     intoRoom,
@@ -217,8 +217,8 @@ export function buildCameraPathFromBounds(box: THREE.Box3): RoomShot[] {
     box,
     floor,
     ceiling: floor + interiorHeight,
-    eye: floor + interiorHeight * 0.56,
-    look: floor + interiorHeight * 0.4,
+    eye: floor + interiorHeight * 0.62,
+    look: floor + interiorHeight * 0.44,
     desk: new THREE.Vector3(center.x, floor + interiorHeight * 0.28, center.z - size.z * 0.08),
     monitor: new THREE.Vector3(center.x, floor + interiorHeight * 0.46, center.z - size.z * 0.12),
     window: new THREE.Vector3(box.max.x - size.x * 0.08, floor + interiorHeight * 0.58, center.z),
