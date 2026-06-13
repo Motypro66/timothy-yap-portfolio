@@ -11,14 +11,13 @@ import type { CampaignNode } from '../data/campaigns'
 import type { TerrainQuality } from '../hooks/useTerrainQuality'
 
 export type SignalStatus = 'idle' | 'processing' | 'ready'
-export type SectionId = 'hero' | 'about' | 'skills' | 'experience' | 'brief' | 'contact'
+export type SectionId = 'hero' | 'about' | 'skills' | 'experience' | 'contact'
 
 const DEFAULT_SECTION_PROGRESS: Record<SectionId, number> = {
   hero: 0,
   about: 0,
   skills: 0,
   experience: 0,
-  brief: 0,
   contact: 0,
 }
 
@@ -56,10 +55,10 @@ type CommandContextValue = {
 
 const CommandContext = createContext<CommandContextValue | null>(null)
 
-const SECTION_IDS: SectionId[] = ['hero', 'about', 'skills', 'experience', 'brief', 'contact']
+const SECTION_IDS: SectionId[] = ['hero', 'about', 'skills', 'experience', 'contact']
 
 export function CommandProvider({ children }: { children: ReactNode }) {
-  const [introComplete, setIntroComplete] = useState(false)
+  const [introComplete, setIntroComplete] = useState(true)
   const [bootComplete, setBootComplete] = useState(false)
   const [signalStatus, setSignalStatus] = useState<SignalStatus>('idle')
   const [activeSection, setActiveSection] = useState<SectionId>('hero')

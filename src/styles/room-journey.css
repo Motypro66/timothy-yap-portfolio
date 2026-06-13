@@ -1,0 +1,220 @@
+/* ===== Full-screen 3D room journey ===== */
+.room-shell {
+  min-height: 100vh;
+  background: #e8dfd4;
+  position: relative;
+}
+
+.room-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.room-canvas--loading {
+  background: linear-gradient(165deg, #f5ebe0 0%, #e8dfd4 50%, #dcc9b8 100%);
+}
+
+.room-canvas__warm-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 70% 25%, transparent 30%, rgba(180, 140, 90, 0.12) 100%);
+}
+
+.journey-scroll {
+  position: relative;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.journey-anchor {
+  min-height: 100vh;
+  pointer-events: none;
+}
+
+.journey-station__inner {
+  min-height: 1px;
+  pointer-events: none;
+}
+
+/* ===== Minimal HUD ===== */
+.minimal-hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem 0.85rem calc(var(--rail-width) + 0.5rem);
+  background: linear-gradient(180deg, rgba(255, 248, 240, 0.72) 0%, rgba(255, 248, 240, 0) 100%);
+  backdrop-filter: blur(8px);
+  pointer-events: auto;
+}
+
+.minimal-hud__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.minimal-hud__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.minimal-hud__link {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.minimal-hud__link:hover {
+  color: var(--accent-sun);
+}
+
+.minimal-rail {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.75rem 0.5rem;
+  width: var(--rail-width);
+  pointer-events: auto;
+}
+
+.minimal-rail__item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  color: var(--text-muted);
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+.minimal-rail__item:hover,
+.minimal-rail__item--active {
+  opacity: 1;
+  color: var(--text-primary);
+}
+
+.minimal-rail__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-sun);
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.minimal-rail__item--active .minimal-rail__dot {
+  background: var(--accent-sun);
+  box-shadow: var(--glow-sun);
+}
+
+.minimal-rail__label {
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .minimal-hud {
+    padding-left: 1rem;
+  }
+
+  .minimal-rail__label {
+    display: none;
+  }
+
+  .minimal-rail {
+    width: 2.75rem;
+  }
+}
+
+/* ===== Journey overlay copy (film subtitles) ===== */
+.journey-overlay {
+  position: fixed;
+  left: calc(var(--rail-width) + 1.5rem);
+  bottom: clamp(1.5rem, 8vh, 3rem);
+  z-index: 90;
+  max-width: min(34rem, calc(100vw - var(--rail-width) - 2.5rem));
+  pointer-events: auto;
+  transition: opacity 0.25s ease;
+}
+
+.journey-overlay__beat {
+  letter-spacing: 0.18em;
+  color: var(--accent-sun);
+  margin-bottom: 0.5rem;
+  font-size: 0.62rem;
+}
+
+.journey-overlay__title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.05;
+  margin-bottom: 0.5rem;
+  color: #2a2218;
+  text-shadow: 0 1px 24px rgba(255, 255, 255, 0.45);
+}
+
+.journey-overlay__role {
+  color: #4a4035;
+  margin-bottom: 0.65rem;
+}
+
+.journey-overlay__line {
+  color: #5c5248;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+  max-width: 32rem;
+}
+
+.journey-overlay__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.journey-overlay__hint {
+  color: #7a6f62;
+  letter-spacing: 0.04em;
+}
+
+.scroll-progress {
+  z-index: 100;
+}
+
+:root {
+  --bg-deep: #e8dfd4;
+  --bg-surface: #f5ebe0;
+  --text-primary: #2a2218;
+  --text-muted: #7a6f62;
+  --glass-border: rgba(42, 34, 24, 0.12);
+  --glass-bg: rgba(255, 252, 248, 0.55);
+}
+
+.magnetic-btn--primary {
+  background: linear-gradient(135deg, var(--accent-sun), var(--accent-peach)) !important;
+  color: #2a1808 !important;
+}
+
+.magnetic-btn--secondary {
+  background: rgba(255, 252, 248, 0.65) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--text-primary) !important;
+}
+
+.lang-toggle__btn--active {
+  background: rgba(245, 166, 35, 0.2) !important;
+  color: #9a5a08 !important;
+}

@@ -2,7 +2,7 @@ import { useCommand, type SectionId } from '../../context/CommandContext'
 import { useLanguage } from '../../i18n/LanguageContext'
 import SignalDot from '../ui/SignalDot'
 
-const sectionIds: SectionId[] = ['hero', 'about', 'skills', 'experience', 'brief', 'contact']
+const sectionIds: SectionId[] = ['hero', 'about', 'skills', 'experience', 'contact']
 
 export default function CheckpointRail() {
   const { activeSection, introComplete } = useCommand()
@@ -11,8 +11,7 @@ export default function CheckpointRail() {
   if (!introComplete) return null
 
   const labelFor = (id: SectionId) => {
-    if (id === 'hero') return 'Ops'
-    if (id === 'brief') return t.nav.brief
+    if (id === 'hero') return 'Home'
     return t.nav[id as keyof typeof t.nav] ?? id
   }
 

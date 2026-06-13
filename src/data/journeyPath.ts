@@ -7,55 +7,43 @@ export type CameraKeyframe = {
   pos: THREE.Vector3
   target: THREE.Vector3
   fov: number
-  fogNear: number
-  fogFar: number
-  fogColor: string
 }
 
+/** Camera path inside sunny room (Three.js Y-up). Tune after GLB export if needed. */
 const k = (
   t: number,
   section: SectionId,
   pos: [number, number, number],
   target: [number, number, number],
   fov: number,
-  fogNear = 14,
-  fogFar = 42,
-  fogColor = '#070b12',
 ): CameraKeyframe => ({
   t,
   section,
   pos: new THREE.Vector3(...pos),
   target: new THREE.Vector3(...target),
   fov,
-  fogNear,
-  fogFar,
-  fogColor,
 })
 
 export const JOURNEY_KEYFRAMES: CameraKeyframe[] = [
-  k(0, 'hero', [0, 24, 44], [0, 2, 4], 68),
-  k(0.1, 'hero', [0, 19, 34], [0, 1.5, -2], 62),
-  k(0.2, 'hero', [5, 15, 24], [2, 1, -8], 58, 12, 40),
+  k(0, 'hero', [0, 1.68, 3.6], [0, 1.25, -1.2], 54),
+  k(0.1, 'hero', [0, 1.58, 2.5], [0, 1.18, -1.45], 50),
+  k(0.2, 'hero', [0.15, 1.52, 1.35], [0, 1.12, -1.55], 47),
 
-  k(0.2, 'about', [5, 15, 24], [2, 1, -8], 58),
-  k(0.28, 'about', [-4, 11, 18], [-1, 0.6, -12], 54, 12, 38, '#081018'),
-  k(0.34, 'about', [-2, 8, 14], [0, 0.4, -16], 50, 11, 36, '#081018'),
+  k(0.2, 'about', [0.15, 1.52, 1.35], [0, 1.12, -1.55], 47),
+  k(0.34, 'about', [1.45, 1.38, 0.05], [0.05, 1.14, -1.58], 44),
+  k(0.42, 'about', [1.15, 1.32, -0.35], [0, 1.1, -1.52], 42),
 
-  k(0.34, 'skills', [-2, 8, 14], [0, 0.4, -16], 50),
-  k(0.42, 'skills', [6, 6.5, 10], [3, 0.2, -18], 48, 10, 34, '#071018'),
-  k(0.48, 'skills', [3, 5, 8], [1, 0, -20], 46, 10, 32, '#071018'),
+  k(0.42, 'skills', [1.15, 1.32, -0.35], [-1.85, 1.52, -1.75], 42),
+  k(0.54, 'skills', [-1.75, 1.48, -1.15], [-2.05, 1.58, -2.05], 40),
+  k(0.6, 'skills', [-1.55, 1.42, -0.85], [-2.0, 1.55, -1.95], 38),
 
-  k(0.48, 'experience', [3, 5, 8], [1, 0, -20], 46),
-  k(0.56, 'experience', [-5, 4, 5], [-2, 0, -22], 44, 9, 30, '#060e16'),
-  k(0.62, 'experience', [-1, 3, 3.5], [0, 0, -24], 42, 9, 28, '#060e16'),
+  k(0.6, 'experience', [-1.55, 1.42, -0.85], [0.15, 1.05, -1.15], 38),
+  k(0.72, 'experience', [0.55, 1.28, 0.05], [0, 1.02, -1.38], 36),
+  k(0.78, 'experience', [0.35, 1.24, -0.15], [0, 1.08, -1.48], 35),
 
-  k(0.62, 'brief', [-1, 3, 3.5], [0, 0, -24], 42),
-  k(0.72, 'brief', [4, 2.5, 2], [2, 0, -26], 40, 8, 26, '#050c14'),
-  k(0.78, 'brief', [0, 2, 1], [0, 0, -28], 38, 8, 24, '#050c14'),
-
-  k(0.78, 'contact', [0, 2, 1], [0, 0, -28], 38),
-  k(0.88, 'contact', [0, 1.6, 0.2], [0, 0, -32], 36, 7, 22, '#040a10'),
-  k(1, 'contact', [0, 1.2, -0.5], [0, 0, -34], 34, 6, 20, '#040a10'),
+  k(0.78, 'contact', [0.35, 1.24, -0.15], [2.15, 1.72, -1.35], 35),
+  k(0.9, 'contact', [1.65, 1.52, -0.95], [2.25, 1.78, -1.55], 33),
+  k(1, 'contact', [0.25, 1.46, 0.95], [0, 1.14, -0.75], 32),
 ]
 
 export type SectionJourneyConfig = {
@@ -67,12 +55,11 @@ export type SectionJourneyConfig = {
 }
 
 export const SECTION_JOURNEY: SectionJourneyConfig[] = [
-  { id: 'hero', pin: '150%', weight: 0.2, beatEn: 'SIGNAL ACQUIRED', beatZh: '信号锁定' },
-  { id: 'about', pin: '115%', weight: 0.14, beatEn: 'OPERATOR PROFILE', beatZh: '操作员档案' },
-  { id: 'skills', pin: '110%', weight: 0.14, beatEn: 'TOOLCHAIN ONLINE', beatZh: '工具链就绪' },
-  { id: 'experience', pin: '110%', weight: 0.16, beatEn: 'IMPACT LOG', beatZh: '战绩记录' },
-  { id: 'brief', pin: '120%', weight: 0.18, beatEn: 'BRIEF SIMULATOR', beatZh: '简报模拟器' },
-  { id: 'contact', pin: '100%', weight: 0.18, beatEn: 'OPEN CHANNEL', beatZh: '开放频道' },
+  { id: 'hero', pin: '140%', weight: 0.22, beatEn: 'WELCOME IN', beatZh: '欢迎进来' },
+  { id: 'about', pin: '120%', weight: 0.18, beatEn: 'WHO I AM', beatZh: '关于我' },
+  { id: 'skills', pin: '115%', weight: 0.18, beatEn: 'WHAT I USE', beatZh: '技能工具' },
+  { id: 'experience', pin: '120%', weight: 0.2, beatEn: 'WHERE I IMPACT', beatZh: '经历与成果' },
+  { id: 'contact', pin: '110%', weight: 0.22, beatEn: 'SAY HELLO', beatZh: '联系我' },
 ]
 
 export function sampleJourneyPath(progress: number) {
@@ -88,10 +75,10 @@ export function sampleJourneyPath(progress: number) {
     position: a.pos.clone().lerp(b.pos, ease),
     target: a.target.clone().lerp(b.target, ease),
     fov: THREE.MathUtils.lerp(a.fov, b.fov, ease),
-    fogNear: THREE.MathUtils.lerp(a.fogNear, b.fogNear, ease),
-    fogFar: THREE.MathUtils.lerp(a.fogFar, b.fogFar, ease),
-    fogColor: a.fogColor,
     section: local > 0.5 ? b.section : a.section,
+    fogColor: '#070b12',
+    fogNear: 14,
+    fogFar: 42,
   }
 }
 

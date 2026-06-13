@@ -1,52 +1,37 @@
+import { useEffect } from 'react'
 import { useScrollJourney } from './hooks/useScrollJourney'
 import { useCommand } from './context/CommandContext'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { CommandProvider } from './context/CommandContext'
-import CommandHud from './components/layout/CommandHud'
-import CheckpointRail from './components/layout/CheckpointRail'
-import CommandPalette from './components/layout/CommandPalette'
+import MinimalHud, { JourneyOverlay } from './components/layout/MinimalHud'
 import ScrollProgress from './components/layout/ScrollProgress'
-import CampaignCardOverlay from './components/layout/CampaignCardOverlay'
-import IntroShowreel from './components/effects/IntroShowreel'
-import JourneyCanvas from './components/effects/JourneyCanvas'
-import JourneySpeedLines from './components/effects/JourneySpeedLines'
-import JourneyDepthMeter from './components/layout/JourneyDepthMeter'
-import SectionBeatOverlay from './components/layout/SectionBeatOverlay'
-import Footer from './components/layout/Footer'
-import Hero from './components/sections/Hero'
-import About from './components/sections/About'
-import Skills from './components/sections/Skills'
-import Experience from './components/sections/Experience'
-import BriefRoom from './components/sections/BriefRoom'
-import Contact from './components/sections/Contact'
+import RoomCanvas from './components/effects/RoomCanvas'
+import { SECTION_JOURNEY } from './data/journeyPath'
 import './styles/components.css'
-import './styles/command.css'
+import './styles/room-journey.css'
 
-function CommandApp() {
+function RoomApp() {
   useScrollJourney()
-  const { introComplete } = useCommand()
+  const { setBootComplete } = useCommand()
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setBootComplete(true), 400)
+    return () => window.clearTimeout(t)
+  }, [setBootComplete])
 
   return (
-    <div className={`command-shell ${introComplete ? 'command-shell--live' : ''}`}>
-      <IntroShowreel />
-      <JourneyCanvas />
-      <JourneySpeedLines />
-      <CommandHud />
-      <CheckpointRail />
-      <JourneyDepthMeter />
-      <SectionBeatOverlay />
+    <div className="room-shell">
+      <RoomCanvas />
+      <MinimalHud />
+      <JourneyOverlay />
       <ScrollProgress />
-      <CommandPalette />
-      <CampaignCardOverlay />
-      <main className="command-main">
-        <Hero />
-        <About />
-        <Skills />
-        <Experience />
-        <BriefRoom />
-        <Contact />
+      <main className="journey-scroll">
+        {SECTION_JOURNEY.map(({ id }) => (
+          <section key={id} id={id} className="journey-anchor journey-station" aria-label={id}>
+            <div className="journey-station__inner" />
+          </section>
+        ))}
       </main>
-      <Footer />
     </div>
   )
 }
@@ -55,7 +40,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <CommandProvider>
-        <CommandApp />
+        <RoomApp />
       </CommandProvider>
     </LanguageProvider>
   )

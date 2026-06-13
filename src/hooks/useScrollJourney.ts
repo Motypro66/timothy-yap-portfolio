@@ -22,7 +22,6 @@ export function useScrollJourney() {
       about: 0,
       skills: 0,
       experience: 0,
-      brief: 0,
       contact: 0,
     }
 
@@ -73,15 +72,14 @@ export function useScrollJourney() {
         }
 
         if (id === 'hero') {
-          gsap.to('.hero__copy', {
-            y: -140,
-            opacity: 0.08,
+          gsap.to('.journey-overlay', {
+            opacity: 1,
             ease: 'none',
             scrollTrigger: {
               trigger: el,
               start: 'top top',
               end: `+=${pin}`,
-              scrub: 1,
+              scrub: 0.6,
             },
           })
         }
