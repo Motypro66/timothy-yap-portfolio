@@ -187,9 +187,9 @@ export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
   return [
     shot(
       layout,
-      [center.x, eye, inward(0.2)],
-      [desk.x, lookDesk + h * 0.06, desk.z - depthDir * size.z * 0.02],
-      52,
+      [center.x, eye, inward(0.14)],
+      [center.x, lookDesk + h * 0.08, desk.z - depthDir * size.z * 0.08],
+      56,
     ),
     shot(
       layout,
