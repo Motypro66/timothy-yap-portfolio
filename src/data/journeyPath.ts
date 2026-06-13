@@ -37,9 +37,15 @@ function shotsToKeyframes(shots: RoomShot[]): CameraKeyframe[] {
 }
 
 let runtimeKeyframes: CameraKeyframe[] = shotsToKeyframes(defaultCameraPath())
+let runtimePathVersion = 0
 
 export function setRuntimeJourneyKeyframes(shots: RoomShot[]) {
   runtimeKeyframes = shotsToKeyframes(shots)
+  runtimePathVersion += 1
+}
+
+export function getCameraPathVersion() {
+  return runtimePathVersion
 }
 
 export function getJourneyKeyframes() {

@@ -6,9 +6,54 @@ export type RoomShot = {
   fov: number
 }
 
+export type RoomLayout = {
+  box: THREE.Box3
+  floor: number
+  ceiling: number
+  eye: number
+  look: number
+  desk: THREE.Vector3
+  monitor: THREE.Vector3
+  window: THREE.Vector3
+  shelf: THREE.Vector3
+  entranceZ: number
+  backZ: number
+  center: THREE.Vector3
+}
+
 const SECTION_T = [0, 0.18, 0.28, 0.38, 0.48, 0.58, 0.68, 0.76, 0.86, 1] as const
 
-/** Fit exported Blender room into a consistent world space for camera paths. */
+function findMesh(root: THREE.Object3D, name: string): THREE.Mesh | null {
+  let found: THREE.Mesh | null = null
+  root.traverse((child) => {
+    if (found) return
+    if (child instanceof THREE.Mesh && child.name === name) found = child
+  })
+  return found
+}
+
+function meshCenter(root: THREE.Object3D, name: string, fallback: THREE.Vector3): THREE.Vector3 {
+  const mesh = findMesh(root, name)
+  if (!mesh) return fallback.clone()
+  mesh.updateMatrixWorld(true)
+  return new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3())
+}
+
+function meshFloorY(root: THREE.Object3D, box: THREE.Box3): number {
+  const floor = findMesh(root, 'Floor')
+  if (!floor) return box.min.y
+  floor.updateMatrixWorld(true)
+  return new THREE.Box3().setFromObject(floor).max.y
+}
+
+function meshCeilingY(root: THREE.Object3D, box: THREE.Box3): number {
+  const ceiling = findMesh(root, 'Ceiling')
+  if (!ceiling) return box.max.y
+  ceiling.updateMatrixWorld(true)
+  return new THREE.Box3().setFromObject(ceiling).min.y
+}
+
+/** Fit exported Blender room into consistent world space; align real floor to y=0. */
 export function normalizeRoom(root: THREE.Object3D, targetSize = 6.4) {
   root.updateMatrixWorld(true)
 
@@ -28,18 +73,66 @@ export function normalizeRoom(root: THREE.Object3D, targetSize = 6.4) {
   root.scale.setScalar(targetSize / maxDim)
   root.updateMatrixWorld(true)
 
-  const fitted = new THREE.Box3().setFromObject(root)
-  const center = fitted.getCenter(new THREE.Vector3())
+  const scaled = new THREE.Box3().setFromObject(root)
+  const center = scaled.getCenter(new THREE.Vector3())
   root.position.x -= center.x
   root.position.z -= center.z
-  root.position.y -= fitted.min.y
-  root.rotation.y = Math.PI
+  root.updateMatrixWorld(true)
+
+  const floorY = meshFloorY(root, scaled)
+  root.position.y -= floorY
+  root.rotation.y = 0
   root.updateMatrixWorld(true)
 
   return new THREE.Box3().setFromObject(root)
 }
 
-function clampInside(box: THREE.Box3, x: number, y: number, z: number, margin = 0.12) {
+export function analyzeRoomLayout(root: THREE.Object3D, box: THREE.Box3): RoomLayout {
+  const center = box.getCenter(new THREE.Vector3())
+  const size = box.getSize(new THREE.Vector3())
+  const floor = meshFloorY(root, box)
+  const ceiling = meshCeilingY(root, box)
+  const interiorHeight = Math.max(1.8, ceiling - floor)
+
+  const desk = meshCenter(root, 'DeskTop', new THREE.Vector3(center.x, floor + interiorHeight * 0.28, center.z - size.z * 0.08))
+  const monitor = meshCenter(
+    root,
+    'MonitorScreen',
+    new THREE.Vector3(desk.x, desk.y + interiorHeight * 0.18, desk.z - 0.08),
+  )
+  const window = meshCenter(
+    root,
+    'WindowGlass',
+    new THREE.Vector3(box.max.x - size.x * 0.08, floor + interiorHeight * 0.58, center.z - size.z * 0.18),
+  )
+  const shelf = meshCenter(
+    root,
+    'Shelf',
+    new THREE.Vector3(box.min.x + size.x * 0.18, floor + interiorHeight * 0.38, box.min.z + size.z * 0.28),
+  )
+
+  const eye = floor + interiorHeight * 0.56
+  const look = floor + interiorHeight * 0.4
+  const entranceZ = box.min.z + size.z * 0.14
+  const backZ = box.max.z - size.z * 0.12
+
+  return {
+    box,
+    floor,
+    ceiling,
+    eye,
+    look,
+    desk,
+    monitor,
+    window,
+    shelf,
+    entranceZ,
+    backZ,
+    center,
+  }
+}
+
+function clampInside(box: THREE.Box3, x: number, y: number, z: number, margin = 0.14) {
   return {
     x: THREE.MathUtils.clamp(x, box.min.x + margin, box.max.x - margin),
     y: THREE.MathUtils.clamp(y, box.min.y + margin, box.max.y - margin),
@@ -47,44 +140,61 @@ function clampInside(box: THREE.Box3, x: number, y: number, z: number, margin = 
   }
 }
 
-/** Director path derived from the actual room bounds — eye level ~58% height, always inside walls. */
-export function buildCameraPathFromBounds(box: THREE.Box3): RoomShot[] {
-  const size = box.getSize(new THREE.Vector3())
-  const c = box.getCenter(new THREE.Vector3())
-  const floor = box.min.y
-  const eyeY = floor + size.y * 0.58
-  const lookY = floor + size.y * 0.44
-
-  const zEntry = box.max.z - size.z * 0.1
-  const zMidFront = box.max.z - size.z * 0.32
-  const zCenter = c.z
-  const zMidBack = box.min.z + size.z * 0.32
-  const zBack = box.min.z + size.z * 0.12
-
-  const xLeft = box.min.x + size.x * 0.22
-  const xRight = box.max.x - size.x * 0.22
-
-  const shots: RoomShot[] = [
-    { pos: [c.x, eyeY, zEntry], target: [c.x, lookY, zCenter], fov: 64 },
-    { pos: [c.x, eyeY, zMidFront], target: [c.x, lookY, zMidBack], fov: 58 },
-    { pos: [xRight, eyeY, zCenter], target: [xLeft, lookY, zBack], fov: 52 },
-    { pos: [xRight, eyeY, zMidBack], target: [c.x, lookY, zBack], fov: 48 },
-    { pos: [c.x + size.x * 0.06, eyeY - size.y * 0.04, zCenter], target: [c.x, lookY - size.y * 0.02, zBack], fov: 44 },
-    { pos: [c.x, eyeY - size.y * 0.05, zMidBack], target: [c.x, lookY - size.y * 0.03, zBack], fov: 40 },
-    { pos: [xLeft, eyeY, zCenter], target: [xLeft + size.x * 0.08, lookY, zBack], fov: 42 },
-    { pos: [xLeft, eyeY - size.y * 0.03, zMidBack], target: [xLeft, lookY + size.y * 0.02, zBack], fov: 38 },
-    { pos: [xRight, eyeY, zMidBack], target: [xRight, lookY + size.y * 0.03, zBack], fov: 36 },
-    { pos: [c.x, eyeY, zMidFront], target: [c.x, lookY + size.y * 0.02, zCenter], fov: 34 },
-  ]
-
-  return shots.map(({ pos, target, fov }) => {
-    const p = clampInside(box, pos[0], pos[1], pos[2])
-    const t = clampInside(box, target[0], target[1], target[2], 0.08)
-    return { pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], fov }
-  })
+function shot(
+  layout: RoomLayout,
+  pos: [number, number, number],
+  target: [number, number, number],
+  fov: number,
+): RoomShot {
+  const p = clampInside(layout.box, pos[0], pos[1], pos[2])
+  const t = clampInside(layout.box, target[0], target[1], target[2], 0.1)
+  return { pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], fov }
 }
 
-/** Fallback when bounds are not ready yet. */
+/** Director path from room landmarks — standing eye height, always looking at workspace props. */
+export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
+  const { box, eye, look, desk, monitor, window, shelf, entranceZ, backZ, center } = layout
+  const size = box.getSize(new THREE.Vector3())
+  const xL = box.min.x + size.x * 0.2
+  const xR = box.max.x - size.x * 0.2
+  const zMid = center.z
+
+  return [
+    shot(layout, [center.x, eye, entranceZ], [monitor.x, monitor.y, monitor.z], 58),
+    shot(layout, [center.x + size.x * 0.04, eye, entranceZ + size.z * 0.18], [desk.x, look, desk.z], 52),
+    shot(layout, [xR, eye, zMid], [desk.x, look, monitor.z], 48),
+    shot(layout, [xR, eye, backZ - size.z * 0.08], [shelf.x, look, shelf.z], 44),
+    shot(layout, [desk.x + size.x * 0.12, eye, desk.z + size.z * 0.22], [monitor.x, monitor.y, monitor.z], 42),
+    shot(layout, [center.x, eye, zMid], [window.x, look, window.z], 40),
+    shot(layout, [xL, eye, zMid], [desk.x, look, monitor.z], 38),
+    shot(layout, [xL, eye, backZ - size.z * 0.05], [shelf.x, look + size.y * 0.02, shelf.z], 36),
+    shot(layout, [xR, eye, entranceZ + size.z * 0.28], [monitor.x, monitor.y, monitor.z], 34),
+    shot(layout, [center.x, eye, entranceZ + size.z * 0.08], [desk.x, look, desk.z], 32),
+  ]
+}
+
+export function buildCameraPathFromBounds(box: THREE.Box3): RoomShot[] {
+  const center = box.getCenter(new THREE.Vector3())
+  const size = box.getSize(new THREE.Vector3())
+  const floor = box.min.y
+  const interiorHeight = Math.max(1.8, size.y * 0.62)
+  const layout: RoomLayout = {
+    box,
+    floor,
+    ceiling: floor + interiorHeight,
+    eye: floor + interiorHeight * 0.56,
+    look: floor + interiorHeight * 0.4,
+    desk: new THREE.Vector3(center.x, floor + interiorHeight * 0.28, center.z - size.z * 0.08),
+    monitor: new THREE.Vector3(center.x, floor + interiorHeight * 0.46, center.z - size.z * 0.12),
+    window: new THREE.Vector3(box.max.x - size.x * 0.08, floor + interiorHeight * 0.58, center.z),
+    shelf: new THREE.Vector3(box.min.x + size.x * 0.18, floor + interiorHeight * 0.38, box.min.z + size.z * 0.28),
+    entranceZ: box.min.z + size.z * 0.14,
+    backZ: box.max.z - size.z * 0.12,
+    center,
+  }
+  return buildCameraPathFromLayout(layout)
+}
+
 export function defaultCameraPath(): RoomShot[] {
   return buildCameraPathFromBounds(new THREE.Box3(new THREE.Vector3(-3, 0, -3), new THREE.Vector3(3, 3, 3)))
 }

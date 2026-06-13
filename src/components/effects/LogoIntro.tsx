@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
 import { useCommand } from '../../context/CommandContext'
 
-/** Pixel2Motion-inspired logo draw-on intro (SVG stroke reveal). */
+/** Pixel2Motion-inspired logo draw-on intro — stroke reveal, dot pop, word stagger. */
 export default function LogoIntro() {
   const { introComplete, setIntroComplete } = useCommand()
 
   useEffect(() => {
     if (introComplete) return
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const delay = prefersReduced ? 400 : 2400
+    const delay = prefersReduced ? 400 : 2800
     const timer = window.setTimeout(() => setIntroComplete(true), delay)
     return () => window.clearTimeout(timer)
   }, [introComplete, setIntroComplete])
@@ -24,16 +24,34 @@ export default function LogoIntro() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path
-            className="logo-intro__stroke"
-            pathLength={1}
-            d="M6 8h16M14 8v22M14 26c6 0 11-3 12-8"
-            stroke="#2a2218"
-            strokeWidth="2.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <circle className="logo-intro__dot" cx="26" cy="16" r="3.2" fill="#f5a623" />
+          <g className="logo-intro__icon">
+            <path
+              className="logo-intro__stroke logo-intro__stroke--bar"
+              pathLength={1}
+              d="M6 8h16"
+              stroke="#2a2218"
+              strokeWidth="2.8"
+              strokeLinecap="round"
+            />
+            <path
+              className="logo-intro__stroke logo-intro__stroke--stem"
+              pathLength={1}
+              d="M14 8v22"
+              stroke="#2a2218"
+              strokeWidth="2.8"
+              strokeLinecap="round"
+            />
+            <path
+              className="logo-intro__stroke logo-intro__stroke--hook"
+              pathLength={1}
+              d="M14 26c6 0 11-3 12-8"
+              stroke="#2a2218"
+              strokeWidth="2.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle className="logo-intro__dot" cx="26" cy="16" r="3.2" fill="#f5a623" />
+          </g>
           <text
             className="logo-intro__word"
             x="34"

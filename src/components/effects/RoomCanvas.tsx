@@ -2,11 +2,12 @@ import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState,
 import { Canvas, useFrame } from '@react-three/fiber'
 import { ContactShadows, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { sampleJourneyPath, setRuntimeJourneyKeyframes } from '../../data/journeyPath'
+import { getCameraPathVersion, sampleJourneyPath, setRuntimeJourneyKeyframes } from '../../data/journeyPath'
 import { useCommand } from '../../context/CommandContext'
 import { useTerrainQuality } from '../../hooks/useTerrainQuality'
 import {
-  buildCameraPathFromBounds,
+  analyzeRoomLayout,
+  buildCameraPathFromLayout,
   defaultCameraPath,
   normalizeRoom,
   polishRoomMaterials,
@@ -20,8 +21,14 @@ function CameraRig() {
   const desired = useRef(new THREE.Vector3())
   const lookTarget = useRef(new THREE.Vector3())
   const initialized = useRef(false)
+  const pathVersion = useRef(getCameraPathVersion())
 
   useFrame((state, delta) => {
+    const version = getCameraPathVersion()
+    if (version !== pathVersion.current) {
+      pathVersion.current = version
+      initialized.current = false
+    }
     const progress = bootComplete ? journeyProgress : 0
     const sample = sampleJourneyPath(progress)
     desired.current.copy(sample.position)
@@ -69,7 +76,7 @@ function SunnyRoomModel({ onReady }: { onReady: (box: THREE.Box3) => void }) {
   useEffect(() => {
     const shots = room.bounds.isEmpty()
       ? defaultCameraPath()
-      : buildCameraPathFromBounds(room.bounds)
+      : buildCameraPathFromLayout(analyzeRoomLayout(room.object, room.bounds))
     setRuntimeJourneyKeyframes(shots)
     onReady(room.bounds)
   }, [room, onReady])
@@ -89,26 +96,34 @@ function FallbackRoom({ onReady }: { onReady: (box: THREE.Box3) => void }) {
       emissiveIntensity: 1.4,
     })
 
-    const addBox = (pos: [number, number, number], size: [number, number, number], mat: THREE.Material) => {
+    const addBox = (
+      name: string,
+      pos: [number, number, number],
+      size: [number, number, number],
+      mat: THREE.Material,
+    ) => {
       const m = new THREE.Mesh(new THREE.BoxGeometry(...size), mat)
+      m.name = name
       m.position.set(...pos)
       g.add(m)
     }
 
-    addBox([0, 0.04, 0], [5.2, 0.08, 4.2], floor)
-    addBox([0, 1.42, -2.06], [5.2, 2.84, 0.12], wall)
-    addBox([-2.54, 1.42, -1.05], [0.12, 2.84, 4.2], wall)
-    addBox([2.54, 1.42, -1.05], [0.12, 2.84, 4.2], wall)
-    addBox([0, 0.78, -1.55], [2.1, 0.08, 1.1], wood)
-    addBox([0, 1.18, -1.6], [1.24, 0.76, 0.1], new THREE.MeshStandardMaterial({ color: '#efefef' }))
-    addBox([0, 1.18, -1.66], [1.08, 0.62, 0.04], screen)
-    addBox([-2.05, 1.05, -2.35], [0.7, 2.1, 1.1], wood)
+    addBox('Floor', [0, 0.04, 0], [5.2, 0.08, 4.2], floor)
+    addBox('Ceiling', [0, 2.81, -2.06], [5.2, 0.08, 4.2], wall)
+    addBox('WallBack', [0, 1.42, -2.06], [5.2, 0.08, 4.2], wall)
+    addBox('WallLeft', [-2.54, 1.42, -1.05], [0.12, 2.84, 4.2], wall)
+    addBox('WallRight', [2.54, 1.42, -1.05], [0.12, 2.84, 4.2], wall)
+    addBox('DeskTop', [0, 0.78, -1.55], [2.1, 0.08, 1.1], wood)
+    addBox('Monitor', [0, 1.18, -1.6], [1.24, 0.76, 0.1], new THREE.MeshStandardMaterial({ color: '#efefef' }))
+    addBox('MonitorScreen', [0, 1.18, -1.66], [1.08, 0.62, 0.04], screen)
+    addBox('Shelf', [-2.05, 1.05, -2.35], [0.7, 2.1, 1.1], wood)
+    addBox('WindowGlass', [2.45, 1.42, -1.35], [0.04, 1.5, 1.35], new THREE.MeshStandardMaterial({ color: '#d4ecff' }))
     const bounds = normalizeRoom(g)
     return { object: g, bounds }
   }, [])
 
   useEffect(() => {
-    const shots = buildCameraPathFromBounds(group.bounds)
+    const shots = buildCameraPathFromLayout(analyzeRoomLayout(group.object, group.bounds))
     setRuntimeJourneyKeyframes(shots)
     onReady(group.bounds)
   }, [group, onReady])
