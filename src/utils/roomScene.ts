@@ -4,11 +4,13 @@ import * as THREE from 'three'
 export function normalizeRoom(root: THREE.Object3D, targetSize = 5.2) {
   root.updateMatrixWorld(true)
 
+  const lights: THREE.Light[] = []
   root.traverse((child) => {
-    if (child instanceof THREE.Light) {
-      child.parent?.remove(child)
-    }
+    if (child instanceof THREE.Light) lights.push(child)
   })
+  for (const light of lights) {
+    light.parent?.remove(light)
+  }
 
   const box = new THREE.Box3().setFromObject(root)
   if (box.isEmpty()) return

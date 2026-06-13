@@ -14,8 +14,9 @@ html {
 
 body {
   font-family: var(--font-body);
-  background: var(--bg-deep);
-  color: var(--text-primary);
+  background: #e8dfd4;
+  background: var(--bg-deep, #e8dfd4);
+  color: var(--text-primary, #2a2218);
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;

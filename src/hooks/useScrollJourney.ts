@@ -51,10 +51,10 @@ export function useScrollJourney() {
           },
         })
 
-        const inner = el.querySelector('.journey-station__inner')
-        if (inner) {
+        const overlayBody = document.querySelector('.journey-overlay__body')
+        if (overlayBody) {
           gsap.fromTo(
-            '.journey-overlay__body',
+            overlayBody,
             { opacity: 0, y: 24 },
             {
               opacity: 1,

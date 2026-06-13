@@ -218,3 +218,23 @@
   background: rgba(245, 166, 35, 0.2) !important;
   color: #9a5a08 !important;
 }
+
+.room-shell--fallback {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.app-error {
+  max-width: 28rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.app-error__detail {
+  color: var(--text-muted);
+  word-break: break-word;
+}

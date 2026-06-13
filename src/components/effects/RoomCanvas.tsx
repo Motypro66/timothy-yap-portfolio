@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useRef } from 'react'
+import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
@@ -8,7 +8,18 @@ import { useTerrainQuality } from '../../hooks/useTerrainQuality'
 import { normalizeRoom } from '../../utils/roomScene'
 
 const MODEL_URL = `${import.meta.env.BASE_URL}models/sunny-room.glb`
-useGLTF.preload(MODEL_URL)
+
+function applyScreenGlow(root: THREE.Object3D) {
+  root.traverse((child) => {
+    if (!(child instanceof THREE.Mesh) || !child.name.includes('Screen')) return
+    const materials = Array.isArray(child.material) ? child.material : [child.material]
+    for (const material of materials) {
+      if (!(material instanceof THREE.MeshStandardMaterial)) continue
+      material.emissive?.set('#5bb5e8')
+      material.emissiveIntensity = 1.6
+    }
+  })
+}
 
 function CameraRig() {
   const { journeyProgress, pointer, bootComplete, scrollVelocity } = useCommand()
@@ -51,13 +62,7 @@ function SunnyRoomModel() {
   const room = useMemo(() => {
     const cloned = scene.clone(true)
     normalizeRoom(cloned)
-    cloned.traverse((child) => {
-      if (child instanceof THREE.Mesh && child.name.includes('Screen')) {
-        const mat = child.material as THREE.MeshStandardMaterial
-        mat.emissive?.set('#5bb5e8')
-        mat.emissiveIntensity = 1.6
-      }
-    })
+    applyScreenGlow(cloned)
     return cloned
   }, [scene])
 
@@ -112,12 +117,73 @@ function SceneContent({ fallback }: { fallback?: boolean }) {
   )
 }
 
+type CanvasBoundaryState = { failed: boolean }
+
+class CanvasErrorBoundary extends Component<{ children: ReactNode }, CanvasBoundaryState> {
+  state: CanvasBoundaryState = { failed: false }
+
+  static getDerivedStateFromError(): CanvasBoundaryState {
+    return { failed: true }
+  }
+
+  render() {
+    if (this.state.failed) {
+      return (
+        <div className="room-canvas room-canvas--loading">
+          <div className="room-canvas__warm-vignette" />
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 function RoomScene() {
   return (
     <Suspense fallback={<SceneContent fallback />}>
       <SceneContent />
     </Suspense>
   )
+}
+
+function WebGLCanvas({ dpr, quality }: { dpr: number; quality: ReturnType<typeof useTerrainQuality> }) {
+  const webglOk = useStateWebGL()
+
+  if (!webglOk) {
+    return (
+      <div className="room-canvas room-canvas--loading">
+        <div className="room-canvas__warm-vignette" />
+      </div>
+    )
+  }
+
+  return (
+    <Canvas
+      shadows={quality !== 'low'}
+      dpr={dpr}
+      camera={{ fov: 52, near: 0.05, far: 40, position: [0, 1.72, 5.4] }}
+      gl={{ antialias: quality !== 'low', powerPreference: 'high-performance' }}
+      onCreated={({ gl }) => {
+        gl.setClearColor('#e8dfd4')
+      }}
+    >
+      <RoomScene />
+    </Canvas>
+  )
+}
+
+function useStateWebGL() {
+  const [ok, setOk] = useState(true)
+  useEffect(() => {
+    try {
+      const canvas = document.createElement('canvas')
+      const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl')
+      setOk(Boolean(gl))
+    } catch {
+      setOk(false)
+    }
+  }, [])
+  return ok
 }
 
 export default function RoomCanvas() {
@@ -132,17 +198,17 @@ export default function RoomCanvas() {
           ? 1
           : Math.min(window.devicePixelRatio, 1.25)
 
+  useEffect(() => {
+    useGLTF.preload(MODEL_URL)
+  }, [])
+
   return (
-    <div className="room-canvas room-canvas--live" aria-hidden="true">
-      <Canvas
-        shadows={quality !== 'low'}
-        dpr={dpr}
-        camera={{ fov: 52, near: 0.05, far: 40, position: [0, 1.72, 5.4] }}
-        gl={{ antialias: quality !== 'low', powerPreference: 'high-performance' }}
-      >
-        <RoomScene />
-      </Canvas>
-      <div className="room-canvas__warm-vignette" />
-    </div>
+    <CanvasErrorBoundary>
+      <div className="room-canvas room-canvas--live" aria-hidden="true">
+        <WebGLCanvas dpr={dpr} quality={quality} />
+        <div className="room-canvas__warm-vignette" />
+      </div>
+    </CanvasErrorBoundary>
   )
 }
+
