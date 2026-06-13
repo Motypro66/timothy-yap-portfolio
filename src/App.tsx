@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useScrollJourney } from './hooks/useScrollJourney'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { CommandProvider } from './context/CommandContext'
