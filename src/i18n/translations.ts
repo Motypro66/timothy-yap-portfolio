@@ -47,7 +47,7 @@ export const translations = {
     },
     skills: {
       eyebrow: 'Skills',
-      title: 'Tools  expertise',
+      title: 'Tools & expertise',
       subtitle: 'From campaign management to AI-assisted workflows',
       marketing: 'Marketing Analytics',
       ai: 'AI Automation',
