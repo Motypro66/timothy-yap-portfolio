@@ -11,8 +11,8 @@ export default function Contact() {
   const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
 
   return (
-    <ScrollRevealSection id="contact" className="contact command-section">
-      <div className="container">
+    <ScrollRevealSection id="contact" className="contact command-section journey-station">
+      <div className="container journey-station__inner">
         <SectionHeading
           eyebrow={t.contact.eyebrow}
           title={t.contact.title}

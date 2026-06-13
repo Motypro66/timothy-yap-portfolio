@@ -18,8 +18,8 @@ export default function Skills() {
   const { t, lang } = useLanguage()
 
   return (
-    <ScrollRevealSection id="skills" className="skills command-section">
-      <div className="container">
+    <ScrollRevealSection id="skills" className="skills command-section journey-station">
+      <div className="container journey-station__inner">
         <SectionHeading
           eyebrow={t.skills.eyebrow}
           title={t.skills.title}

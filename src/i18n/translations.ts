@@ -20,7 +20,8 @@ export const translations = {
       runBrief: 'Run Brief Simulator',
       getInTouch: 'Get in Touch',
       viewExperience: 'View Experience',
-      nodeHint: 'Click any node in the field — simulated campaign data',
+      nodeHint: 'Click glowing nodes in the 3D terrain — simulated data',
+      journeyHint: 'Scroll ↓ to fly through the signal landscape',
       metrics: [
         { type: 'count', count: 30, suffix: '+', label: 'Active Campaigns' },
         { type: 'text', value: 'Full-Funnel', label: 'Tracking Setup' },
@@ -191,7 +192,8 @@ export const translations = {
       runBrief: '运行 Brief 模拟器',
       getInTouch: '联系我',
       viewExperience: '查看经历',
-      nodeHint: '点击场域中的节点 — 模拟 campaign 数据',
+      nodeHint: '点击 3D 地形中的发光节点 — 模拟数据',
+      journeyHint: '向下滚动 ↓ 穿越信号地形',
       metrics: [
         { type: 'count', count: 30, suffix: '+', label: '活跃广告活动' },
         { type: 'text', value: '全漏斗', label: '转化追踪' },

@@ -12,8 +12,8 @@ export default function About() {
   const summary = lang === 'zh' ? profile.summaryZh : profile.summary
 
   return (
-    <ScrollRevealSection id="about" className="about command-section">
-      <div className="container">
+    <ScrollRevealSection id="about" className="about command-section journey-station">
+      <div className="container journey-station__inner">
         <SectionHeading
           eyebrow={t.about.eyebrow}
           title={t.about.title}

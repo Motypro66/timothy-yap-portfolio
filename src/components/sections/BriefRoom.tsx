@@ -57,8 +57,8 @@ export default function BriefRoom() {
   const shuffleAngle = () => setAngle(((angle + 1) % 3) as BriefAngle)
 
   return (
-    <ScrollRevealSection id="brief" className="brief-room command-section">
-      <div className="container">
+    <ScrollRevealSection id="brief" className="brief-room command-section journey-station">
+      <div className="container journey-station__inner">
         <SectionHeading eyebrow={t.brief.eyebrow} title={t.brief.title} subtitle={t.brief.subtitle} />
 
         <div className="brief-room__grid">

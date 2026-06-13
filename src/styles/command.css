@@ -1,12 +1,144 @@
 /* ===== Command shell layout ===== */
 .command-shell {
   min-height: 100vh;
-  background: var(--bg-deep);
+  background: transparent;
+  position: relative;
+}
+
+.journey-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: auto;
+}
+
+.journey-canvas__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(7, 11, 18, 0.55) 100%);
 }
 
 .command-main {
   padding-left: var(--rail-width);
   padding-top: var(--hud-height);
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.journey-station {
+  min-height: 115vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  pointer-events: none;
+}
+
+.journey-station__inner {
+  pointer-events: auto;
+  width: 100%;
+}
+
+.hero--command {
+  min-height: 100vh;
+}
+
+.hero__scrim--light {
+  background: linear-gradient(
+    180deg,
+    rgba(7, 11, 18, 0.15) 0%,
+    rgba(7, 11, 18, 0.35) 50%,
+    rgba(7, 11, 18, 0.55) 100%
+  ) !important;
+}
+
+.hero__journey-hint {
+  margin-top: 0.35rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-tracking);
+  animation: journey-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes journey-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+.campaign-card--overlay {
+  position: fixed;
+  z-index: 120;
+}
+
+.command-hud,
+.checkpoint-rail,
+.scroll-progress,
+.command-palette {
+  z-index: 100;
+}
+
+.hero-boot {
+  z-index: 50;
+}
+
+.footer--command {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.journey-speed {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.journey-speed__line {
+  position: absolute;
+  top: -20vh;
+  left: calc(var(--i) * 3.6%);
+  width: 1px;
+  height: min(28vh, 220px);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(91, 181, 232, 0.15) 20%,
+    rgba(245, 166, 35, 0.55) 55%,
+    transparent 100%
+  );
+  transform: rotate(8deg);
+  animation: speed-streak var(--speed, 0.55s) linear infinite;
+  animation-delay: calc(var(--i) * -0.04s);
+}
+
+.journey-speed__haze {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(91, 181, 232, 0.08), transparent 65%);
+}
+
+@keyframes speed-streak {
+  from {
+    transform: translateY(-10vh) rotate(8deg);
+  }
+  to {
+    transform: translateY(130vh) rotate(8deg);
+  }
+}
+
+.glass-card {
+  background: rgba(13, 18, 25, 0.62) !important;
+  backdrop-filter: blur(18px);
+  border-color: var(--glass-border) !important;
 }
 
 @media (max-width: 900px) {
@@ -900,11 +1032,6 @@
 
 .section-heading__title {
   color: var(--text-primary);
-}
-
-.glass-card {
-  background: var(--glass-bg) !important;
-  border-color: var(--glass-border) !important;
 }
 
 .skills__group-title,

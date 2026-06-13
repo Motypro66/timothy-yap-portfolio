@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { profile } from '../../data/resume'
 import { useCommand } from '../../context/CommandContext'
 import { useLanguage } from '../../i18n/LanguageContext'
-import CampaignField from '../effects/CampaignField'
 import StaggeredText from '../ui/StaggeredText'
 import MagneticButton from '../ui/MagneticButton'
 import RollingNumber from '../ui/RollingNumber'
@@ -51,10 +50,9 @@ export default function Hero() {
   }, [setBootComplete])
 
   return (
-    <section className="hero hero--command" id="hero">
-      <CampaignField />
+    <section className="hero hero--command journey-station" id="hero">
       <div className="hero__grid hero__grid--command" aria-hidden="true" />
-      <div className="hero__scrim hero__scrim--command" aria-hidden="true" />
+      <div className="hero__scrim hero__scrim--command hero__scrim--light" aria-hidden="true" />
 
       <AnimatePresence>
         {!bootComplete && (
@@ -88,7 +86,7 @@ export default function Hero() {
         )}
       </AnimatePresence>
 
-      <div className="container hero__content">
+      <div className="container hero__content journey-station__inner">
         <div className="hero__copy">
           <motion.div
             className="hero__badge"
@@ -170,6 +168,9 @@ export default function Hero() {
             transition={{ delay: 1.5 }}
           >
             {t.hero.nodeHint}
+          </motion.p>
+          <motion.p className="hero__journey-hint type-label" initial={{ opacity: 0 }} animate={bootComplete ? { opacity: 0.7 } : {}} transition={{ delay: 1.6 }}>
+            {t.hero.journeyHint}
           </motion.p>
         </div>
 
