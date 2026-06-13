@@ -17,6 +17,7 @@ export type RoomLayout = {
   monitor: THREE.Vector3
   window: THREE.Vector3
   shelf: THREE.Vector3
+  entrance: THREE.Vector3
   entranceZ: number
   backZ: number
   center: THREE.Vector3
@@ -33,9 +34,16 @@ function findMesh(root: THREE.Object3D, name: string): THREE.Mesh | null {
   return found
 }
 
+function objectCenter(root: THREE.Object3D, name: string, fallback: THREE.Vector3): THREE.Vector3 {
+  const hit = root.getObjectByName(name)
+  if (!hit) return fallback.clone()
+  hit.updateMatrixWorld(true)
+  return new THREE.Box3().setFromObject(hit).getCenter(new THREE.Vector3())
+}
+
 function meshCenter(root: THREE.Object3D, name: string, fallback: THREE.Vector3): THREE.Vector3 {
   const mesh = findMesh(root, name)
-  if (!mesh) return fallback.clone()
+  if (!mesh) return objectCenter(root, name, fallback)
   mesh.updateMatrixWorld(true)
   return new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3())
 }
@@ -52,6 +60,16 @@ function meshCeilingY(root: THREE.Object3D, box: THREE.Box3): number {
   if (!ceiling) return box.max.y
   ceiling.updateMatrixWorld(true)
   return new THREE.Box3().setFromObject(ceiling).min.y
+}
+
+function entrancePoint(root: THREE.Object3D, box: THREE.Box3, desk: THREE.Vector3): THREE.Vector3 {
+  const marker = meshCenter(root, 'Entrance', new THREE.Vector3(NaN, NaN, NaN))
+  if (Number.isFinite(marker.x)) return marker
+
+  const center = box.getCenter(new THREE.Vector3())
+  const size = box.getSize(new THREE.Vector3())
+  const frontZ = desk.z <= center.z ? box.min.z : box.max.z
+  return new THREE.Vector3(center.x, box.min.y, frontZ + Math.sign(center.z - desk.z) * size.z * 0.06)
 }
 
 /** Fit exported Blender room into consistent world space; align real floor to y=0. */
@@ -111,11 +129,16 @@ export function analyzeRoomLayout(root: THREE.Object3D, box: THREE.Box3): RoomLa
     'Shelf',
     new THREE.Vector3(box.min.x + size.x * 0.18, floor + interiorHeight * 0.38, box.min.z + size.z * 0.28),
   )
+  const entrance = objectCenter(root, 'Entrance', new THREE.Vector3(NaN, NaN, NaN))
+  if (!Number.isFinite(entrance.x)) {
+    Object.assign(entrance, entrancePoint(root, box, desk))
+  }
 
-  const eye = floor + interiorHeight * 0.62
-  const look = floor + interiorHeight * 0.44
-  const entranceZ = box.min.z + size.z * 0.14
-  const backZ = box.max.z - size.z * 0.12
+  const eye = floor + interiorHeight * 0.56
+  const look = floor + interiorHeight * 0.4
+  const frontZ = entrance.z
+  const backZ = desk.z <= center.z ? box.max.z - size.z * 0.1 : box.min.z + size.z * 0.1
+  const entranceZ = frontZ
 
   return {
     box,
@@ -127,6 +150,7 @@ export function analyzeRoomLayout(root: THREE.Object3D, box: THREE.Box3): RoomLa
     monitor,
     window,
     shelf,
+    entrance,
     entranceZ,
     backZ,
     center,
@@ -152,35 +176,54 @@ function shot(
   return { pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], fov }
 }
 
-/** Perimeter camera path — six beats, no shots through furniture volumes. */
+/**
+ * Five cinematic beats — matches scroll sections and user storyboard:
+ * doorway → desk side → monitor → shelf → window / contact
+ */
 export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
-  const { box, eye, look, desk, monitor, window, shelf, entranceZ, backZ, center } = layout
+  const { box, eye, look, desk, monitor, window, shelf, entrance, center } = layout
   const size = box.getSize(new THREE.Vector3())
-  const xL = box.min.x + size.x * 0.22
-  const xR = box.max.x - size.x * 0.22
   const h = layout.ceiling - layout.floor
+  const lookDesk = look + h * 0.04
+  const lookScreen = look + h * 0.1
 
-  const heroTarget = new THREE.Vector3(
-    center.x - size.x * 0.1,
-    look + h * 0.12,
-    backZ - size.z * 0.12,
-  )
-  const heroPos = new THREE.Vector3(
-    center.x + size.x * 0.12,
-    eye + h * 0.04,
-    entranceZ + size.z * 0.22,
-  )
+  const towardBack = Math.sign(layout.backZ - entrance.z) || 1
 
   return [
-    shot(layout, [heroPos.x, heroPos.y, heroPos.z], [heroTarget.x, heroTarget.y, heroTarget.z], 58),
-    shot(layout, [xL, eye, center.z - size.z * 0.02], [desk.x, look, monitor.z], 50),
-    shot(layout, [xR, eye, entranceZ + size.z * 0.28], [monitor.x, look + h * 0.06, monitor.z], 46),
-    shot(layout, [xL, eye, backZ - size.z * 0.1], [shelf.x, look, shelf.z], 42),
-    shot(layout, [center.x, eye, center.z], [window.x, look, window.z], 38),
     shot(
       layout,
-      [center.x - size.x * 0.06, eye, entranceZ + size.z * 0.14],
-      [desk.x, look, desk.z],
+      [entrance.x, eye, entrance.z + towardBack * size.z * 0.12],
+      [desk.x, lookDesk, desk.z + towardBack * size.z * 0.04],
+      54,
+    ),
+    shot(
+      layout,
+      [desk.x - size.x * 0.26, eye - h * 0.02, desk.z + towardBack * size.z * 0.18],
+      [desk.x + size.x * 0.04, lookDesk, monitor.z],
+      48,
+    ),
+    shot(
+      layout,
+      [desk.x + size.x * 0.14, eye + h * 0.015, desk.z + towardBack * size.z * 0.28],
+      [monitor.x, lookScreen, monitor.z],
+      42,
+    ),
+    shot(
+      layout,
+      [shelf.x + size.x * 0.22, eye, shelf.z + towardBack * size.z * 0.06],
+      [shelf.x, lookDesk + h * 0.08, shelf.z],
+      40,
+    ),
+    shot(
+      layout,
+      [window.x - size.x * 0.22, eye, window.z + towardBack * size.z * 0.04],
+      [window.x, lookDesk + h * 0.12, window.z],
+      38,
+    ),
+    shot(
+      layout,
+      [center.x - size.x * 0.04, eye, entrance.z + towardBack * size.z * 0.2],
+      [desk.x, lookDesk, desk.z],
       36,
     ),
   ]
@@ -202,12 +245,13 @@ export function buildCameraPathFromBounds(box: THREE.Box3): RoomShot[] {
     box,
     floor,
     ceiling: floor + interiorHeight,
-    eye: floor + interiorHeight * 0.62,
-    look: floor + interiorHeight * 0.44,
+    eye: floor + interiorHeight * 0.56,
+    look: floor + interiorHeight * 0.4,
     desk: new THREE.Vector3(center.x, floor + interiorHeight * 0.28, center.z - size.z * 0.08),
     monitor: new THREE.Vector3(center.x, floor + interiorHeight * 0.46, center.z - size.z * 0.12),
     window: new THREE.Vector3(box.max.x - size.x * 0.08, floor + interiorHeight * 0.58, center.z),
     shelf: new THREE.Vector3(box.min.x + size.x * 0.18, floor + interiorHeight * 0.38, box.min.z + size.z * 0.28),
+    entrance: new THREE.Vector3(center.x, floor, box.min.z + size.z * 0.06),
     entranceZ: box.min.z + size.z * 0.14,
     backZ: box.max.z - size.z * 0.12,
     center,

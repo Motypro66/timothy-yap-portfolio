@@ -158,6 +158,7 @@ def build_room():
     box('WallLeft', (-ROOM_W / 2 + 0.06, -ROOM_D / 2, ROOM_H / 2), (0.06, ROOM_D / 2, ROOM_H / 2), m_wall, root)
     box('WallRight', (ROOM_W / 2 - 0.06, -ROOM_D / 2, ROOM_H / 2), (0.06, ROOM_D / 2, ROOM_H / 2), m_wall, root)
     box('WindowGlass', (ROOM_W / 2 - 0.12, -1.35, 1.65), (0.02, 0.75, 0.68), m_glass, root)
+    box('Entrance', (0, 0.08, 0.02), (0.55, 0.02, 0.55), m_floor, root)
     box('DeskTop', (0, DESK_Y, 0.78), (1.05, 0.55, 0.035), m_desk, root)
     normalize_and_place(os.path.join(HI_DIR, 'table.glb'), 'DeskBase', root, (0, DESK_Y, 0.36), 0.72, 2.2)
     box('Monitor', (0, DESK_Y - 0.05, 1.2), (0.64, 0.05, 0.4), m_white, root)

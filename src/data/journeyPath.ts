@@ -19,9 +19,18 @@ const SECTION_AT: { section: SectionId; t: number }[] = [
   { section: 'contact', t: 1 },
 ]
 
+/** Map 5 storyboard shots (+ closing beat) to scroll sections. */
 function shotsToKeyframes(shots: RoomShot[]): CameraKeyframe[] {
+  const storyboard = [
+    shots[0],
+    shots[1] ?? shots[0],
+    shots[2] ?? shots[1] ?? shots[0],
+    shots[3] ?? shots[2] ?? shots[0],
+    shots[4] ?? shots[3] ?? shots[0],
+    shots[5] ?? shots[4] ?? shots[0],
+  ]
   return SECTION_AT.map(({ section, t }, i) => {
-    const shot = shots[i] ?? shots[shots.length - 1]
+    const shot = storyboard[i] ?? storyboard[storyboard.length - 1]
     return {
       t,
       section,

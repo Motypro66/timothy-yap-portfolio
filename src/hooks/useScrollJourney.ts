@@ -42,7 +42,7 @@ export function useScrollJourney() {
         trigger: scrollRoot,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 1.15,
+        scrub: 0.75,
         onUpdate: (self) => {
           syncFromProgress(self.progress, Math.abs(self.getVelocity()))
         },

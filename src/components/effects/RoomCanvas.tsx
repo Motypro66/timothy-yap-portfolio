@@ -31,11 +31,11 @@ function CameraRig() {
     const progress = bootComplete ? journeyProgress : 0
     const sample = sampleJourneyPath(progress)
     desired.current.copy(sample.position)
-    desired.current.x += pointer.x * 0.08
-    desired.current.y += pointer.y * 0.035
+    desired.current.x += pointer.x * 0.035
+    desired.current.y += pointer.y * 0.018
     lookTarget.current.copy(sample.target)
-    lookTarget.current.x += pointer.x * 0.04
-    lookTarget.current.y += pointer.y * 0.02
+    lookTarget.current.x += pointer.x * 0.018
+    lookTarget.current.y += pointer.y * 0.01
 
     const cam = state.camera as THREE.PerspectiveCamera
     state.camera.position.copy(desired.current)

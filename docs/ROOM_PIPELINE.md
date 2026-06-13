@@ -32,7 +32,19 @@ Do **not** add props before navigation volume exists (causes clipping).
 
 Replace the GLB anytime (CGTrader / Meshy / etc.) — see `blender/README.md`.
 
-## Mistakes we do not repeat
+## Storyboard (scroll = walk through room)
+
+| Progress | Section | Beat | Camera |
+|----------|---------|------|--------|
+| 0 | hero | 门口 | Just inside entrance, wide view toward desk |
+| 0.22 | about | 桌边 | Left of desk, workspace angle |
+| 0.4 | skills | 屏幕 | Beside monitor, screen in frame |
+| 0.62 | experience | 书架 | Turn toward shelf wall |
+| 0.82 | contact | 窗 | Window light, contact / goodbye |
+| 1 | contact | — | Gentle pull back toward desk |
+
+Landmarks: `Entrance`, `Floor`, `DeskTop`, `MonitorScreen`, `Shelf` (root), `WindowGlass`.
+
 
 - Using **full scene bbox min Y** for floor (geometry below floor broke height).
 - **Hero target on monitor** while camera path crosses desk volume.
