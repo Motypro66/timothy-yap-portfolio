@@ -1,6 +1,6 @@
 import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { ContactShadows, useGLTF } from '@react-three/drei'
+import { ContactShadows, Environment, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { getCameraPathVersion, sampleJourneyPath, setRuntimeJourneyKeyframes } from '../../data/journeyPath'
 import { useCommand } from '../../context/CommandContext'
@@ -130,11 +130,12 @@ function SceneContent({
     <>
       <color attach="background" args={['#e8dfd4']} />
       <fog attach="fog" args={['#e8dfd4', 28, 55]} />
-      <ambientLight intensity={0.38} color="#fff8ef" />
-      <hemisphereLight args={['#fff8ef', '#9a7355', 0.55]} />
+      <Environment preset="apartment" environmentIntensity={0.95} />
+      <ambientLight intensity={0.28} color="#fff8ef" />
+      <hemisphereLight args={['#fff8ef', '#9a7355', 0.42]} />
       <directionalLight
         position={[4.5, 7, 3.5]}
-        intensity={1.85}
+        intensity={1.55}
         color="#fff0d0"
         castShadow={shadows}
         shadow-mapSize={[1024, 1024]}
@@ -144,8 +145,8 @@ function SceneContent({
         shadow-camera-top={5}
         shadow-camera-bottom={-5}
       />
-      <directionalLight position={[3.2, 4, -1.5]} intensity={0.85} color="#d8ecff" />
-      <pointLight position={[0, 1.35, -1.45]} intensity={0.45} color="#7ec8f0" distance={5} />
+      <directionalLight position={[3.2, 4, -1.5]} intensity={0.72} color="#d8ecff" />
+      <pointLight position={[0, 1.35, -1.45]} intensity={0.38} color="#7ec8f0" distance={5} />
       {fallback ? (
         <FallbackRoom onReady={onRoomReady} />
       ) : (
@@ -232,7 +233,7 @@ function WebGLCanvas({
       onCreated={({ gl }) => {
         gl.setClearColor('#e8dfd4')
         gl.toneMapping = THREE.ACESFilmicToneMapping
-        gl.toneMappingExposure = 1.14
+        gl.toneMappingExposure = 1.22
         gl.shadowMap.enabled = quality !== 'low'
         gl.shadowMap.type = THREE.PCFSoftShadowMap
       }}

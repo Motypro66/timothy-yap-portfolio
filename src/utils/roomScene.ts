@@ -255,20 +255,22 @@ export function polishRoomMaterials(root: THREE.Object3D) {
         continue
       }
 
+      material.envMapIntensity = 1.05
+
       if (name.includes('floor') || name.includes('rug')) {
-        material.roughness = 0.58
+        material.roughness = Math.min(material.roughness, 0.62)
         material.metalness = 0
         continue
       }
 
       if (name.includes('wood') || name.includes('desk') || name.includes('shelf')) {
-        material.roughness = 0.38
-        material.metalness = 0.03
+        material.roughness = Math.min(material.roughness, 0.42)
+        material.metalness = 0.04
         continue
       }
 
       if (name.includes('wall') || name.includes('ceil')) {
-        material.roughness = 0.9
+        material.roughness = Math.max(material.roughness, 0.82)
         material.metalness = 0
       }
 

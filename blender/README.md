@@ -14,8 +14,26 @@ Run `blender/run-export.bat` (edit the Blender path inside if needed).
 ## Option C — Headless (terminal)
 
 ```bat
-"C:\Program Files\Blender Foundation\Blender 4.4\blender.exe" --background --python "blender/generate_sunny_room.py"
+"C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" --background --python "blender/generate_sunny_room.py"
 ```
+
+## Option E — CC0 realistic studio (recommended)
+
+Downloads free CC0 props + Poly Haven PBR textures, composes a furnished room, exports `sunny-room.glb`:
+
+1. One-time asset fetch (PowerShell from repo root):
+
+```powershell
+.\blender\download_assets.ps1
+```
+
+2. Compose + export:
+
+```bat
+"C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" --background --python "blender/compose_cc0_studio.py"
+```
+
+Sources and license notes: `public/models/ATTRIBUTION.md`.
 
 ## Option D — Replace with a downloaded room (CGTrader / Meshy / Hyper3D / Free3D)
 
