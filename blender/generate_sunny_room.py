@@ -114,6 +114,16 @@ def build_room():
     box("MonitorStand", (0, desk_y - 0.05, 0.92), (0.12, 0.08, 0.08), m_white, root)
     box("Monitor", (0, desk_y - 0.05, 1.18), (0.62, 0.05, 0.38), m_white, root)
     box("MonitorScreen", (0, desk_y - 0.12, 1.18), (0.54, 0.02, 0.31), m_screen, root)
+    box("Keyboard", (0.15, desk_y + 0.08, 0.86), (0.38, 0.14, 0.02), m_white, root)
+    box("Mouse", (0.62, desk_y + 0.1, 0.84), (0.08, 0.12, 0.025), m_sun, root)
+
+    # Desk lamp
+    cyl("LampBase", (-0.72, desk_y + 0.22, 0.86), 0.06, 0.04, m_sun)
+    box("LampArm", (-0.72, desk_y + 0.08, 0.98), (0.03, 0.03, 0.22), m_sun, root)
+    box("LampShade", (-0.72, desk_y - 0.02, 1.08), (0.1, 0.1, 0.06), mat("Lamp", (0.98, 0.92, 0.78), 0.35, emit=0.25), root)
+
+    # Window sun streak (soft realism)
+    box("SunStreak", (ROOM_W / 2 - 0.14, -1.35, 0.35), (0.01, 1.1, 2.2), mat("SunStreak", (1.0, 0.94, 0.78), 0.2, emit=0.35), root)
 
     # Chair (simple)
     box("ChairSeat", (-1.05, desk_y + 0.35, 0.48), (0.38, 0.38, 0.05), m_sun, root)

@@ -5,52 +5,47 @@ import * as THREE from 'three'
 import { sampleJourneyPath } from '../../data/journeyPath'
 import { useCommand } from '../../context/CommandContext'
 import { useTerrainQuality } from '../../hooks/useTerrainQuality'
-import { normalizeRoom } from '../../utils/roomScene'
+import { normalizeRoom, polishRoomMaterials } from '../../utils/roomScene'
 
 const MODEL_URL = `${import.meta.env.BASE_URL}models/sunny-room.glb`
-
-function applyScreenGlow(root: THREE.Object3D) {
-  root.traverse((child) => {
-    if (!(child instanceof THREE.Mesh) || !child.name.includes('Screen')) return
-    const materials = Array.isArray(child.material) ? child.material : [child.material]
-    for (const material of materials) {
-      if (!(material instanceof THREE.MeshStandardMaterial)) continue
-      material.emissive?.set('#5bb5e8')
-      material.emissiveIntensity = 1.6
-    }
-  })
-}
 
 function CameraRig() {
   const { journeyProgress, pointer, bootComplete, scrollVelocity } = useCommand()
   const lookAt = useRef(new THREE.Vector3())
   const desired = useRef(new THREE.Vector3())
+  const lookTarget = useRef(new THREE.Vector3())
   const initialized = useRef(false)
 
   useFrame((state, delta) => {
     const progress = bootComplete ? journeyProgress : 0
     const sample = sampleJourneyPath(progress)
     desired.current.copy(sample.position)
-    desired.current.x += pointer.x * 0.22
-    desired.current.y += pointer.y * 0.1
+    desired.current.x += pointer.x * 0.18
+    desired.current.y += pointer.y * 0.08
 
-    const shake = Math.min(0.05, scrollVelocity * 0.00008)
+    const shake = Math.min(0.04, scrollVelocity * 0.00006)
     desired.current.x += (Math.random() - 0.5) * shake
+
+    lookTarget.current.copy(sample.target)
+    lookTarget.current.x += pointer.x * 0.06
+    lookTarget.current.y += pointer.y * 0.03
+
+    const scrolling = scrollVelocity > 40
+    const follow = Math.min(1, delta * (scrolling ? 16 : 9))
 
     if (!initialized.current) {
       state.camera.position.copy(desired.current)
-      lookAt.current.copy(sample.target)
+      lookAt.current.copy(lookTarget.current)
       state.camera.lookAt(lookAt.current)
       initialized.current = true
     } else {
-      state.camera.position.lerp(desired.current, 1 - Math.pow(0.0004, delta))
-      lookAt.current.copy(sample.target)
-      lookAt.current.x += pointer.x * 0.08
+      state.camera.position.lerp(desired.current, follow)
+      lookAt.current.lerp(lookTarget.current, follow)
       state.camera.lookAt(lookAt.current)
     }
 
     const cam = state.camera as THREE.PerspectiveCamera
-    cam.fov = THREE.MathUtils.lerp(cam.fov, sample.fov, 1 - Math.pow(0.012, delta))
+    cam.fov = THREE.MathUtils.lerp(cam.fov, sample.fov, Math.min(1, delta * 10))
     cam.updateProjectionMatrix()
   })
 
@@ -62,7 +57,7 @@ function SunnyRoomModel() {
   const room = useMemo(() => {
     const cloned = scene.clone(true)
     normalizeRoom(cloned)
-    applyScreenGlow(cloned)
+    polishRoomMaterials(cloned)
     return cloned
   }, [scene])
 
@@ -106,11 +101,23 @@ function SceneContent({ fallback }: { fallback?: boolean }) {
   return (
     <>
       <color attach="background" args={['#e8dfd4']} />
-      <fog attach="fog" args={['#e8dfd4', 12, 28]} />
-      <ambientLight intensity={0.65} color="#fff8ef" />
-      <directionalLight position={[5, 8, 4]} intensity={1.25} color="#fff0d0" castShadow />
-      <directionalLight position={[-4, 5, -3]} intensity={0.4} color="#d4ecff" />
-      <hemisphereLight args={['#fff8ef', '#c4a882', 0.35]} />
+      <fog attach="fog" args={['#e8dfd4', 24, 48]} />
+      <ambientLight intensity={0.42} color="#fff8ef" />
+      <hemisphereLight args={['#fff8ef', '#a88462', 0.48]} />
+      <directionalLight
+        position={[4.5, 6.5, 3.5]}
+        intensity={1.65}
+        color="#fff0d0"
+        castShadow
+        shadow-mapSize={[1024, 1024]}
+        shadow-camera-far={18}
+        shadow-camera-left={-4}
+        shadow-camera-right={4}
+        shadow-camera-top={4}
+        shadow-camera-bottom={-4}
+      />
+      <directionalLight position={[2.8, 3.2, -1.2]} intensity={0.75} color="#d8ecff" />
+      <pointLight position={[0, 1.15, -1.55]} intensity={0.35} color="#7ec8f0" distance={4} />
       {fallback ? <FallbackRoom /> : <SunnyRoomModel />}
       <CameraRig />
     </>
@@ -162,12 +169,12 @@ function WebGLCanvas({ dpr, quality }: { dpr: number; quality: ReturnType<typeof
       style={{ width: '100%', height: '100%', display: 'block' }}
       shadows={quality !== 'low'}
       dpr={dpr}
-      camera={{ fov: 52, near: 0.05, far: 40, position: [0, 1.72, 5.4] }}
+      camera={{ fov: 58, near: 0.05, far: 40, position: [0, 1.62, 2.35] }}
       gl={{ antialias: quality !== 'low', powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.setClearColor('#e8dfd4')
         gl.toneMapping = THREE.ACESFilmicToneMapping
-        gl.toneMappingExposure = 1.06
+        gl.toneMappingExposure = 1.12
       }}
     >
       <RoomScene />

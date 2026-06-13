@@ -41,11 +41,11 @@ export type SectionJourneyConfig = {
 }
 
 export const SECTION_JOURNEY: SectionJourneyConfig[] = [
-  { id: 'hero', pin: '130%', weight: 0.22, beatEn: 'WELCOME IN', beatZh: '欢迎进来' },
-  { id: 'about', pin: '120%', weight: 0.18, beatEn: 'WHO I AM', beatZh: '关于我' },
-  { id: 'skills', pin: '115%', weight: 0.18, beatEn: 'WHAT I USE', beatZh: '技能工具' },
-  { id: 'experience', pin: '120%', weight: 0.2, beatEn: 'WHERE I IMPACT', beatZh: '经历与成果' },
-  { id: 'contact', pin: '110%', weight: 0.22, beatEn: 'SAY HELLO', beatZh: '联系我' },
+  { id: 'hero', pin: '165%', weight: 0.22, beatEn: 'WELCOME IN', beatZh: '欢迎进来' },
+  { id: 'about', pin: '155%', weight: 0.18, beatEn: 'WHO I AM', beatZh: '关于我' },
+  { id: 'skills', pin: '150%', weight: 0.18, beatEn: 'WHAT I USE', beatZh: '技能工具' },
+  { id: 'experience', pin: '155%', weight: 0.2, beatEn: 'WHERE I IMPACT', beatZh: '经历与成果' },
+  { id: 'contact', pin: '145%', weight: 0.22, beatEn: 'SAY HELLO', beatZh: '联系我' },
 ]
 
 export function sampleJourneyPath(progress: number) {
