@@ -1,29 +1,23 @@
 import * as THREE from 'three'
 import type { RoomLayout, RoomShot } from './roomScene'
 
-const OBSTACLE_NAMES = [
-  'DeskTop',
-  'DeskLeg',
-  'Monitor',
-  'MonitorScreen',
-  'MonitorStand',
-  'Shelf',
-  'ChairSeat',
-  'ChairBack',
-  'Keyboard',
-  'Speaker',
-  'PlantPot',
-  'Rug',
-]
+const WALKABLE = ['floor', 'rug', 'carpet']
+const IGNORE = ['ceiling', 'wallback', 'wallleft', 'wallright', 'window', 'glass']
 
-export function collectObstacleBoxes(root: THREE.Object3D, padding = 0.08): THREE.Box3[] {
+/** Treat all furnished meshes as obstacles except floor, walls, ceiling, and window. */
+export function collectObstacleBoxes(root: THREE.Object3D, padding = 0.12): THREE.Box3[] {
   const boxes: THREE.Box3[] = []
   root.traverse((child) => {
     if (!(child instanceof THREE.Mesh)) return
-    const hit = OBSTACLE_NAMES.some((token) => child.name.includes(token))
-    if (!hit) return
+    const name = child.name.toLowerCase()
+    if (WALKABLE.some((token) => name.includes(token))) return
+    if (IGNORE.some((token) => name.includes(token))) return
+
     child.updateMatrixWorld(true)
     const box = new THREE.Box3().setFromObject(child)
+    const size = box.getSize(new THREE.Vector3())
+    if (size.x < 0.02 && size.y < 0.02 && size.z < 0.02) return
+
     box.expandByScalar(padding)
     boxes.push(box)
   })
@@ -123,7 +117,7 @@ export function sanitizeCameraPath(
 
     clampToWalkVolume(p, walk, eyeMin, eyeMax)
     pushOutsideBoxes(p, obstacles, layout)
-    pushAwayFromTarget(p, t, obstacles, 0.35)
+    pushAwayFromTarget(p, t, obstacles, 0.48)
     clampToWalkVolume(p, walk, eyeMin, eyeMax)
 
     clampToWalkVolume(t, walk, layout.floor + 0.2, eyeMax)

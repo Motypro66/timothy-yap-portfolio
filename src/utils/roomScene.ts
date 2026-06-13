@@ -166,9 +166,9 @@ export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
     backZ - size.z * 0.12,
   )
   const heroPos = new THREE.Vector3(
-    center.x + size.x * 0.08,
-    eye + h * 0.02,
-    entranceZ + size.z * 0.08,
+    center.x + size.x * 0.12,
+    eye + h * 0.04,
+    entranceZ + size.z * 0.22,
   )
 
   return [
