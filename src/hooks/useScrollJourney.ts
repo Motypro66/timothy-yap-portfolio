@@ -50,25 +50,6 @@ export function useScrollJourney() {
             syncGlobal(Math.abs(self.getVelocity()))
           },
         })
-
-        const overlayBody = document.querySelector('.journey-overlay__body')
-        if (overlayBody) {
-          gsap.fromTo(
-            overlayBody,
-            { opacity: 0, y: 24 },
-            {
-              opacity: 1,
-              y: 0,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: el,
-                start: 'top top',
-                end: `+=${Math.max(80, parseInt(pin, 10) * 0.6)}%`,
-                scrub: 0.65,
-              },
-            },
-          )
-        }
       })
 
       ScrollTrigger.addEventListener('refreshInit', onRefresh)

@@ -165,6 +165,8 @@ function WebGLCanvas({ dpr, quality }: { dpr: number; quality: ReturnType<typeof
       gl={{ antialias: quality !== 'low', powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.setClearColor('#e8dfd4')
+        gl.toneMapping = THREE.ACESFilmicToneMapping
+        gl.toneMappingExposure = 1.06
       }}
     >
       <RoomScene />
