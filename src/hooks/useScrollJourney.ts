@@ -2,64 +2,56 @@ import { useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useCommand } from '../context/CommandContext'
-import type { SectionId } from '../context/CommandContext'
-import { progressFromSections, SECTION_JOURNEY } from '../data/journeyPath'
+import {
+  sectionFromProgress,
+  sectionProgressFromJourney,
+} from '../data/journeyPath'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/** Per-section pin + scrubbed camera journey across the full storyboard */
+/** One continuous scrub across the journey — avoids multi-pin progress jumps. */
 export function useScrollJourney() {
-  const { setJourneyProgress, setScrollVelocity, setSectionProgress, bootComplete } = useCommand()
+  const { setJourneyProgress, setScrollVelocity, setSectionProgress, setActiveSection, bootComplete } =
+    useCommand()
 
   useEffect(() => {
     if (!bootComplete) return
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReduced) return
+    const scrollRoot = document.querySelector('.journey-scroll')
+    if (!scrollRoot) return
 
-    const progressMap: Record<SectionId, number> = {
-      hero: 0,
-      about: 0,
-      skills: 0,
-      experience: 0,
-      contact: 0,
-    }
-
-    const syncGlobal = (velocity = 0) => {
-      setJourneyProgress(progressFromSections(progressMap))
+    const syncFromProgress = (progress: number, velocity = 0) => {
+      const p = Math.max(0, Math.min(1, progress))
+      setJourneyProgress(p)
       setScrollVelocity(velocity)
+      setActiveSection(sectionFromProgress(p))
+      const perSection = sectionProgressFromJourney(p)
+      for (const [id, value] of Object.entries(perSection)) {
+        setSectionProgress(id as keyof typeof perSection, value)
+      }
     }
 
-    const onRefresh = () => syncGlobal()
+    if (prefersReduced) {
+      syncFromProgress(0)
+      return
+    }
 
     const ctx = gsap.context(() => {
-      SECTION_JOURNEY.forEach(({ id, pin }) => {
-        const el = document.getElementById(id)
-        if (!el) return
-
-        ScrollTrigger.create({
-          trigger: el,
-          start: 'top top',
-          end: `+=${pin}`,
-          pin: true,
-          pinSpacing: true,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            progressMap[id] = self.progress
-            setSectionProgress(id, self.progress)
-            syncGlobal(Math.abs(self.getVelocity()))
-          },
-        })
+      ScrollTrigger.create({
+        trigger: scrollRoot,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1.15,
+        onUpdate: (self) => {
+          syncFromProgress(self.progress, Math.abs(self.getVelocity()))
+        },
       })
 
-      ScrollTrigger.addEventListener('refreshInit', onRefresh)
-      syncGlobal()
+      syncFromProgress(0)
       ScrollTrigger.refresh()
     })
 
-    return () => {
-      ScrollTrigger.removeEventListener('refreshInit', onRefresh)
-      ctx.revert()
-    }
-  }, [bootComplete, setJourneyProgress, setScrollVelocity, setSectionProgress])
+    return () => ctx.revert()
+  }, [bootComplete, setJourneyProgress, setScrollVelocity, setSectionProgress, setActiveSection])
 }

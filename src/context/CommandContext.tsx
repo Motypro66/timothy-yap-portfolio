@@ -55,7 +55,6 @@ type CommandContextValue = {
 
 const CommandContext = createContext<CommandContextValue | null>(null)
 
-const SECTION_IDS: SectionId[] = ['hero', 'about', 'skills', 'experience', 'contact']
 
 export function CommandProvider({ children }: { children: ReactNode }) {
   const [introComplete, setIntroComplete] = useState(false)
@@ -107,27 +106,6 @@ export function CommandProvider({ children }: { children: ReactNode }) {
     window.addEventListener('mousemove', onMove, { passive: true })
     return () => window.removeEventListener('mousemove', onMove)
   }, [])
-
-  useEffect(() => {
-    if (!bootComplete) return
-    const elements = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[]
-    if (!elements.length) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-        if (visible[0]?.target.id) {
-          setActiveSection(visible[0].target.id as SectionId)
-        }
-      },
-      { rootMargin: '-20% 0px -55% 0px', threshold: [0, 0.25, 0.5] },
-    )
-
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [bootComplete])
 
   const value = useMemo(
     () => ({
