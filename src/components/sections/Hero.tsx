@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { profile } from '../../data/resume'
+import { useCommand } from '../../context/CommandContext'
 import { useLanguage } from '../../i18n/LanguageContext'
-import FloatingOrbs from '../effects/FloatingOrbs'
-import ParticleBackground from '../effects/ParticleBackground'
-import SunRays from '../effects/SunRays'
+import CampaignField from '../effects/CampaignField'
 import StaggeredText from '../ui/StaggeredText'
 import MagneticButton from '../ui/MagneticButton'
 import RollingNumber from '../ui/RollingNumber'
 import InteractiveBox from '../ui/InteractiveBox'
+import Logo from '../ui/Logo'
 
 type Metric = {
   type: string
@@ -37,49 +37,64 @@ function MetricValue({ metric, rollStarted }: { metric: Metric; rollStarted: boo
 
 export default function Hero() {
   const [rollStarted, setRollStarted] = useState(false)
+  const { bootComplete, setBootComplete } = useCommand()
   const { t, lang } = useLanguage()
   const title = lang === 'zh' ? profile.titleZh : profile.title
   const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
 
   useEffect(() => {
-    let cancelled = false
-
-    const beginRoll = () => {
-      if (!cancelled) setRollStarted(true)
-    }
-
-    const timer = window.setTimeout(beginRoll, 1500)
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) {
-        setRollStarted(false)
-        window.setTimeout(beginRoll, 300)
-      }
-    }
-
-    window.addEventListener('pageshow', onPageShow)
-    return () => {
-      cancelled = true
-      window.clearTimeout(timer)
-      window.removeEventListener('pageshow', onPageShow)
-    }
-  }, [])
+    const timer = window.setTimeout(() => {
+      setBootComplete(true)
+      setRollStarted(true)
+    }, 2200)
+    return () => window.clearTimeout(timer)
+  }, [setBootComplete])
 
   return (
-    <section className="hero" id="hero">
-      <SunRays />
-      <ParticleBackground />
-      <FloatingOrbs />
-      <div className="hero__mobile-glow" aria-hidden="true" />
-      <div className="hero__scrim" aria-hidden="true" />
-      <div className="hero__grid" aria-hidden="true" />
+    <section className="hero hero--command" id="hero">
+      <CampaignField />
+      <div className="hero__grid hero__grid--command" aria-hidden="true" />
+      <div className="hero__scrim hero__scrim--command" aria-hidden="true" />
+
+      <AnimatePresence>
+        {!bootComplete && (
+          <motion.div
+            className="hero-boot"
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Logo variant="command" iconOnly className="hero-boot__logo" />
+            <svg className="hero-boot__stroke" viewBox="0 0 32 32" aria-hidden="true">
+              <motion.path
+                d="M7 8h12M13 8v16M13 20c5 0 9-2.5 10-6"
+                fill="none"
+                stroke="#e8e0d8"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                initial={{ pathLength: 0, opacity: 0.3 }}
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </svg>
+            <motion.p
+              className="hero-boot__status type-label"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.1 }}
+            >
+              {t.hero.systemOnline}
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="container hero__content">
         <div className="hero__copy">
           <motion.div
             className="hero__badge"
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            animate={bootComplete ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 0.1, duration: 0.5 }}
           >
             <span className="hero__badge-dot" />
             {t.hero.badge}
@@ -89,30 +104,39 @@ export default function Hero() {
             <motion.span
               className="hero__name type-display"
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              animate={bootComplete ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               {profile.displayName}
             </motion.span>
             <span className="hero__role type-body-strong">
-              <StaggeredText text={title} delay={0.5} />
+              {bootComplete && <StaggeredText text={title} delay={0.35} />}
             </span>
           </h1>
 
           <motion.p
             className="hero__tagline type-body"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
+            animate={bootComplete ? { opacity: 1 } : {}}
+            transition={{ delay: 0.9, duration: 0.8 }}
           >
             {t.hero.tagline}
+          </motion.p>
+
+          <motion.p
+            className="hero__operator type-caption"
+            initial={{ opacity: 0 }}
+            animate={bootComplete ? { opacity: 1 } : {}}
+            transition={{ delay: 1, duration: 0.6 }}
+          >
+            {t.hero.operatorLine}
           </motion.p>
 
           <motion.div
             className="hero__metrics"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.7 }}
+            animate={bootComplete ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 1.1, duration: 0.7 }}
           >
             {t.hero.metrics.map((m) => (
               <InteractiveBox key={m.label} className="hero__metric">
@@ -125,11 +149,11 @@ export default function Hero() {
           <motion.div
             className="hero__actions"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6, duration: 0.7 }}
+            animate={bootComplete ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 1.3, duration: 0.7 }}
           >
-            <MagneticButton href="#contact" variant="primary">
-              {t.hero.getInTouch}
+            <MagneticButton href="#brief" variant="primary">
+              {t.hero.runBrief}
             </MagneticButton>
             <MagneticButton href="#experience" variant="secondary">
               {t.hero.viewExperience}
@@ -138,13 +162,22 @@ export default function Hero() {
               {t.nav.downloadCv}
             </MagneticButton>
           </motion.div>
+
+          <motion.p
+            className="hero__hint type-caption"
+            initial={{ opacity: 0 }}
+            animate={bootComplete ? { opacity: 1 } : {}}
+            transition={{ delay: 1.5 }}
+          >
+            {t.hero.nodeHint}
+          </motion.p>
         </div>
 
         <motion.div
           className="hero__scroll type-label"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.8 }}
+          animate={bootComplete ? { opacity: 1 } : {}}
+          transition={{ delay: 1.7, duration: 0.8 }}
         >
           <span>{t.hero.scroll}</span>
           <motion.div

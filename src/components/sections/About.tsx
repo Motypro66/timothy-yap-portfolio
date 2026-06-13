@@ -12,7 +12,7 @@ export default function About() {
   const summary = lang === 'zh' ? profile.summaryZh : profile.summary
 
   return (
-    <ScrollRevealSection id="about" className="about">
+    <ScrollRevealSection id="about" className="about command-section">
       <div className="container">
         <SectionHeading
           eyebrow={t.about.eyebrow}

@@ -43,7 +43,7 @@ img {
 }
 
 ::selection {
-  background: rgba(245, 166, 35, 0.35);
+  background: rgba(245, 166, 35, 0.25);
   color: var(--text-primary);
 }
 

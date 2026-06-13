@@ -5,6 +5,7 @@ import SectionHeading from '../ui/SectionHeading'
 import SkillPill from '../ui/SkillPill'
 import GlassCard from '../ui/GlassCard'
 import SkillIllustrations from '../ui/SkillIllustrations'
+import { getSkillHint } from '../../data/skillHints'
 
 const skillGroups = [
   { key: 'marketing' as const, num: '01', descEn: 'Campaigns, tracking and optimization', descZh: '广告投放、追踪与优化' },
@@ -17,7 +18,7 @@ export default function Skills() {
   const { t, lang } = useLanguage()
 
   return (
-    <ScrollRevealSection id="skills" className="skills">
+    <ScrollRevealSection id="skills" className="skills command-section">
       <div className="container">
         <SectionHeading
           eyebrow={t.skills.eyebrow}
@@ -59,7 +60,16 @@ export default function Skills() {
                 ) : (
                   <div className="skills__pills">
                     {t.skillLabels[group.key].map((s: string, idx: number) => (
-                      <SkillPill key={s} label={s} index={idx} />
+                      <SkillPill
+                        key={s}
+                        label={s}
+                        index={idx}
+                        backText={
+                          group.key === 'marketing' || group.key === 'ai'
+                            ? getSkillHint(s, lang)
+                            : undefined
+                        }
+                      />
                     ))}
                   </div>
                 )}
