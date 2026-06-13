@@ -111,7 +111,7 @@ export function analyzeRoomLayout(root: THREE.Object3D, box: THREE.Box3): RoomLa
     new THREE.Vector3(box.min.x + size.x * 0.18, floor + interiorHeight * 0.38, box.min.z + size.z * 0.28),
   )
 
-  const eye = floor + interiorHeight * 0.56
+  const eye = floor + interiorHeight * 0.58
   const look = floor + interiorHeight * 0.4
   const entranceZ = box.min.z + size.z * 0.14
   const backZ = box.max.z - size.z * 0.12
@@ -151,6 +151,20 @@ function shot(
   return { pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], fov }
 }
 
+function ensureMinDistance(
+  pos: THREE.Vector3,
+  target: THREE.Vector3,
+  minDist: number,
+  fallbackDir: THREE.Vector3,
+): THREE.Vector3 {
+  if (pos.distanceTo(target) >= minDist) return pos.clone()
+  const dir = pos.clone().sub(target)
+  if (dir.lengthSq() < 1e-6) {
+    dir.copy(fallbackDir)
+  }
+  return target.clone().add(dir.normalize().multiplyScalar(minDist))
+}
+
 /** Director path from room landmarks — standing eye height, always looking at workspace props. */
 export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
   const { box, eye, look, desk, monitor, window, shelf, entranceZ, backZ, center } = layout
@@ -158,18 +172,35 @@ export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
   const xL = box.min.x + size.x * 0.2
   const xR = box.max.x - size.x * 0.2
   const zMid = center.z
+  const minTravel = Math.max(1.8, size.z * 0.42)
+  const intoRoom = new THREE.Vector3(0, 0, 1)
+
+  const heroTarget = new THREE.Vector3(center.x, look, zMid - size.z * 0.06)
+  const heroPos = ensureMinDistance(
+    new THREE.Vector3(center.x, eye, entranceZ),
+    heroTarget,
+    minTravel,
+    intoRoom,
+  )
+
+  const deskSide = ensureMinDistance(
+    new THREE.Vector3(desk.x + size.x * 0.14, eye, desk.z + size.z * 0.28),
+    monitor,
+    minTravel * 0.55,
+    intoRoom,
+  )
 
   return [
-    shot(layout, [center.x, eye, entranceZ], [monitor.x, monitor.y, monitor.z], 58),
-    shot(layout, [center.x + size.x * 0.04, eye, entranceZ + size.z * 0.18], [desk.x, look, desk.z], 52),
-    shot(layout, [xR, eye, zMid], [desk.x, look, monitor.z], 48),
-    shot(layout, [xR, eye, backZ - size.z * 0.08], [shelf.x, look, shelf.z], 44),
-    shot(layout, [desk.x + size.x * 0.12, eye, desk.z + size.z * 0.22], [monitor.x, monitor.y, monitor.z], 42),
+    shot(layout, [heroPos.x, heroPos.y, heroPos.z], [heroTarget.x, heroTarget.y, heroTarget.z], 64),
+    shot(layout, [center.x + size.x * 0.04, eye, entranceZ + size.z * 0.22], [desk.x, look, desk.z], 54),
+    shot(layout, [xR, eye, zMid], [desk.x, look, monitor.z], 50),
+    shot(layout, [xR, eye, backZ - size.z * 0.08], [shelf.x, look, shelf.z], 46),
+    shot(layout, [deskSide.x, eye, deskSide.z], [monitor.x, monitor.y, monitor.z], 44),
     shot(layout, [center.x, eye, zMid], [window.x, look, window.z], 40),
     shot(layout, [xL, eye, zMid], [desk.x, look, monitor.z], 38),
     shot(layout, [xL, eye, backZ - size.z * 0.05], [shelf.x, look + size.y * 0.02, shelf.z], 36),
-    shot(layout, [xR, eye, entranceZ + size.z * 0.28], [monitor.x, monitor.y, monitor.z], 34),
-    shot(layout, [center.x, eye, entranceZ + size.z * 0.08], [desk.x, look, desk.z], 32),
+    shot(layout, [xR, eye, entranceZ + size.z * 0.32], [monitor.x, monitor.y, monitor.z], 34),
+    shot(layout, [center.x, eye, entranceZ + size.z * 0.12], [desk.x, look, desk.z], 32),
   ]
 }
 
