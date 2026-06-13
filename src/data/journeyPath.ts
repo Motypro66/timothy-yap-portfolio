@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import type { SectionId } from '../context/CommandContext'
-import { roomCameraPath } from '../utils/roomScene'
+import { defaultCameraPath, type RoomShot } from '../utils/roomScene'
 
 export type CameraKeyframe = {
   t: number
@@ -10,7 +10,6 @@ export type CameraKeyframe = {
   fov: number
 }
 
-const SHOTS = roomCameraPath()
 const SECTION_AT: { section: SectionId; t: number }[] = [
   { section: 'hero', t: 0 },
   { section: 'hero', t: 0.18 },
@@ -24,13 +23,28 @@ const SECTION_AT: { section: SectionId; t: number }[] = [
   { section: 'contact', t: 1 },
 ]
 
-export const JOURNEY_KEYFRAMES: CameraKeyframe[] = SECTION_AT.map(({ section, t }, i) => ({
-  t,
-  section,
-  pos: new THREE.Vector3(...SHOTS[i].pos),
-  target: new THREE.Vector3(...SHOTS[i].target),
-  fov: SHOTS[i].fov,
-}))
+function shotsToKeyframes(shots: RoomShot[]): CameraKeyframe[] {
+  return SECTION_AT.map(({ section, t }, i) => {
+    const shot = shots[i] ?? shots[shots.length - 1]
+    return {
+      t,
+      section,
+      pos: new THREE.Vector3(...shot.pos),
+      target: new THREE.Vector3(...shot.target),
+      fov: shot.fov,
+    }
+  })
+}
+
+let runtimeKeyframes: CameraKeyframe[] = shotsToKeyframes(defaultCameraPath())
+
+export function setRuntimeJourneyKeyframes(shots: RoomShot[]) {
+  runtimeKeyframes = shotsToKeyframes(shots)
+}
+
+export function getJourneyKeyframes() {
+  return runtimeKeyframes
+}
 
 export type SectionJourneyConfig = {
   id: SectionId
@@ -49,7 +63,7 @@ export const SECTION_JOURNEY: SectionJourneyConfig[] = [
 ]
 
 export function sampleJourneyPath(progress: number) {
-  const frames = JOURNEY_KEYFRAMES
+  const frames = runtimeKeyframes
   const p = Math.max(0, Math.min(1, progress))
   let i = 0
   while (i < frames.length - 1 && frames[i + 1].t < p) i += 1

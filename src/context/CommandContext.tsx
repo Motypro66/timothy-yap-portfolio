@@ -58,7 +58,7 @@ const CommandContext = createContext<CommandContextValue | null>(null)
 const SECTION_IDS: SectionId[] = ['hero', 'about', 'skills', 'experience', 'contact']
 
 export function CommandProvider({ children }: { children: ReactNode }) {
-  const [introComplete, setIntroComplete] = useState(true)
+  const [introComplete, setIntroComplete] = useState(false)
   const [bootComplete, setBootComplete] = useState(false)
   const [signalStatus, setSignalStatus] = useState<SignalStatus>('idle')
   const [activeSection, setActiveSection] = useState<SectionId>('hero')

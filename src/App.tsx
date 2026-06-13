@@ -6,6 +6,7 @@ import { CommandProvider } from './context/CommandContext'
 import MinimalHud, { JourneyOverlay } from './components/layout/MinimalHud'
 import ScrollProgress from './components/layout/ScrollProgress'
 import RoomCanvas from './components/effects/RoomCanvas'
+import LogoIntro from './components/effects/LogoIntro'
 import { SECTION_JOURNEY } from './data/journeyPath'
 import './styles/components.css'
 import './styles/room-journey.css'
@@ -21,6 +22,7 @@ function RoomApp() {
   return (
     <div className="room-shell">
       <RoomCanvas />
+      <LogoIntro />
       <MinimalHud />
       <JourneyOverlay />
       <ScrollProgress />

@@ -63,12 +63,41 @@ def box(name, loc, scale, material, collection=None):
     return o
 
 
-def cyl(name, loc, radius, depth, material):
+def cyl(name, loc, radius, depth, material, collection=None):
     bpy.ops.mesh.primitive_cylinder_add(location=loc, radius=radius, depth=depth)
     o = bpy.context.active_object
     o.name = name
     assign(o, material)
+    if collection:
+        collection.objects.link(o)
+        bpy.context.collection.objects.unlink(o)
     return o
+
+
+def apply_bevels(root):
+    """Soft edges on furniture — reads more realistic without heavy poly count."""
+    keywords = ("Desk", "Monitor", "Shelf", "Chair", "Frame", "Mug", "Speaker", "Lamp", "Keyboard")
+    for obj in root.all_objects:
+        if obj.type != "MESH":
+            continue
+        if not any(k in obj.name for k in keywords):
+            continue
+        bevel = obj.modifiers.new(name="Bevel", type="BEVEL")
+        bevel.width = 0.012
+        bevel.segments = 2
+        bevel.limit_method = "ANGLE"
+        bevel.angle_limit = math.radians(35)
+    bpy.context.view_layer.update()
+    for obj in root.all_objects:
+        if obj.type != "MESH" or "Bevel" not in obj.modifiers:
+            continue
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(True)
+        try:
+            bpy.ops.object.modifier_apply(modifier="Bevel")
+        except RuntimeError:
+            obj.modifiers.remove(obj.modifiers["Bevel"])
+        obj.select_set(False)
 
 
 def build_room():
@@ -136,15 +165,30 @@ def build_room():
         box(f"Book_{i}", (-2.15 + i * 0.12, -2.25, 0.72 + i * 0.55), (0.05, 0.18, 0.22), m_sun if i == 1 else m_plant, root)
 
     # Plant + frame (personal touch)
-    cyl("PlantPot", (1.85, -0.35, 0.12), 0.12, 0.24, m_white)
-    cyl("PlantStem", (1.85, -0.35, 0.42), 0.04, 0.35, m_plant)
+    cyl("PlantPot", (1.85, -0.35, 0.12), 0.12, 0.24, m_white, root)
+    cyl("PlantStem", (1.85, -0.35, 0.42), 0.04, 0.35, m_plant, root)
     box("Frame", (-1.75, -0.25, 1.75), (0.32, 0.02, 0.42), m_frame, root)
     box("FramePhoto", (-1.75, -0.18, 1.75), (0.26, 0.01, 0.34), m_sun, root)
 
     # Rug
     box("Rug", (0.15, -1.15, 0.02), (1.35, 0.95, 0.015), mat("Rug", (0.92, 0.78, 0.55), 0.85), root)
 
-    # --- Lights (sun + fill) ---
+    # Baseboards + window sill (more finished interior read)
+    box("BaseboardBack", (0, -ROOM_D + 0.12, 0.12), (ROOM_W / 2 - 0.08, 0.04, 0.12), m_white, root)
+    box("BaseboardLeft", (-ROOM_W / 2 + 0.12, -ROOM_D / 2, 0.12), (0.04, ROOM_D / 2 - 0.08, 0.12), m_white, root)
+    box("BaseboardRight", (ROOM_W / 2 - 0.12, -ROOM_D / 2, 0.12), (0.04, ROOM_D / 2 - 0.08, 0.12), m_white, root)
+    box("WindowSill", (ROOM_W / 2 - 0.1, -1.35, 1.05), (0.08, 0.9, 0.06), m_white, root)
+
+    # Extra desk props
+    cyl("Mug", (0.45, desk_y + 0.12, 0.88), 0.05, 0.08, m_white, root)
+    box("Notebook", (-0.35, desk_y + 0.1, 0.88), (0.18, 0.24, 0.015), mat("Notebook", (0.35, 0.42, 0.55), 0.7), root)
+    box("SpeakerL", (-0.95, desk_y + 0.06, 0.92), (0.08, 0.08, 0.14), m_white, root)
+    box("SpeakerR", (0.95, desk_y + 0.06, 0.92), (0.08, 0.08, 0.14), m_white, root)
+
+    # Ceiling light panel
+    box("CeilingLight", (0, -ROOM_D / 2, ROOM_H - 0.08), (0.55, 0.35, 0.03), mat("CeilingLight", (1.0, 0.98, 0.92), 0.2, emit=0.6), root)
+
+    apply_bevels(root)
     sun = bpy.data.lights.new("Sun", type="SUN")
     sun_obj = bpy.data.objects.new("Sun", sun)
     root.objects.link(sun_obj)
@@ -202,7 +246,7 @@ def export_glb():
         export_apply=True,
         export_yup=True,
         export_materials="EXPORT",
-        export_lights=True,
+        export_lights=False,
         export_cameras=False,
     )
     print(f"Exported: {EXPORT_PATH}")

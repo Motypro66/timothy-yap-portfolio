@@ -1,11 +1,16 @@
-import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { ContactShadows, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { sampleJourneyPath } from '../../data/journeyPath'
+import { sampleJourneyPath, setRuntimeJourneyKeyframes } from '../../data/journeyPath'
 import { useCommand } from '../../context/CommandContext'
 import { useTerrainQuality } from '../../hooks/useTerrainQuality'
-import { normalizeRoom, polishRoomMaterials } from '../../utils/roomScene'
+import {
+  buildCameraPathFromBounds,
+  defaultCameraPath,
+  normalizeRoom,
+  polishRoomMaterials,
+} from '../../utils/roomScene'
 
 const MODEL_URL = `${import.meta.env.BASE_URL}models/sunny-room.glb`
 
@@ -20,18 +25,18 @@ function CameraRig() {
     const progress = bootComplete ? journeyProgress : 0
     const sample = sampleJourneyPath(progress)
     desired.current.copy(sample.position)
-    desired.current.x += pointer.x * 0.18
-    desired.current.y += pointer.y * 0.08
+    desired.current.x += pointer.x * 0.14
+    desired.current.y += pointer.y * 0.06
 
-    const shake = Math.min(0.04, scrollVelocity * 0.00006)
+    const shake = Math.min(0.035, scrollVelocity * 0.00005)
     desired.current.x += (Math.random() - 0.5) * shake
 
     lookTarget.current.copy(sample.target)
-    lookTarget.current.x += pointer.x * 0.06
-    lookTarget.current.y += pointer.y * 0.03
+    lookTarget.current.x += pointer.x * 0.05
+    lookTarget.current.y += pointer.y * 0.025
 
     const scrolling = scrollVelocity > 40
-    const follow = Math.min(1, delta * (scrolling ? 16 : 9))
+    const follow = Math.min(1, delta * (scrolling ? 18 : 11))
 
     if (!initialized.current) {
       state.camera.position.copy(desired.current)
@@ -45,26 +50,34 @@ function CameraRig() {
     }
 
     const cam = state.camera as THREE.PerspectiveCamera
-    cam.fov = THREE.MathUtils.lerp(cam.fov, sample.fov, Math.min(1, delta * 10))
+    cam.fov = THREE.MathUtils.lerp(cam.fov, sample.fov, Math.min(1, delta * 12))
     cam.updateProjectionMatrix()
   })
 
   return null
 }
 
-function SunnyRoomModel() {
+function SunnyRoomModel({ onReady }: { onReady: (box: THREE.Box3) => void }) {
   const { scene } = useGLTF(MODEL_URL)
   const room = useMemo(() => {
     const cloned = scene.clone(true)
-    normalizeRoom(cloned)
+    const bounds = normalizeRoom(cloned)
     polishRoomMaterials(cloned)
-    return cloned
+    return { object: cloned, bounds }
   }, [scene])
 
-  return <primitive object={room} />
+  useEffect(() => {
+    const shots = room.bounds.isEmpty()
+      ? defaultCameraPath()
+      : buildCameraPathFromBounds(room.bounds)
+    setRuntimeJourneyKeyframes(shots)
+    onReady(room.bounds)
+  }, [room, onReady])
+
+  return <primitive object={room.object} />
 }
 
-function FallbackRoom() {
+function FallbackRoom({ onReady }: { onReady: (box: THREE.Box3) => void }) {
   const group = useMemo(() => {
     const g = new THREE.Group()
     const wall = new THREE.MeshStandardMaterial({ color: '#f5ebe0', roughness: 0.75 })
@@ -90,35 +103,63 @@ function FallbackRoom() {
     addBox([0, 1.18, -1.6], [1.24, 0.76, 0.1], new THREE.MeshStandardMaterial({ color: '#efefef' }))
     addBox([0, 1.18, -1.66], [1.08, 0.62, 0.04], screen)
     addBox([-2.05, 1.05, -2.35], [0.7, 2.1, 1.1], wood)
-    normalizeRoom(g)
-    return g
+    const bounds = normalizeRoom(g)
+    return { object: g, bounds }
   }, [])
 
-  return <primitive object={group} />
+  useEffect(() => {
+    const shots = buildCameraPathFromBounds(group.bounds)
+    setRuntimeJourneyKeyframes(shots)
+    onReady(group.bounds)
+  }, [group, onReady])
+
+  return <primitive object={group.object} />
 }
 
-function SceneContent({ fallback }: { fallback?: boolean }) {
+function SceneContent({
+  fallback,
+  onRoomReady,
+  shadows,
+}: {
+  fallback?: boolean
+  onRoomReady: (box: THREE.Box3) => void
+  shadows: boolean
+}) {
   return (
     <>
       <color attach="background" args={['#e8dfd4']} />
-      <fog attach="fog" args={['#e8dfd4', 24, 48]} />
-      <ambientLight intensity={0.42} color="#fff8ef" />
-      <hemisphereLight args={['#fff8ef', '#a88462', 0.48]} />
+      <fog attach="fog" args={['#e8dfd4', 28, 55]} />
+      <ambientLight intensity={0.38} color="#fff8ef" />
+      <hemisphereLight args={['#fff8ef', '#9a7355', 0.55]} />
       <directionalLight
-        position={[4.5, 6.5, 3.5]}
-        intensity={1.65}
+        position={[4.5, 7, 3.5]}
+        intensity={1.85}
         color="#fff0d0"
-        castShadow
+        castShadow={shadows}
         shadow-mapSize={[1024, 1024]}
-        shadow-camera-far={18}
-        shadow-camera-left={-4}
-        shadow-camera-right={4}
-        shadow-camera-top={4}
-        shadow-camera-bottom={-4}
+        shadow-camera-far={20}
+        shadow-camera-left={-5}
+        shadow-camera-right={5}
+        shadow-camera-top={5}
+        shadow-camera-bottom={-5}
       />
-      <directionalLight position={[2.8, 3.2, -1.2]} intensity={0.75} color="#d8ecff" />
-      <pointLight position={[0, 1.15, -1.55]} intensity={0.35} color="#7ec8f0" distance={4} />
-      {fallback ? <FallbackRoom /> : <SunnyRoomModel />}
+      <directionalLight position={[3.2, 4, -1.5]} intensity={0.85} color="#d8ecff" />
+      <pointLight position={[0, 1.35, -1.45]} intensity={0.45} color="#7ec8f0" distance={5} />
+      {fallback ? (
+        <FallbackRoom onReady={onRoomReady} />
+      ) : (
+        <SunnyRoomModel onReady={onRoomReady} />
+      )}
+      {shadows && (
+        <ContactShadows
+          position={[0, 0.02, 0]}
+          opacity={0.35}
+          scale={12}
+          blur={2.2}
+          far={4}
+          color="#6b4a2a"
+        />
+      )}
       <CameraRig />
     </>
   )
@@ -145,16 +186,32 @@ class CanvasErrorBoundary extends Component<{ children: ReactNode }, CanvasBound
   }
 }
 
-function RoomScene() {
+function RoomScene({
+  onRoomReady,
+  shadows,
+}: {
+  onRoomReady: (box: THREE.Box3) => void
+  shadows: boolean
+}) {
   return (
-    <Suspense fallback={<SceneContent fallback />}>
-      <SceneContent />
+    <Suspense fallback={<SceneContent fallback onRoomReady={onRoomReady} shadows={shadows} />}>
+      <SceneContent onRoomReady={onRoomReady} shadows={shadows} />
     </Suspense>
   )
 }
 
-function WebGLCanvas({ dpr, quality }: { dpr: number; quality: ReturnType<typeof useTerrainQuality> }) {
+function WebGLCanvas({
+  dpr,
+  quality,
+  onRoomReady,
+}: {
+  dpr: number
+  quality: ReturnType<typeof useTerrainQuality>
+  onRoomReady: (box: THREE.Box3) => void
+}) {
   const webglOk = useStateWebGL()
+  const fallback = defaultCameraPath()
+  const start = fallback[0]
 
   if (!webglOk) {
     return (
@@ -169,15 +226,17 @@ function WebGLCanvas({ dpr, quality }: { dpr: number; quality: ReturnType<typeof
       style={{ width: '100%', height: '100%', display: 'block' }}
       shadows={quality !== 'low'}
       dpr={dpr}
-      camera={{ fov: 56, near: 0.05, far: 40, position: [0, 1.72, 3.55] }}
+      camera={{ fov: start.fov, near: 0.05, far: 45, position: start.pos }}
       gl={{ antialias: quality !== 'low', powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.setClearColor('#e8dfd4')
         gl.toneMapping = THREE.ACESFilmicToneMapping
-        gl.toneMappingExposure = 1.12
+        gl.toneMappingExposure = 1.14
+        gl.shadowMap.enabled = quality !== 'low'
+        gl.shadowMap.type = THREE.PCFSoftShadowMap
       }}
     >
-      <RoomScene />
+      <RoomScene onRoomReady={onRoomReady} shadows={quality !== 'low'} />
     </Canvas>
   )
 }
@@ -198,15 +257,16 @@ function useStateWebGL() {
 
 export default function RoomCanvas() {
   const quality = useTerrainQuality()
+  const handleRoomReady = useCallback((_box: THREE.Box3) => {}, [])
 
   const dpr =
     typeof window === 'undefined'
       ? 1
       : quality === 'low'
-        ? 0.9
+        ? 0.85
         : quality === 'medium'
           ? 1
-          : Math.min(window.devicePixelRatio, 1.25)
+          : Math.min(window.devicePixelRatio, 1.35)
 
   useEffect(() => {
     useGLTF.preload(MODEL_URL)
@@ -215,10 +275,9 @@ export default function RoomCanvas() {
   return (
     <CanvasErrorBoundary>
       <div className="room-canvas room-canvas--live" aria-hidden="true">
-        <WebGLCanvas dpr={dpr} quality={quality} />
+        <WebGLCanvas dpr={dpr} quality={quality} onRoomReady={handleRoomReady} />
         <div className="room-canvas__warm-vignette" />
       </div>
     </CanvasErrorBoundary>
   )
 }
-
