@@ -2,7 +2,8 @@
 
 Dynamic job-hunting portfolio built with React, Three.js, GSAP, and Framer Motion.
 
-**Live:** https://motypro66.github.io/timothy-yap-portfolio/
+**Live:** https://timothy-yap.pages.dev/  
+**Mirror:** https://motypro66.github.io/timothy-yap-portfolio/
 
 ## Stack
 
@@ -35,4 +36,4 @@ npm run dev   # local dev server
 npm run build # production build
 ```
 
-See [docs/DEPLOY.md](docs/DEPLOY.md) for GitHub Pages setup.
+See [docs/DEPLOY.md](docs/DEPLOY.md) for Cloudflare Pages and GitHub Pages setup.
