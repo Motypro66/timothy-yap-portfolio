@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { collectObstacleBoxes, sanitizeCameraPath } from './cameraCollision'
 
 export type RoomShot = {
   pos: [number, number, number]
@@ -151,61 +152,45 @@ function shot(
   return { pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], fov }
 }
 
-function ensureMinDistance(
-  pos: THREE.Vector3,
-  target: THREE.Vector3,
-  minDist: number,
-  fallbackDir: THREE.Vector3,
-): THREE.Vector3 {
-  if (pos.distanceTo(target) >= minDist) return pos.clone()
-  const dir = pos.clone().sub(target)
-  if (dir.lengthSq() < 1e-6) {
-    dir.copy(fallbackDir)
-  }
-  return target.clone().add(dir.normalize().multiplyScalar(minDist))
-}
-
-/** Director path from room landmarks — standing eye height, always looking at workspace props. */
+/** Perimeter camera path — six beats, no shots through furniture volumes. */
 export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
   const { box, eye, look, desk, monitor, window, shelf, entranceZ, backZ, center } = layout
   const size = box.getSize(new THREE.Vector3())
-  const xL = box.min.x + size.x * 0.2
-  const xR = box.max.x - size.x * 0.2
-  const zMid = center.z
-  const minTravel = Math.max(1.8, size.z * 0.42)
-  const intoRoom = new THREE.Vector3(0, 0, 1)
+  const xL = box.min.x + size.x * 0.22
+  const xR = box.max.x - size.x * 0.22
+  const h = layout.ceiling - layout.floor
 
   const heroTarget = new THREE.Vector3(
-    center.x - size.x * 0.12,
-    look + (layout.ceiling - layout.floor) * 0.16,
-    backZ - size.z * 0.1,
+    center.x - size.x * 0.1,
+    look + h * 0.12,
+    backZ - size.z * 0.12,
   )
-  const heroPos = ensureMinDistance(
-    new THREE.Vector3(center.x + size.x * 0.1, eye + (layout.ceiling - layout.floor) * 0.03, entranceZ + size.z * 0.1),
-    heroTarget,
-    minTravel,
-    intoRoom,
-  )
-
-  const deskSide = ensureMinDistance(
-    new THREE.Vector3(desk.x + size.x * 0.14, eye, desk.z + size.z * 0.28),
-    monitor,
-    minTravel * 0.55,
-    intoRoom,
+  const heroPos = new THREE.Vector3(
+    center.x + size.x * 0.08,
+    eye + h * 0.02,
+    entranceZ + size.z * 0.08,
   )
 
   return [
-    shot(layout, [heroPos.x, heroPos.y, heroPos.z], [heroTarget.x, heroTarget.y, heroTarget.z], 64),
-    shot(layout, [center.x + size.x * 0.04, eye, entranceZ + size.z * 0.22], [desk.x, look, desk.z], 54),
-    shot(layout, [xR, eye, zMid], [desk.x, look, monitor.z], 50),
-    shot(layout, [xR, eye, backZ - size.z * 0.08], [shelf.x, look, shelf.z], 46),
-    shot(layout, [deskSide.x, eye, deskSide.z], [monitor.x, monitor.y, monitor.z], 44),
-    shot(layout, [center.x, eye, zMid], [window.x, look, window.z], 40),
-    shot(layout, [xL, eye, zMid], [desk.x, look, monitor.z], 38),
-    shot(layout, [xL, eye, backZ - size.z * 0.05], [shelf.x, look + size.y * 0.02, shelf.z], 36),
-    shot(layout, [xR, eye, entranceZ + size.z * 0.32], [monitor.x, monitor.y, monitor.z], 34),
-    shot(layout, [center.x, eye, entranceZ + size.z * 0.12], [desk.x, look, desk.z], 32),
+    shot(layout, [heroPos.x, heroPos.y, heroPos.z], [heroTarget.x, heroTarget.y, heroTarget.z], 58),
+    shot(layout, [xL, eye, center.z - size.z * 0.02], [desk.x, look, monitor.z], 50),
+    shot(layout, [xR, eye, entranceZ + size.z * 0.28], [monitor.x, look + h * 0.06, monitor.z], 46),
+    shot(layout, [xL, eye, backZ - size.z * 0.1], [shelf.x, look, shelf.z], 42),
+    shot(layout, [center.x, eye, center.z], [window.x, look, window.z], 38),
+    shot(
+      layout,
+      [center.x - size.x * 0.06, eye, entranceZ + size.z * 0.14],
+      [desk.x, look, desk.z],
+      36,
+    ),
   ]
+}
+
+export function buildSafeCameraPath(root: THREE.Object3D, box: THREE.Box3): RoomShot[] {
+  if (box.isEmpty()) return defaultCameraPath()
+  const layout = analyzeRoomLayout(root, box)
+  const raw = buildCameraPathFromLayout(layout)
+  return sanitizeCameraPath(raw, layout, collectObstacleBoxes(root))
 }
 
 export function buildCameraPathFromBounds(box: THREE.Box3): RoomShot[] {

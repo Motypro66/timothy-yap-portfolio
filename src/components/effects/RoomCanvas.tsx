@@ -6,8 +6,7 @@ import { getCameraPathVersion, sampleJourneyPath, setRuntimeJourneyKeyframes } f
 import { useCommand } from '../../context/CommandContext'
 import { useTerrainQuality } from '../../hooks/useTerrainQuality'
 import {
-  analyzeRoomLayout,
-  buildCameraPathFromLayout,
+  buildSafeCameraPath,
   defaultCameraPath,
   normalizeRoom,
   polishRoomMaterials,
@@ -16,7 +15,7 @@ import {
 const MODEL_URL = `${import.meta.env.BASE_URL}models/sunny-room.glb`
 
 function CameraRig() {
-  const { journeyProgress, pointer, bootComplete, scrollVelocity } = useCommand()
+  const { journeyProgress, pointer, bootComplete } = useCommand()
   const lookAt = useRef(new THREE.Vector3())
   const desired = useRef(new THREE.Vector3())
   const lookTarget = useRef(new THREE.Vector3())
@@ -32,32 +31,19 @@ function CameraRig() {
     const progress = bootComplete ? journeyProgress : 0
     const sample = sampleJourneyPath(progress)
     desired.current.copy(sample.position)
-    desired.current.x += pointer.x * 0.14
-    desired.current.y += pointer.y * 0.06
-
-    const shake = Math.min(0.035, scrollVelocity * 0.00005)
-    desired.current.x += (Math.random() - 0.5) * shake
-
+    desired.current.x += pointer.x * 0.08
+    desired.current.y += pointer.y * 0.035
     lookTarget.current.copy(sample.target)
-    lookTarget.current.x += pointer.x * 0.05
-    lookTarget.current.y += pointer.y * 0.025
-
-    const scrolling = scrollVelocity > 40
-    const follow = Math.min(1, delta * (scrolling ? 18 : 11))
-
-    if (!initialized.current) {
-      state.camera.position.copy(desired.current)
-      lookAt.current.copy(lookTarget.current)
-      state.camera.lookAt(lookAt.current)
-      initialized.current = true
-    } else {
-      state.camera.position.lerp(desired.current, follow)
-      lookAt.current.lerp(lookTarget.current, follow)
-      state.camera.lookAt(lookAt.current)
-    }
+    lookTarget.current.x += pointer.x * 0.04
+    lookTarget.current.y += pointer.y * 0.02
 
     const cam = state.camera as THREE.PerspectiveCamera
-    cam.fov = THREE.MathUtils.lerp(cam.fov, sample.fov, Math.min(1, delta * 12))
+    state.camera.position.copy(desired.current)
+    lookAt.current.copy(lookTarget.current)
+    state.camera.lookAt(lookAt.current)
+    initialized.current = true
+
+    cam.fov = THREE.MathUtils.lerp(cam.fov, sample.fov, Math.min(1, delta * 10))
     cam.updateProjectionMatrix()
   })
 
@@ -76,7 +62,7 @@ function SunnyRoomModel({ onReady }: { onReady: (box: THREE.Box3) => void }) {
   useEffect(() => {
     const shots = room.bounds.isEmpty()
       ? defaultCameraPath()
-      : buildCameraPathFromLayout(analyzeRoomLayout(room.object, room.bounds))
+      : buildSafeCameraPath(room.object, room.bounds)
     setRuntimeJourneyKeyframes(shots)
     onReady(room.bounds)
   }, [room, onReady])
@@ -123,7 +109,7 @@ function FallbackRoom({ onReady }: { onReady: (box: THREE.Box3) => void }) {
   }, [])
 
   useEffect(() => {
-    const shots = buildCameraPathFromLayout(analyzeRoomLayout(group.object, group.bounds))
+    const shots = buildSafeCameraPath(group.object, group.bounds)
     setRuntimeJourneyKeyframes(shots)
     onReady(group.bounds)
   }, [group, onReady])

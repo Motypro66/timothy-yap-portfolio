@@ -12,14 +12,10 @@ export type CameraKeyframe = {
 
 const SECTION_AT: { section: SectionId; t: number }[] = [
   { section: 'hero', t: 0 },
-  { section: 'hero', t: 0.18 },
-  { section: 'about', t: 0.28 },
-  { section: 'about', t: 0.38 },
-  { section: 'skills', t: 0.48 },
-  { section: 'skills', t: 0.58 },
-  { section: 'experience', t: 0.68 },
-  { section: 'experience', t: 0.76 },
-  { section: 'contact', t: 0.86 },
+  { section: 'about', t: 0.22 },
+  { section: 'skills', t: 0.4 },
+  { section: 'experience', t: 0.62 },
+  { section: 'contact', t: 0.82 },
   { section: 'contact', t: 1 },
 ]
 
@@ -91,6 +87,41 @@ export function progressFromSections(sectionProgress: Record<SectionId, number>)
     total += (sectionProgress[s.id] ?? 0) * s.weight
   }
   return Math.max(0, Math.min(1, total))
+}
+
+const SECTION_THRESHOLDS = SECTION_JOURNEY.reduce<{ id: SectionId; start: number }[]>(
+  (acc, s) => {
+    const start = acc.length ? acc[acc.length - 1].start + SECTION_JOURNEY[acc.length - 1].weight : 0
+    acc.push({ id: s.id, start })
+    return acc
+  },
+  [],
+)
+
+export function sectionFromProgress(progress: number): SectionId {
+  const p = Math.max(0, Math.min(1, progress))
+  let current: SectionId = 'hero'
+  for (const row of SECTION_THRESHOLDS) {
+    if (p >= row.start) current = row.id
+  }
+  return current
+}
+
+export function sectionProgressFromJourney(progress: number): Record<SectionId, number> {
+  const p = Math.max(0, Math.min(1, progress))
+  const out: Record<SectionId, number> = {
+    hero: 0,
+    about: 0,
+    skills: 0,
+    experience: 0,
+    contact: 0,
+  }
+  for (const s of SECTION_JOURNEY) {
+    const start = SECTION_THRESHOLDS.find((t) => t.id === s.id)?.start ?? 0
+    const local = (p - start) / s.weight
+    out[s.id] = Math.max(0, Math.min(1, local))
+  }
+  return out
 }
 
 export function getSectionBeat(id: SectionId, lang: 'en' | 'zh') {

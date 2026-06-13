@@ -74,9 +74,23 @@ def cyl(name, loc, radius, depth, material, collection=None):
     return o
 
 
+def uv_sphere(name, loc, radius, material, collection=None):
+    bpy.ops.mesh.primitive_uv_sphere_add(location=loc, radius=radius, segments=12, ring_count=8)
+    o = bpy.context.active_object
+    o.name = name
+    assign(o, material)
+    if collection:
+        collection.objects.link(o)
+        bpy.context.collection.objects.unlink(o)
+    return o
+
+
 def apply_bevels(root):
     """Soft edges on furniture — reads more realistic without heavy poly count."""
-    keywords = ("Desk", "Monitor", "Shelf", "Chair", "Frame", "Mug", "Speaker", "Lamp", "Keyboard")
+    keywords = (
+        "Desk", "Monitor", "Shelf", "Chair", "Frame", "Mug", "Speaker", "Lamp",
+        "Keyboard", "Drawer", "Plant", "Window", "Book", "Notebook",
+    )
     for obj in root.all_objects:
         if obj.type != "MESH":
             continue
@@ -129,34 +143,46 @@ def build_room():
     box("WallLeft", (-ROOM_W / 2 + 0.06, -ROOM_D / 2, ROOM_H / 2), (0.06, ROOM_D / 2, ROOM_H / 2), m_wall, root)
     box("WallRight", (ROOM_W / 2 - 0.06, -ROOM_D / 2, ROOM_H / 2), (0.06, ROOM_D / 2, ROOM_H / 2), m_wall, root)
 
-    # Window on right wall (bright sun)
+    # Window on right wall (bright sun) + mullions
     box("WindowFrame", (ROOM_W / 2 - 0.08, -1.35, 1.65), (0.05, 0.85, 0.75), m_white, root)
     box("WindowGlass", (ROOM_W / 2 - 0.12, -1.35, 1.65), (0.02, 0.75, 0.68), m_glass, root)
+    box("WindowMullionV", (ROOM_W / 2 - 0.12, -1.35, 1.65), (0.015, 0.72, 0.04), m_white, root)
+    box("WindowMullionH", (ROOM_W / 2 - 0.12, -1.35, 1.65), (0.015, 0.04, 0.66), m_white, root)
 
-    # Desk group
+    # Desk group — top, apron, legs (not one solid slab)
     desk_y = -1.55
-    box("DeskTop", (0, desk_y, 0.78), (1.05, 0.55, 0.04), m_wood, root)
-    for i, x in enumerate([-0.85, 0.85]):
-        box(f"DeskLeg_{i}", (x, desk_y, 0.38), (0.06, 0.06, 0.38), m_wood, root)
+    box("DeskTop", (0, desk_y, 0.78), (1.05, 0.55, 0.035), m_wood, root)
+    box("DeskApronFront", (0, desk_y + 0.42, 0.62), (0.98, 0.04, 0.12), m_wood, root)
+    box("DeskDrawer", (0.42, desk_y + 0.18, 0.64), (0.38, 0.28, 0.08), m_wood, root)
+    box("DeskDrawerHandle", (0.42, desk_y + 0.18, 0.71), (0.14, 0.02, 0.015), m_sun, root)
+    for i, x in enumerate([-0.82, 0.82]):
+        cyl(f"DeskLeg_{i}", (x, desk_y, 0.36), 0.045, 0.72, m_wood, root)
 
-    # Monitor
-    box("MonitorStand", (0, desk_y - 0.05, 0.92), (0.12, 0.08, 0.08), m_white, root)
-    box("Monitor", (0, desk_y - 0.05, 1.18), (0.62, 0.05, 0.38), m_white, root)
-    box("MonitorScreen", (0, desk_y - 0.12, 1.18), (0.54, 0.02, 0.31), m_screen, root)
-    box("Keyboard", (0.15, desk_y + 0.08, 0.86), (0.38, 0.14, 0.02), m_white, root)
-    box("Mouse", (0.62, desk_y + 0.1, 0.84), (0.08, 0.12, 0.025), m_sun, root)
+    # Monitor — bezel + chin + thin screen
+    box("MonitorStand", (0, desk_y - 0.05, 0.92), (0.14, 0.1, 0.06), m_white, root)
+    box("MonitorNeck", (0, desk_y - 0.02, 0.98), (0.05, 0.04, 0.14), m_white, root)
+    box("Monitor", (0, desk_y - 0.05, 1.2), (0.64, 0.05, 0.4), m_white, root)
+    box("MonitorBezel", (0, desk_y - 0.1, 1.2), (0.58, 0.015, 0.34), mat("Bezel", (0.12, 0.12, 0.14), 0.35), root)
+    box("MonitorScreen", (0, desk_y - 0.12, 1.2), (0.52, 0.012, 0.3), m_screen, root)
+    box("MonitorChin", (0, desk_y - 0.02, 1.02), (0.22, 0.04, 0.04), m_white, root)
+    box("Keyboard", (0.15, desk_y + 0.08, 0.86), (0.38, 0.14, 0.018), m_white, root)
+    for i, x in enumerate([0.04, 0.12, 0.2, 0.28]):
+        box(f"Key_{i}", (x, desk_y + 0.1, 0.875), (0.06, 0.08, 0.008), mat("Key", (0.88, 0.88, 0.9), 0.45), root)
+    box("Mouse", (0.62, desk_y + 0.1, 0.84), (0.08, 0.12, 0.022), m_sun, root)
 
     # Desk lamp
     cyl("LampBase", (-0.72, desk_y + 0.22, 0.86), 0.06, 0.04, m_sun)
     box("LampArm", (-0.72, desk_y + 0.08, 0.98), (0.03, 0.03, 0.22), m_sun, root)
     box("LampShade", (-0.72, desk_y - 0.02, 1.08), (0.1, 0.1, 0.06), mat("Lamp", (0.98, 0.92, 0.78), 0.35, emit=0.25), root)
 
-    # Window sun streak (soft realism)
-    box("SunStreak", (ROOM_W / 2 - 0.14, -1.35, 0.35), (0.01, 1.1, 2.2), mat("SunStreak", (1.0, 0.94, 0.78), 0.2, emit=0.35), root)
+    # Sun patch on floor (stays above floor — avoids bad bbox below y=0)
+    box("SunStreak", (0.25, -1.35, 0.025), (1.05, 0.95, 0.008), mat("SunStreak", (1.0, 0.94, 0.78), 0.2, emit=0.28), root)
 
-    # Chair (simple)
-    box("ChairSeat", (-1.05, desk_y + 0.35, 0.48), (0.38, 0.38, 0.05), m_sun, root)
+    # Chair — seat, back, arm hints, base
+    box("ChairSeat", (-1.05, desk_y + 0.35, 0.48), (0.38, 0.38, 0.045), m_sun, root)
     box("ChairBack", (-1.05, desk_y + 0.05, 0.82), (0.38, 0.05, 0.42), m_sun, root)
+    box("ChairArmL", (-1.25, desk_y + 0.22, 0.55), (0.05, 0.22, 0.32), m_sun, root)
+    cyl("ChairBase", (-1.05, desk_y + 0.35, 0.22), 0.05, 0.08, mat("Metal", (0.35, 0.35, 0.38), 0.25), root)
 
     # Bookshelf on left wall
     box("Shelf", (-2.05, -2.35, 1.05), (0.35, 0.55, 1.05), m_wood, root)
@@ -166,9 +192,12 @@ def build_room():
 
     # Plant + frame (personal touch)
     cyl("PlantPot", (1.85, -0.35, 0.12), 0.12, 0.24, m_white, root)
-    cyl("PlantStem", (1.85, -0.35, 0.42), 0.04, 0.35, m_plant, root)
+    cyl("PlantStem", (1.85, -0.35, 0.42), 0.035, 0.32, m_plant, root)
+    for i, (ox, oz, r) in enumerate([(0, 0, 0.14), (0.08, 0.06, 0.11), (-0.07, 0.05, 0.1)]):
+        uv_sphere(f"PlantLeaf_{i}", (1.85 + ox, -0.35 + oz, 0.62 + i * 0.06), r, m_plant, root)
     box("Frame", (-1.75, -0.25, 1.75), (0.32, 0.02, 0.42), m_frame, root)
     box("FramePhoto", (-1.75, -0.18, 1.75), (0.26, 0.01, 0.34), m_sun, root)
+    box("FrameMat", (-1.75, -0.17, 1.75), (0.22, 0.005, 0.28), m_white, root)
 
     # Rug
     box("Rug", (0.15, -1.15, 0.02), (1.35, 0.95, 0.015), mat("Rug", (0.92, 0.78, 0.55), 0.85), root)
@@ -178,6 +207,11 @@ def build_room():
     box("BaseboardLeft", (-ROOM_W / 2 + 0.12, -ROOM_D / 2, 0.12), (0.04, ROOM_D / 2 - 0.08, 0.12), m_white, root)
     box("BaseboardRight", (ROOM_W / 2 - 0.12, -ROOM_D / 2, 0.12), (0.04, ROOM_D / 2 - 0.08, 0.12), m_white, root)
     box("WindowSill", (ROOM_W / 2 - 0.1, -1.35, 1.05), (0.08, 0.9, 0.06), m_white, root)
+
+    # Crown molding (finishing detail)
+    box("CrownLeft", (-ROOM_W / 2 + 0.12, -ROOM_D / 2, ROOM_H - 0.06), (0.04, ROOM_D / 2 - 0.08, 0.06), m_white, root)
+    box("CrownRight", (ROOM_W / 2 - 0.12, -ROOM_D / 2, ROOM_H - 0.06), (0.04, ROOM_D / 2 - 0.08, 0.06), m_white, root)
+    box("CrownBack", (0, -ROOM_D + 0.12, ROOM_H - 0.06), (ROOM_W / 2 - 0.08, 0.04, 0.06), m_white, root)
 
     # Extra desk props
     cyl("Mug", (0.45, desk_y + 0.12, 0.88), 0.05, 0.08, m_white, root)
