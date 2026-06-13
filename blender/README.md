@@ -17,18 +17,23 @@ Run `blender/run-export.bat` (edit the Blender path inside if needed).
 "C:\Program Files\Blender Foundation\Blender 4.4\blender.exe" --background --python "blender/generate_sunny_room.py"
 ```
 
-## Option D — Replace with a downloaded room (CGTrader / Meshy / Free3D)
+## Option D — Replace with a downloaded room (CGTrader / Meshy / Hyper3D / Free3D)
 
 You can swap in any **`.glb` / `.gltf`** interior model:
 
-1. Export or download as **GLB** (prefer &lt; 25 MB for GitHub + mobile)
-2. Rename to `public/models/sunny-room.glb` (overwrite)
-3. Redeploy — the site auto-normalizes scale and builds the scroll camera from the model bounds
+1. Browse / generate on a marketplace (examples):
+   - [CGTrader — Blender room models](https://www.cgtrader.com/3d-models/blender-room)
+   - [Meshy — Blender-tagged models](https://www.meshy.ai/tags/blender)
+   - [Hyper3D Rodin workspace](http://hyper3d.ai/workspace/rodin)
+   - [Free3D — Blender category](https://free3d.com/3d-models/blender)
+2. Export or download as **GLB** (prefer &lt; 25 MB for GitHub; keep textures reasonable for mobile)
+3. Rename to `public/models/sunny-room.glb` (overwrite)
+4. Redeploy — the site normalizes scale, aligns the **Floor** mesh to ground, and builds scroll cameras from desk / monitor / window landmarks
 
 **License:** use models you are allowed to ship (CC0, royalty-free, or purchased).  
 **CC0 packs:** [PolygonalMind GLB collection](https://github.com/ToxSam/cc0-models-Polygonal-Mind), [MrEliptik office pack](https://mreliptik.itch.io/office-low-poly-pack).
 
-The camera path is computed from the room bounding box, so most interior GLBs work without code changes.
+Named meshes (`Floor`, `Ceiling`, `DeskTop`, `MonitorScreen`, `WindowGlass`, `Shelf`) improve camera targeting; otherwise the site falls back to bounds-based shots.
 
 ## After export
 
