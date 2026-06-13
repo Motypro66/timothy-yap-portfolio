@@ -6,10 +6,12 @@ import SignalDot from '../ui/SignalDot'
 import SignalFeed from './SignalFeed'
 
 export default function CommandHud() {
-  const { activeSection, setLogoHovered, bootComplete, openPalette } = useCommand()
+  const { activeSection, setLogoHovered, bootComplete, openPalette, introComplete } = useCommand()
   const { t, lang, setLang } = useLanguage()
   const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
   const compact = activeSection !== 'hero' && bootComplete
+
+  if (!introComplete) return null
 
   return (
     <header className={`command-hud ${compact ? 'command-hud--compact' : ''}`}>

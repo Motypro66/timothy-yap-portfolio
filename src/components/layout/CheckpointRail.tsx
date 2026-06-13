@@ -5,8 +5,10 @@ import SignalDot from '../ui/SignalDot'
 const sectionIds: SectionId[] = ['hero', 'about', 'skills', 'experience', 'brief', 'contact']
 
 export default function CheckpointRail() {
-  const { activeSection } = useCommand()
+  const { activeSection, introComplete } = useCommand()
   const { t } = useLanguage()
+
+  if (!introComplete) return null
 
   const labelFor = (id: SectionId) => {
     if (id === 'hero') return 'Ops'

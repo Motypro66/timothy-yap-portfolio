@@ -36,18 +36,19 @@ function MetricValue({ metric, rollStarted }: { metric: Metric; rollStarted: boo
 
 export default function Hero() {
   const [rollStarted, setRollStarted] = useState(false)
-  const { bootComplete, setBootComplete } = useCommand()
+  const { bootComplete, setBootComplete, introComplete } = useCommand()
   const { t, lang } = useLanguage()
   const title = lang === 'zh' ? profile.titleZh : profile.title
   const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
 
   useEffect(() => {
+    if (!introComplete) return
     const timer = window.setTimeout(() => {
       setBootComplete(true)
       setRollStarted(true)
     }, 2200)
     return () => window.clearTimeout(timer)
-  }, [setBootComplete])
+  }, [introComplete, setBootComplete])
 
   return (
     <section className="hero hero--command journey-station" id="hero">

@@ -38,3 +38,16 @@ export const mountainSpecs: MountainSpec[] = Array.from({ length: 48 }, (_, i) =
     color: PALETTE[i % PALETTE.length],
   }
 })
+
+export function getNearestNodeIndices(fromIndex: number, max = 3, maxDist = 9) {
+  const from = campaignWorldPositions[fromIndex]
+  return campaignWorldPositions
+    .map((p, i) => ({
+      i,
+      d: Math.hypot(p.x - from.x, p.y - from.y, p.z - from.z),
+    }))
+    .filter((x) => x.i !== fromIndex && x.d < maxDist)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, max)
+    .map((x) => x.i)
+}

@@ -8,17 +8,31 @@ import {
   type ReactNode,
 } from 'react'
 import type { CampaignNode } from '../data/campaigns'
+import type { TerrainQuality } from '../hooks/useTerrainQuality'
 
 export type SignalStatus = 'idle' | 'processing' | 'ready'
 export type SectionId = 'hero' | 'about' | 'skills' | 'experience' | 'brief' | 'contact'
 
+const DEFAULT_SECTION_PROGRESS: Record<SectionId, number> = {
+  hero: 0,
+  about: 0,
+  skills: 0,
+  experience: 0,
+  brief: 0,
+  contact: 0,
+}
+
 type CommandContextValue = {
+  introComplete: boolean
+  setIntroComplete: (v: boolean) => void
   bootComplete: boolean
   setBootComplete: (v: boolean) => void
   signalStatus: SignalStatus
   setSignalStatus: (s: SignalStatus) => void
   activeSection: SectionId
   setActiveSection: (s: SectionId) => void
+  sectionProgress: Record<SectionId, number>
+  setSectionProgress: (id: SectionId, n: number) => void
   paletteOpen: boolean
   setPaletteOpen: (v: boolean) => void
   highlightCampaigns: boolean
@@ -30,8 +44,12 @@ type CommandContextValue = {
   scrollVelocity: number
   setScrollVelocity: (n: number) => void
   pointer: { x: number; y: number }
+  hoveredCampaignId: number | null
+  setHoveredCampaignId: (id: number | null) => void
   selectedCampaign: CampaignNode | null
   setSelectedCampaign: (c: CampaignNode | null) => void
+  terrainQuality: TerrainQuality
+  setTerrainQuality: (q: TerrainQuality) => void
   openPalette: () => void
   closePalette: () => void
 }
@@ -41,16 +59,24 @@ const CommandContext = createContext<CommandContextValue | null>(null)
 const SECTION_IDS: SectionId[] = ['hero', 'about', 'skills', 'experience', 'brief', 'contact']
 
 export function CommandProvider({ children }: { children: ReactNode }) {
+  const [introComplete, setIntroComplete] = useState(false)
   const [bootComplete, setBootComplete] = useState(false)
   const [signalStatus, setSignalStatus] = useState<SignalStatus>('idle')
   const [activeSection, setActiveSection] = useState<SectionId>('hero')
+  const [sectionProgress, setSectionProgressState] = useState(DEFAULT_SECTION_PROGRESS)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [highlightCampaigns, setHighlightCampaigns] = useState(false)
   const [logoHovered, setLogoHovered] = useState(false)
   const [journeyProgress, setJourneyProgress] = useState(0)
   const [scrollVelocity, setScrollVelocity] = useState(0)
   const [pointer, setPointer] = useState({ x: 0, y: 0 })
+  const [hoveredCampaignId, setHoveredCampaignId] = useState<number | null>(null)
   const [selectedCampaign, setSelectedCampaign] = useState<CampaignNode | null>(null)
+  const [terrainQuality, setTerrainQuality] = useState<TerrainQuality>('high')
+
+  const setSectionProgress = useCallback((id: SectionId, n: number) => {
+    setSectionProgressState((prev) => ({ ...prev, [id]: n }))
+  }, [])
 
   const openPalette = useCallback(() => setPaletteOpen(true), [])
   const closePalette = useCallback(() => setPaletteOpen(false), [])
@@ -84,6 +110,7 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
+    if (!bootComplete) return
     const elements = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[]
     if (!elements.length) return
 
@@ -105,12 +132,16 @@ export function CommandProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
+      introComplete,
+      setIntroComplete,
       bootComplete,
       setBootComplete,
       signalStatus,
       setSignalStatus,
       activeSection,
       setActiveSection,
+      sectionProgress,
+      setSectionProgress,
       paletteOpen,
       setPaletteOpen,
       highlightCampaigns,
@@ -122,24 +153,33 @@ export function CommandProvider({ children }: { children: ReactNode }) {
       scrollVelocity,
       setScrollVelocity,
       pointer,
+      hoveredCampaignId,
+      setHoveredCampaignId,
       selectedCampaign,
       setSelectedCampaign,
+      terrainQuality,
+      setTerrainQuality,
       openPalette,
       closePalette,
     }),
     [
+      introComplete,
       bootComplete,
       signalStatus,
       activeSection,
+      sectionProgress,
       paletteOpen,
       highlightCampaigns,
       logoHovered,
       journeyProgress,
       scrollVelocity,
       pointer,
+      hoveredCampaignId,
       selectedCampaign,
+      terrainQuality,
       openPalette,
       closePalette,
+      setSectionProgress,
     ],
   )
 

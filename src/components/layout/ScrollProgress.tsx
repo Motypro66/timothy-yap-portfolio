@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import SignalDot from '../ui/SignalDot'
 
+import { useCommand } from '../../context/CommandContext'
+
 export default function ScrollProgress() {
+  const { introComplete, bootComplete } = useCommand()
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
@@ -14,6 +17,8 @@ export default function ScrollProgress() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  if (!introComplete || !bootComplete) return null
 
   return (
     <div className="scroll-progress" aria-hidden="true">

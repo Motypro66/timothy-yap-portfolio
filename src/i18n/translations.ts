@@ -2,6 +2,13 @@ export type Lang = 'en' | 'zh'
 
 export const translations = {
   en: {
+    intro: {
+      initializing: 'INITIALIZING SIGNAL TERRAIN',
+      title: 'Campaign Command',
+      tagline: 'Scroll-driven portfolio · Lead gen operator · AI on the signal',
+      enter: 'Enter Terrain',
+      skip: 'Skip intro',
+    },
     nav: {
       about: 'About',
       skills: 'Skills',
@@ -174,6 +181,13 @@ export const translations = {
     ],
   },
   zh: {
+    intro: {
+      initializing: '正在初始化信号地形',
+      title: 'Campaign Command',
+      tagline: '滚动驱动作品集 · Lead Gen 操作员 · AI 读信号',
+      enter: '进入地形',
+      skip: '跳过开场',
+    },
     nav: {
       about: '关于',
       skills: '技能',
