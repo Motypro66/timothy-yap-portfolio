@@ -159,6 +159,7 @@ function WebGLCanvas({ dpr, quality }: { dpr: number; quality: ReturnType<typeof
 
   return (
     <Canvas
+      style={{ width: '100%', height: '100%', display: 'block' }}
       shadows={quality !== 'low'}
       dpr={dpr}
       camera={{ fov: 52, near: 0.05, far: 40, position: [0, 1.72, 5.4] }}

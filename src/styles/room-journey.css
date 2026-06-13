@@ -9,6 +9,11 @@
   position: fixed;
   inset: 0;
   z-index: 0;
+  background: #e8dfd4;
+}
+
+.room-canvas--live {
+  background: #e8dfd4;
 }
 
 .room-canvas canvas {
@@ -130,9 +135,9 @@
   align-items: center;
   gap: 0.45rem;
   text-decoration: none;
-  color: #6b5f52;
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
+  color: #3d342b;
+  opacity: 0.88;
+  transition: opacity 0.2s ease, color 0.2s ease;
 }
 
 .minimal-rail__item:hover,
