@@ -175,9 +175,13 @@ export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
   const minTravel = Math.max(1.8, size.z * 0.42)
   const intoRoom = new THREE.Vector3(0, 0, 1)
 
-  const heroTarget = new THREE.Vector3(desk.x, look + (layout.ceiling - layout.floor) * 0.05, backZ - size.z * 0.06)
+  const heroTarget = new THREE.Vector3(
+    shelf.x,
+    look + (layout.ceiling - layout.floor) * 0.08,
+    shelf.z,
+  )
   const heroPos = ensureMinDistance(
-    new THREE.Vector3(center.x + size.x * 0.06, eye, entranceZ),
+    new THREE.Vector3(xR, eye, entranceZ + size.z * 0.06),
     heroTarget,
     minTravel,
     intoRoom,
