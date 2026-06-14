@@ -43,6 +43,18 @@ export default function LogoIntro() {
     const ctx = gsap.context(() => {
       gsap.set(mark, { xPercent: -50, yPercent: -50, transformOrigin: 'center center' })
 
+      // The artwork only fills the left part of the 168-wide viewBox, so centre
+      // it by its REAL bounding box (otherwise it looks shifted left).
+      const content = mark.querySelector('.li-content') as SVGGraphicsElement | null
+      if (content) {
+        try {
+          const bb = content.getBBox()
+          gsap.set(content, { x: 84 - (bb.x + bb.width / 2), y: 20 - (bb.y + bb.height / 2) })
+        } catch {
+          /* getBBox may throw before layout in rare cases — ignore */
+        }
+      }
+
       const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
       strokes.forEach((p) => {
         const len = p.getTotalLength()
@@ -93,29 +105,31 @@ export default function LogoIntro() {
       <div className="logo-intro__bg li-bg" />
       <div className="logo-intro__mark" ref={markRef}>
         <svg className="logo-intro__svg" viewBox="0 0 168 40" xmlns="http://www.w3.org/2000/svg">
-          <path className="li-stroke" d="M6 8h16" stroke="#3d2e2a" strokeWidth="2.8" strokeLinecap="round" />
-          <path className="li-stroke" d="M14 8v22" stroke="#3d2e2a" strokeWidth="2.8" strokeLinecap="round" />
-          <path
-            className="li-stroke"
-            d="M14 26c6 0 11-3 12-8"
-            stroke="#3d2e2a"
-            strokeWidth="2.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <circle className="li-dot" cx="26" cy="16" r="3.2" fill="#f5a623" />
-          <text
-            className="li-word"
-            x="34"
-            y="27"
-            fill="#3d2e2a"
-            fontFamily="'Fraunces', Georgia, serif"
-            fontSize="20"
-            fontWeight="700"
-            letterSpacing="-0.02em"
-          >
-            imothy
-          </text>
+          <g className="li-content">
+            <path className="li-stroke" d="M6 8h16" stroke="#3d2e2a" strokeWidth="2.8" strokeLinecap="round" />
+            <path className="li-stroke" d="M14 8v22" stroke="#3d2e2a" strokeWidth="2.8" strokeLinecap="round" />
+            <path
+              className="li-stroke"
+              d="M14 26c6 0 11-3 12-8"
+              stroke="#3d2e2a"
+              strokeWidth="2.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle className="li-dot" cx="26" cy="16" r="3.2" fill="#f5a623" />
+            <text
+              className="li-word"
+              x="34"
+              y="27"
+              fill="#3d2e2a"
+              fontFamily="'Fraunces', Georgia, serif"
+              fontSize="20"
+              fontWeight="700"
+              letterSpacing="-0.02em"
+            >
+              imothy
+            </text>
+          </g>
         </svg>
       </div>
     </div>
