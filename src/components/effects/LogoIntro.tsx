@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
+import LogoContent from '../ui/LogoContent'
+import { LOGO_VIEWBOX } from '../ui/logoTokens'
 
 const VIEWBOX_CX = 84
 const VIEWBOX_CY = 20
-/** Measured fallback when getBBox is unavailable before first paint (common on mobile). */
 const CONTENT_OFFSET_FALLBACK = { x: 26.5, y: 0.5 }
 
 function centerSvgContent(content: SVGGraphicsElement | null) {
@@ -21,6 +22,30 @@ function centerSvgContent(content: SVGGraphicsElement | null) {
   }
 }
 
+function getGroupScreenCenter(svg: SVGSVGElement, group: SVGGraphicsElement) {
+  const bb = group.getBBox()
+  const pt = svg.createSVGPoint()
+  pt.x = bb.x + bb.width / 2
+  pt.y = bb.y + bb.height / 2
+  const ctm = group.getScreenCTM()
+  if (!ctm) return null
+  return pt.matrixTransform(ctm)
+}
+
+function setTransformOriginToContent(
+  mark: HTMLElement,
+  svg: SVGSVGElement,
+  group: SVGGraphicsElement,
+) {
+  const markRect = mark.getBoundingClientRect()
+  const center = getGroupScreenCenter(svg, group)
+  if (!center || markRect.width <= 0 || markRect.height <= 0) return
+
+  const originX = ((center.x - markRect.left) / markRect.width) * 100
+  const originY = ((center.y - markRect.top) / markRect.height) * 100
+  gsap.set(mark, { transformOrigin: `${originX}% ${originY}%` })
+}
+
 async function waitForLayout() {
   if (document.fonts?.ready) {
     try {
@@ -34,10 +59,6 @@ async function waitForLayout() {
   })
 }
 
-/**
- * Brand intro: draw the mark, hold centred, glide into the navbar.
- * Flexbox-centred (reliable on mobile); SVG content centred after fonts load.
- */
 export default function LogoIntro() {
   const [done, setDone] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -74,12 +95,13 @@ export default function LogoIntro() {
     void waitForLayout().then(() => {
       if (finished) return
 
-      const content = mark.querySelector('.li-content') as SVGGraphicsElement | null
+      const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
+      const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
 
       ctx = gsap.context(() => {
-        gsap.set(mark, { transformOrigin: '50% 50%', force3D: true })
+        gsap.set(mark, { force3D: true })
 
-        centerSvgContent(content)
+        centerSvgContent(introGroup)
 
         const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
         strokes.forEach((p) => {
@@ -89,22 +111,33 @@ export default function LogoIntro() {
         gsap.set('.li-dot', { scale: 0, svgOrigin: '26 16' })
         gsap.set('.li-word', { opacity: 0, y: 6 })
 
+        let flyTarget = { x: 0, y: -150, scale: 0.4 }
+
         const measureFly = () => {
-          const navLogo = document.querySelector('.navbar__logo-link')
-          const mr = mark.getBoundingClientRect()
-          const mcx = mr.left + mr.width / 2
-          const mcy = mr.top + mr.height / 2
+          const navSvg = document.querySelector('.navbar__logo-link .logo-mark') as SVGSVGElement | null
+          const navGroup = navSvg?.querySelector('.logo-content') as SVGGraphicsElement | null
 
-          if (!navLogo) {
-            return { x: 0, y: -150, scale: 0.4 }
+          if (!introSvg || !introGroup || !navSvg || !navGroup) {
+            return flyTarget
           }
 
-          const nr = navLogo.getBoundingClientRect()
-          return {
-            x: nr.left + nr.width / 2 - mcx,
-            y: nr.top + nr.height / 2 - mcy,
-            scale: nr.width / mr.width,
+          const from = getGroupScreenCenter(introSvg, introGroup)
+          const to = getGroupScreenCenter(navSvg, navGroup)
+          if (!from || !to) {
+            return flyTarget
           }
+
+          const navRect = navSvg.getBoundingClientRect()
+          const introRect = introSvg.getBoundingClientRect()
+          const scale =
+            navRect.height > 0 && introRect.height > 0 ? navRect.height / introRect.height : 0.4
+
+          flyTarget = {
+            x: to.x - from.x,
+            y: to.y - from.y,
+            scale,
+          }
+          return flyTarget
         }
 
         const tl = gsap.timeline({ onComplete: finish })
@@ -119,12 +152,18 @@ export default function LogoIntro() {
           .to('.li-word', { opacity: 1, y: 0, duration: 0.48, ease: 'power2.out' }, '-=0.26')
           .to({}, { duration: 0.5 })
           .addLabel('fly')
+          .add(() => {
+            if (introSvg && introGroup) {
+              setTransformOriginToContent(mark, introSvg, introGroup)
+            }
+            measureFly()
+          }, 'fly')
           .to(
             mark,
             {
-              x: () => measureFly().x,
-              y: () => measureFly().y,
-              scale: () => measureFly().scale,
+              x: () => flyTarget.x,
+              y: () => flyTarget.y,
+              scale: () => flyTarget.scale,
               duration: 0.72,
               ease: 'power3.inOut',
             },
@@ -148,32 +187,13 @@ export default function LogoIntro() {
       <div className="logo-intro__bg li-bg" />
       <div className="logo-intro__center">
         <div className="logo-intro__mark" ref={markRef}>
-          <svg className="logo-intro__svg" viewBox="0 0 168 40" xmlns="http://www.w3.org/2000/svg">
-            <g className="li-content">
-              <path className="li-stroke" d="M6 8h16" stroke="#3d2e2a" strokeWidth="2.8" strokeLinecap="round" />
-              <path className="li-stroke" d="M14 8v22" stroke="#3d2e2a" strokeWidth="2.8" strokeLinecap="round" />
-              <path
-                className="li-stroke"
-                d="M14 26c6 0 11-3 12-8"
-                stroke="#3d2e2a"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle className="li-dot" cx="26" cy="16" r="3.2" fill="#f5a623" />
-              <text
-                className="li-word"
-                x="34"
-                y="27"
-                fill="#3d2e2a"
-                fontFamily="'Fraunces', Georgia, serif"
-                fontSize="20"
-                fontWeight="700"
-                letterSpacing="-0.02em"
-              >
-                imothy
-              </text>
-            </g>
+          <svg className="logo-intro__svg" viewBox={LOGO_VIEWBOX} xmlns="http://www.w3.org/2000/svg">
+            <LogoContent
+              groupClassName="logo-content li-content"
+              strokeClassName="li-stroke"
+              dotClassName="li-dot"
+              wordClassName="li-word"
+            />
           </svg>
         </div>
       </div>

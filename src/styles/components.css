@@ -55,6 +55,7 @@
 .logo-mark {
   height: 36px;
   width: auto;
+  display: block;
 }
 
 .navbar__logo-link {
