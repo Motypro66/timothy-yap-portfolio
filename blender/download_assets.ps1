@@ -26,7 +26,17 @@ $textures = @(
   @('plastered_wall_nor_gl_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall/plastered_wall_nor_gl_1k.jpg'),
   @('plastered_wall_rough_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall/plastered_wall_rough_1k.jpg'),
   @('wood_table_diff_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_table/wood_table_diff_1k.jpg'),
-  @('wood_table_rough_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_table/wood_table_rough_1k.jpg')
+  @('wood_table_nor_gl_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_table/wood_table_nor_gl_1k.jpg'),
+  @('wood_table_rough_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_table/wood_table_rough_1k.jpg'),
+  @('brown_leather_diff_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_leather/brown_leather_diff_1k.jpg'),
+  @('brown_leather_nor_gl_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_leather/brown_leather_nor_gl_1k.jpg'),
+  @('brown_leather_rough_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_leather/brown_leather_rough_1k.jpg'),
+  @('carpet_persian_diff_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/carpet_persian/carpet_persian_diff_1k.jpg'),
+  @('carpet_persian_nor_gl_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/carpet_persian/carpet_persian_nor_gl_1k.jpg'),
+  @('carpet_persian_rough_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/carpet_persian/carpet_persian_rough_1k.jpg'),
+  @('metal_plate_diff_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate/metal_plate_diff_1k.jpg'),
+  @('metal_plate_nor_gl_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate/metal_plate_nor_gl_1k.jpg'),
+  @('metal_plate_rough_1k.jpg', 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate/metal_plate_rough_1k.jpg')
 )
 foreach ($pair in $textures) {
   $out = Join-Path $tex $pair[0]

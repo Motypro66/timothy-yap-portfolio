@@ -268,48 +268,83 @@ export function polishRoomMaterials(root: THREE.Object3D) {
     for (const material of materials) {
       if (!(material instanceof THREE.MeshStandardMaterial)) continue
 
-      if (name.includes('screen') || (name.includes('monitor') && !name.includes('stand'))) {
+      if (name.includes('monitorscreen') || name.includes('screenglow')) {
         material.emissive.set('#5bb5e8')
-        material.emissiveIntensity = 2.2
-        material.roughness = 0.12
-        continue
-      }
-
-      if (name.includes('window') || name.includes('glass') || name.includes('sunstreak')) {
-        material.emissive.set('#d4ecff')
-        material.emissiveIntensity = 0.55
-        material.roughness = 0.06
-        material.metalness = 0.04
-        if (name.includes('glass')) {
-          material.transparent = true
-          material.opacity = 0.78
-        }
-        continue
-      }
-
-      material.envMapIntensity = 1.05
-
-      if (name.includes('floor') || name.includes('rug')) {
-        material.roughness = Math.min(material.roughness, 0.62)
+        material.emissiveIntensity = 2.4
+        material.roughness = 0.1
         material.metalness = 0
         continue
       }
 
-      if (name.includes('wood') || name.includes('desk') || name.includes('shelf')) {
-        material.roughness = Math.min(material.roughness, 0.42)
-        material.metalness = 0.04
+      if (name.includes('ceilinglight')) {
+        material.emissive.set('#fff4e0')
+        material.emissiveIntensity = 1.6
+        material.roughness = 0.35
+        continue
+      }
+
+      if (name.includes('windowglass') || (name.includes('glass') && name.includes('window'))) {
+        material.emissive.set('#c8e8ff')
+        material.emissiveIntensity = 0.35
+        material.roughness = 0.04
+        material.metalness = 0.02
+        material.transparent = true
+        material.opacity = 0.72
+        material.envMapIntensity = 1.2
+        continue
+      }
+
+      material.envMapIntensity = 1.12
+
+      if (name.includes('floor') && !name.includes('mouse')) {
+        material.roughness = Math.min(material.roughness, 0.58)
+        material.metalness = 0
+        continue
+      }
+
+      if (name.includes('rug') || name.includes('carpet')) {
+        material.roughness = Math.min(material.roughness, 0.88)
+        material.metalness = 0
+        material.envMapIntensity = 0.85
+        continue
+      }
+
+      if (
+        name.includes('wood') ||
+        name.includes('desk') ||
+        name.includes('shelf') ||
+        name.includes('trim') ||
+        name.includes('frame') ||
+        name.includes('baseboard') ||
+        name.includes('crown')
+      ) {
+        material.roughness = Math.min(material.roughness, 0.38)
+        material.metalness = 0.05
         continue
       }
 
       if (name.includes('wall') || name.includes('ceil')) {
-        material.roughness = Math.max(material.roughness, 0.82)
+        material.roughness = Math.max(material.roughness, 0.78)
         material.metalness = 0
+        continue
       }
 
-      if (name.includes('plant')) {
-        material.roughness = 0.72
-        material.emissive.set('#1a4020')
-        material.emissiveIntensity = 0.08
+      if (name.includes('keyboard') || name.includes('mousepad') || name.includes('bezel') || name.includes('plastic')) {
+        material.roughness = Math.max(material.roughness, 0.45)
+        material.metalness = 0.08
+        continue
+      }
+
+      if ((name.includes('metal') || name.includes('mouse')) && !name.includes('pad')) {
+        material.metalness = Math.max(material.metalness, 0.65)
+        material.roughness = Math.min(material.roughness, 0.35)
+        continue
+      }
+
+      if (name.includes('plant') || name.includes('pot')) {
+        material.roughness = 0.68
+        material.emissive.set('#183818')
+        material.emissiveIntensity = 0.06
       }
     }
   })

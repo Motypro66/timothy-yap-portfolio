@@ -130,23 +130,25 @@ function SceneContent({
     <>
       <color attach="background" args={['#e8dfd4']} />
       <fog attach="fog" args={['#e8dfd4', 28, 55]} />
-      <Environment preset="apartment" environmentIntensity={0.95} />
-      <ambientLight intensity={0.28} color="#fff8ef" />
-      <hemisphereLight args={['#fff8ef', '#9a7355', 0.42]} />
+      <Environment preset="apartment" environmentIntensity={1.08} />
+      <ambientLight intensity={0.32} color="#fff8ef" />
+      <hemisphereLight args={['#fff8ef', '#8a6548', 0.48]} />
       <directionalLight
         position={[4.5, 7, 3.5]}
-        intensity={1.55}
+        intensity={1.68}
         color="#fff0d0"
         castShadow={shadows}
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={[1536, 1536]}
         shadow-camera-far={20}
         shadow-camera-left={-5}
         shadow-camera-right={5}
         shadow-camera-top={5}
         shadow-camera-bottom={-5}
+        shadow-bias={-0.0004}
       />
-      <directionalLight position={[3.2, 4, -1.5]} intensity={0.72} color="#d8ecff" />
-      <pointLight position={[0, 1.35, -1.45]} intensity={0.38} color="#7ec8f0" distance={5} />
+      <directionalLight position={[3.2, 4, -1.5]} intensity={0.82} color="#d8ecff" />
+      <pointLight position={[0, 2.55, -1.2]} intensity={0.28} color="#fff4e6" distance={6} decay={2} />
+      <pointLight position={[0, 1.35, -1.45]} intensity={0.42} color="#7ec8f0" distance={5} decay={2} />
       {fallback ? (
         <FallbackRoom onReady={onRoomReady} />
       ) : (
@@ -155,11 +157,11 @@ function SceneContent({
       {shadows && (
         <ContactShadows
           position={[0, 0.02, 0]}
-          opacity={0.35}
-          scale={12}
-          blur={2.2}
-          far={4}
-          color="#6b4a2a"
+          opacity={0.42}
+          scale={14}
+          blur={2.6}
+          far={4.5}
+          color="#5c3f24"
         />
       )}
       <CameraRig />
@@ -233,7 +235,7 @@ function WebGLCanvas({
       onCreated={({ gl }) => {
         gl.setClearColor('#e8dfd4')
         gl.toneMapping = THREE.ACESFilmicToneMapping
-        gl.toneMappingExposure = 1.22
+        gl.toneMappingExposure = 1.28
         gl.shadowMap.enabled = quality !== 'low'
         gl.shadowMap.type = THREE.PCFSoftShadowMap
       }}
