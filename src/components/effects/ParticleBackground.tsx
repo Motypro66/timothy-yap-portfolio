@@ -21,7 +21,7 @@ function buildOptions(mobile: boolean): ISourceOptions {
       },
       move: {
         enable: true,
-        speed: mobile ? 0.5 : 0.6,
+        speed: mobile ? 0.72 : 0.82,
         direction: 'none',
         random: true,
         outModes: { default: 'bounce' },
