@@ -63,7 +63,14 @@ export default function LogoContent({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle className={dotClassName} cx="26" cy="16" r="3.2" fill={LOGO_SUN} />
+      <circle
+        className={dotClassName}
+        cx="26"
+        cy="16"
+        r="3.2"
+        fill={LOGO_SUN}
+        opacity={dotClassName ? 0 : 1}
+      />
       {showWord && (
         <text
           className={wordClassName}

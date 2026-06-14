@@ -142,15 +142,13 @@ export default function LogoIntro() {
           const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
           applyStrokeDash(strokes)
 
-          gsap.set(mark, { autoAlpha: 1 })
-
           gsap.set('.li-dot', {
             attr: { cy: 5 },
-            opacity: 0,
+            autoAlpha: 0,
             scale: 0.45,
             svgOrigin: '26 16',
           })
-          gsap.set('.li-word', { opacity: 0, y: 4 })
+          gsap.set('.li-word', { autoAlpha: 0, y: 4 })
 
           let flyTarget = { x: 0, y: -150, scale: 0.4 }
 
@@ -188,6 +186,9 @@ export default function LogoIntro() {
 
           const tl = gsap.timeline({ onComplete: finish })
 
+        tl.set(mark, { autoAlpha: 1 }, 0)
+          .set(strokes, { opacity: 1, visibility: 'visible' }, 0)
+
         tl.to('.logo-intro__ambience', { opacity: mobile ? 0.55 : 1, duration: 0.28, ease: 'power2.out' })
           .to(
             '.logo-intro__orb',
@@ -205,7 +206,7 @@ export default function LogoIntro() {
             '.li-dot',
             {
               attr: { cy: 16 },
-              opacity: 1,
+              autoAlpha: 1,
               duration: 0.36,
               ease: 'power2.in',
             },
@@ -223,7 +224,7 @@ export default function LogoIntro() {
             { scale: 1.08, opacity: 0.42, duration: 0.24, ease: 'power2.out' },
             '-=0.2',
           )
-          .to('.li-word', { opacity: 1, y: 0, duration: 0.34, ease: 'power2.out' }, '-=0.18')
+          .to('.li-word', { autoAlpha: 1, y: 0, duration: 0.34, ease: 'power2.out' }, '-=0.18')
 
         if (!mobile) {
           tl.to('.li-sweep', { x: '130%', duration: 0.42, ease: 'power2.inOut' }, '-=0.24')

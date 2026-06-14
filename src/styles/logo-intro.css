@@ -9,6 +9,11 @@
   contain: strict;
 }
 
+/* Nav logo sits underneath — hide until intro overlay unmounts */
+.logo-intro ~ .navbar .logo-mark {
+  visibility: hidden;
+}
+
 .logo-intro__bg {
   position: absolute;
   inset: 0;
@@ -171,11 +176,16 @@
 .logo-intro .li-stroke {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .logo-intro .li-dot,
-.logo-intro .li-word {
+.logo-intro .li-word,
+.logo-intro .li-sun-pulse,
+.logo-intro .li-sun-glow {
   opacity: 0;
+  visibility: hidden;
 }
 
 .logo-intro__sweep {
