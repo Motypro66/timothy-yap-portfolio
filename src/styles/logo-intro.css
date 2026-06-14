@@ -9,9 +9,13 @@
   contain: layout style;
 }
 
-/* Nav logo sits underneath — hide until intro overlay unmounts */
+/* Nav logo sits underneath — hide until fly handoff crossfades in */
 .logo-intro ~ .navbar .logo-mark {
   visibility: hidden;
+}
+
+.logo-intro--handoff ~ .navbar .logo-mark {
+  visibility: visible;
 }
 
 .logo-intro__bg {

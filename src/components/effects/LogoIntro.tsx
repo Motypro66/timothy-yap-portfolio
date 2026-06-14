@@ -1,76 +1,20 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import gsap from 'gsap'
 import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
 import LogoContent from '../ui/LogoContent'
-import { LOGO_SUN, LOGO_VIEWBOX } from '../ui/logoTokens'
+import { LOGO_VIEWBOX } from '../ui/logoTokens'
 
-const HOLD_BEFORE_FLY = 0.15
-const FLY_DURATION = 0.82
-const LAYOUT_SAFETY_MS = 5200
-const TIMELINE_SAFETY_MS = 3600
+const DOT_FALL_Y = -11
+
+const HOLD_BEFORE_FLY = 0.06
+const FLY_DURATION = 0.44
+const LAYOUT_SAFETY_MS = 3200
+const TIMELINE_SAFETY_MS = 2400
 const VIEWBOX_CX = 84
 const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
 const MOTE_COUNT = 4
 const MOBILE_QUERY = '(max-width: 960px)'
-const FONT_WAIT_MS = 180
-const STROKE_DRAW_DUR = 0.38
-const STROKE_STAGGER = 0.12
-
-function prependToGroup(group: SVGGraphicsElement, node: SVGElement) {
-  const first = group.firstElementChild
-  if (first) group.insertBefore(node, first)
-  else group.appendChild(node)
-}
-
-function createIntroSunDot(group: SVGGraphicsElement | null) {
-  if (!group || group.querySelector('.li-dot')) return
-  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-  dot.setAttribute('class', 'li-dot')
-  dot.setAttribute('cx', '26')
-  dot.setAttribute('cy', '5')
-  dot.setAttribute('r', '0')
-  dot.setAttribute('fill', LOGO_SUN)
-  dot.setAttribute('opacity', '0')
-  group.appendChild(dot)
-}
-
-function createIntroSunPulse(group: SVGGraphicsElement | null) {
-  if (!group || group.querySelector('.li-sun-pulse')) return
-  const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-  pulse.setAttribute('class', 'li-sun-pulse')
-  pulse.setAttribute('cx', '26')
-  pulse.setAttribute('cy', '16')
-  pulse.setAttribute('r', '10')
-  pulse.setAttribute('fill', LOGO_SUN)
-  pulse.setAttribute('opacity', '0')
-  prependToGroup(group, pulse)
-}
-
-function createIntroSunGlow(group: SVGGraphicsElement | null) {
-  if (!group || group.querySelector('.li-sun-glow')) return
-  const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-  glow.setAttribute('class', 'li-sun-glow')
-  glow.setAttribute('cx', '26')
-  glow.setAttribute('cy', '16')
-  glow.setAttribute('r', '22')
-  glow.setAttribute('fill', 'url(#logoSunGlow)')
-  glow.setAttribute('opacity', '0')
-  prependToGroup(group, glow)
-}
-
-function createIntroSunEffects(group: SVGGraphicsElement | null) {
-  createIntroSunGlow(group)
-  createIntroSunPulse(group)
-  createIntroSunDot(group)
-  gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
-  gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
-  gsap.set('.li-dot', {
-    attr: { cy: 5, r: 0 },
-    fill: LOGO_SUN,
-    autoAlpha: 0,
-  })
-}
 
 function applyStrokeDash(strokes: SVGPathElement[]) {
   strokes.forEach((p) => {
@@ -127,24 +71,21 @@ function clearIntroActive() {
   document.documentElement.classList.remove('intro-active')
 }
 
-async function waitForLogoFont() {
-  const cap = new Promise<void>((resolve) => {
-    window.setTimeout(resolve, FONT_WAIT_MS)
-  })
-  const load = (async () => {
-    if (!document.fonts?.load) return
+async function waitForLayout() {
+  if (document.fonts?.ready) {
     try {
-      await document.fonts.load('700 20px Fraunces')
+      await document.fonts.ready
     } catch {
       /* ignore */
     }
-  })()
-  await Promise.race([load, cap])
+  }
+  await new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  })
 }
 
 export default function LogoIntro() {
   const [done, setDone] = useState(false)
-  const [svgReady, setSvgReady] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const markRef = useRef<HTMLDivElement>(null)
   const isMobile =
@@ -155,18 +96,10 @@ export default function LogoIntro() {
     return () => clearIntroActive()
   }, [])
 
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setSvgReady(true)
-      return
-    }
-    void waitForLogoFont().then(() => setSvgReady(true))
-  }, [])
-
   useLayoutEffect(() => {
     const root = rootRef.current
     const mark = markRef.current
-    if (!svgReady || !root || !mark) return
+    if (!root || !mark) return
 
     let finished = false
     let safetyLayout = 0
@@ -177,11 +110,7 @@ export default function LogoIntro() {
       finished = true
       window.clearTimeout(safetyLayout)
       window.clearTimeout(safetyTimeline)
-      clearIntroActive()
-      window.dispatchEvent(new CustomEvent(LOGO_INTRO_COMPLETE))
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setDone(true))
-      })
+      requestAnimationFrame(() => setDone(true))
     }
 
     safetyLayout = window.setTimeout(finish, LAYOUT_SAFETY_MS)
@@ -195,157 +124,168 @@ export default function LogoIntro() {
     }
 
     let ctx: gsap.Context | undefined
-    let startFrame = 0
     const mobile = window.matchMedia(MOBILE_QUERY).matches
-    const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
-    const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
 
-    startFrame = requestAnimationFrame(() => {
-    ctx = gsap.context(() => {
-      gsap.set(mark, { force3D: true, autoAlpha: 0 })
-      gsap.set('.logo-intro__ambience', { opacity: 0 })
-      gsap.set('.logo-intro__orb', { opacity: 0 })
-      gsap.set('.li-mote', { opacity: 0, y: 6 })
-      gsap.set('.li-sweep', { x: '-130%' })
+    void waitForLayout().then(() => {
+      if (finished) return
 
-      centerSvgContent(introGroup)
+      const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
+      const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
 
-      const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
-      applyStrokeDash(strokes)
+      ctx = gsap.context(() => {
+        gsap.set(mark, { force3D: true, autoAlpha: 0 })
+        gsap.set('.logo-intro__ambience', { opacity: 0 })
+        gsap.set('.logo-intro__orb', { opacity: 0 })
+        gsap.set('.li-mote', { opacity: 0, y: 6 })
+        gsap.set('.li-sweep', { x: '-130%' })
+        gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
+        gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
 
-      gsap.set('.li-word', { autoAlpha: 0, y: 4 })
+        centerSvgContent(introGroup)
 
-      let flyTarget = { x: 0, y: -150, scale: 0.4 }
+        const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
+        applyStrokeDash(strokes)
 
-      const measureFly = () => {
-        const navSvg = document.querySelector('.navbar__logo-link .logo-mark') as SVGSVGElement | null
-        const navGroup = navSvg?.querySelector('.logo-content') as SVGGraphicsElement | null
-
-        if (!introSvg || !introGroup || !navSvg || !navGroup) {
-          return flyTarget
-        }
-
-        const from = getGroupScreenCenter(introSvg, introGroup)
-        const to = getGroupScreenCenter(navSvg, navGroup)
-        if (!from || !to) {
-          return flyTarget
-        }
-
-        const navRect = navSvg.getBoundingClientRect()
-        const introRect = introSvg.getBoundingClientRect()
-        const scale =
-          navRect.height > 0 && introRect.height > 0 ? navRect.height / introRect.height : 0.4
-
-        flyTarget = {
-          x: to.x - from.x,
-          y: to.y - from.y,
-          scale,
-        }
-        return flyTarget
-      }
-
-      measureFly()
-
-      window.clearTimeout(safetyLayout)
-      safetyTimeline = window.setTimeout(finish, TIMELINE_SAFETY_MS)
-
-      const tl = gsap.timeline({ onComplete: finish })
-
-      tl.set(mark, { autoAlpha: 1, force3D: true }, 0)
-        .set(introSvg, { visibility: 'visible' }, 0)
-        .set(strokes, { opacity: 1, visibility: 'visible' }, 0)
-        .add(() => root.classList.add('logo-intro--drawing'), 0)
-        .to(
-          strokes,
-          {
-            strokeDashoffset: 0,
-            duration: STROKE_DRAW_DUR,
-            ease: 'none',
-            stagger: STROKE_STAGGER,
-          },
-          0.05,
-        )
-        .set(strokes, { attr: { 'stroke-linecap': 'round' } })
-        .add(() => {
-          clearStrokeWillChange(strokes)
-          root.classList.remove('logo-intro--drawing')
-          createIntroSunEffects(introGroup)
+        gsap.set('.li-dot', {
+          y: DOT_FALL_Y,
+          autoAlpha: 0,
+          scale: 0.45,
+          svgOrigin: '26 16',
         })
-        .to(
-          '.li-dot',
-          {
-            attr: { cy: 16, r: 3.2 },
-            autoAlpha: 1,
-            duration: 0.34,
-            ease: 'power2.in',
-          },
-          '-=0.02',
-        )
-        .to(
-          '.li-sun-pulse',
-          { scale: 1.55, opacity: 0.34, duration: 0.22, ease: 'power2.out' },
-          '-=0.1',
-        )
-        .to('.li-sun-pulse', { scale: 2.1, opacity: 0, duration: 0.18, ease: 'power2.in' })
-        .to(
-          '.li-sun-glow',
-          { scale: 1.08, opacity: 0.42, duration: 0.24, ease: 'power2.out' },
-          '-=0.18',
-        )
-        .to('.li-word', { autoAlpha: 1, y: 0, duration: 0.32, ease: 'power2.out' }, '-=0.16')
-        .to(
-          '.logo-intro__ambience',
-          { opacity: mobile ? 0.55 : 1, duration: 0.32, ease: 'power2.out' },
-          '-=0.28',
-        )
-        .add(() => root.classList.add('logo-intro--orbs-live'))
-        .to(
-          '.logo-intro__orb',
-          { opacity: mobile ? 0.5 : 0.85, duration: 0.28, stagger: 0.05, ease: 'power2.out' },
-          '<',
-        )
+        gsap.set('.li-word', { autoAlpha: 0, y: 4 })
 
-      if (!mobile) {
-        tl.to('.li-sweep', { x: '130%', duration: 0.42, ease: 'power2.inOut' }, '-=0.24').to(
-          '.li-mote',
-          { opacity: 0.45, y: -12, duration: 0.48, stagger: 0.04, ease: 'power2.out' },
-          '-=0.32',
-        )
-      }
+        let flyTarget = { x: 0, y: -150, scale: 0.4 }
 
-      tl.to({}, { duration: HOLD_BEFORE_FLY })
-        .addLabel('fly')
-        .add(() => {
-          if (introSvg && introGroup) {
-            setTransformOriginToContent(mark, introSvg, introGroup)
+        const measureFly = () => {
+          const navSvg = document.querySelector('.navbar__logo-link .logo-mark') as SVGSVGElement | null
+          const navGroup = navSvg?.querySelector('.logo-content') as SVGGraphicsElement | null
+
+          if (!introSvg || !introGroup || !navSvg || !navGroup) {
+            return flyTarget
           }
-          measureFly()
-        }, 'fly')
-        .to(
-          mark,
-          {
-            x: () => flyTarget.x,
-            y: () => flyTarget.y,
-            scale: () => flyTarget.scale,
-            duration: FLY_DURATION,
-            ease: 'power3.inOut',
-          },
-          'fly',
-        )
-        .to('.logo-intro__ambience', { opacity: 0, duration: 0.38, ease: 'power2.in' }, 'fly')
-        .to('.li-bg', { opacity: 0, duration: 0.42, ease: 'power2.inOut' }, 'fly')
-        .to(mark, { opacity: 0, duration: 0.18 }, `fly+=${FLY_DURATION - 0.1}`)
-    }, root)
+
+          const from = getGroupScreenCenter(introSvg, introGroup)
+          const to = getGroupScreenCenter(navSvg, navGroup)
+          if (!from || !to) {
+            return flyTarget
+          }
+
+          const navRect = navSvg.getBoundingClientRect()
+          const introRect = introSvg.getBoundingClientRect()
+          const scale =
+            navRect.height > 0 && introRect.height > 0 ? navRect.height / introRect.height : 0.4
+
+          flyTarget = {
+            x: to.x - from.x,
+            y: to.y - from.y,
+            scale,
+          }
+          return flyTarget
+        }
+
+        measureFly()
+
+        window.clearTimeout(safetyLayout)
+        safetyTimeline = window.setTimeout(finish, TIMELINE_SAFETY_MS)
+
+        const tl = gsap.timeline({ onComplete: finish })
+
+        tl.set(mark, { autoAlpha: 1, force3D: true }, 0)
+          .set(introSvg, { visibility: 'visible' }, 0)
+          .set(strokes, { opacity: 1, visibility: 'visible' }, 0)
+          .add(() => root.classList.add('logo-intro--drawing'), 0)
+          .to(
+            strokes,
+            {
+              strokeDashoffset: 0,
+              duration: 0.3,
+              ease: 'power2.inOut',
+              stagger: 0.04,
+            },
+            0.02,
+          )
+          .add(() => {
+            clearStrokeWillChange(strokes)
+            strokes.forEach((p) => p.setAttribute('stroke-linecap', 'round'))
+            root.classList.remove('logo-intro--drawing')
+          })
+          .to(
+            '.li-dot',
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.26,
+              ease: 'power2.in',
+            },
+            '-=0.06',
+          )
+          .to('.li-dot', { scale: 1, duration: 0.16, ease: 'back.out(2.4)' }, '-=0.08')
+          .to(
+            '.li-sun-pulse',
+            { scale: 1.55, opacity: 0.34, duration: 0.16, ease: 'power2.out' },
+            '-=0.1',
+          )
+          .to('.li-sun-pulse', { scale: 2.1, opacity: 0, duration: 0.14, ease: 'power2.in' })
+          .to(
+            '.li-sun-glow',
+            { scale: 1.08, opacity: 0.42, duration: 0.18, ease: 'power2.out' },
+            '-=0.16',
+          )
+          .to('.li-word', { autoAlpha: 1, y: 0, duration: 0.22, ease: 'power2.out' }, '-=0.14')
+
+        if (mobile) {
+          tl.to('.logo-intro__ambience', { opacity: 0.55, duration: 0.18, ease: 'power2.out' }, '-=0.18')
+        } else {
+          tl.to('.logo-intro__ambience', { opacity: 1, duration: 0.18, ease: 'power2.out' }, '-=0.18')
+            .add(() => root.classList.add('logo-intro--orbs-live'))
+            .to(
+              '.logo-intro__orb',
+              { opacity: 0.85, duration: 0.22, stagger: 0.04, ease: 'power2.out' },
+              '-=0.14',
+            )
+            .to('.li-sweep', { x: '130%', duration: 0.34, ease: 'power2.inOut' }, '-=0.18')
+            .to(
+              '.li-mote',
+              { opacity: 0.45, y: -12, duration: 0.4, stagger: 0.03, ease: 'power2.out' },
+              '-=0.28',
+            )
+        }
+
+        tl.to({}, { duration: HOLD_BEFORE_FLY })
+          .addLabel('fly')
+          .add(() => {
+            root.classList.add('logo-intro--handoff')
+            clearIntroActive()
+            window.dispatchEvent(new CustomEvent(LOGO_INTRO_COMPLETE))
+            if (introSvg && introGroup) {
+              setTransformOriginToContent(mark, introSvg, introGroup)
+            }
+            measureFly()
+          }, 'fly')
+          .to(
+            mark,
+            {
+              x: () => flyTarget.x,
+              y: () => flyTarget.y,
+              scale: () => flyTarget.scale,
+              duration: FLY_DURATION,
+              ease: 'power3.inOut',
+            },
+            'fly',
+          )
+          .to('.logo-intro__ambience', { opacity: 0, duration: 0.28, ease: 'power2.in' }, 'fly')
+          .to('.li-bg', { opacity: 0, duration: 0.32, ease: 'power2.inOut' }, 'fly')
+          .to(mark, { autoAlpha: 0, duration: 0.1 }, `fly+=${FLY_DURATION - 0.08}`)
+      }, root)
     })
 
     return () => {
-      cancelAnimationFrame(startFrame)
       window.clearTimeout(safetyLayout)
       window.clearTimeout(safetyTimeline)
-      root.classList.remove('logo-intro--drawing', 'logo-intro--orbs-live')
+      root.classList.remove('logo-intro--drawing', 'logo-intro--orbs-live', 'logo-intro--handoff')
       ctx?.revert()
     }
-  }, [svgReady])
+  }, [])
 
   if (done) return null
 
@@ -373,23 +313,23 @@ export default function LogoIntro() {
                 ))}
               </div>
             )}
-            {svgReady && (
-              <svg className="logo-intro__svg" viewBox={LOGO_VIEWBOX} xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <radialGradient id="logoSunGlow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#ffd166" stopOpacity="0.65" />
-                    <stop offset="55%" stopColor="#f5a623" stopOpacity="0.22" />
-                    <stop offset="100%" stopColor="#f5a623" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-                <LogoContent
-                  showSun={false}
-                  groupClassName="logo-content li-content"
-                  strokeClassName="li-stroke"
-                  wordClassName="li-word"
-                />
-              </svg>
-            )}
+            <svg className="logo-intro__svg" viewBox={LOGO_VIEWBOX} xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="logoSunGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#ffd166" stopOpacity="0.65" />
+                  <stop offset="55%" stopColor="#f5a623" stopOpacity="0.22" />
+                  <stop offset="100%" stopColor="#f5a623" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <LogoContent
+                introEffects
+                showSun={false}
+                groupClassName="logo-content li-content"
+                strokeClassName="li-stroke"
+                dotClassName="li-dot"
+                wordClassName="li-word"
+              />
+            </svg>
           </div>
         </div>
       </div>

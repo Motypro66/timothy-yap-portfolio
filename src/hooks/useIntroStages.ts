@@ -20,21 +20,17 @@ export function useIntroStages() {
     }
 
     let uiFrame = 0
-    let uiTimer = 0
     let effectsTimer = 0
 
+    // Intro complete fires at fly start — reveal page on the next frame (no extra hold).
     uiFrame = requestAnimationFrame(() => {
-      // Let the fly-to-nav finish and the overlay unmount before navbar/hero animate in.
-      uiTimer = window.setTimeout(() => {
-        setUiReady(true)
-        const mobile = window.matchMedia(MOBILE_QUERY).matches
-        effectsTimer = window.setTimeout(() => setEffectsReady(true), mobile ? 420 : 260)
-      }, 220)
+      setUiReady(true)
+      const mobile = window.matchMedia(MOBILE_QUERY).matches
+      effectsTimer = window.setTimeout(() => setEffectsReady(true), mobile ? 280 : 180)
     })
 
     return () => {
       cancelAnimationFrame(uiFrame)
-      window.clearTimeout(uiTimer)
       window.clearTimeout(effectsTimer)
     }
   }, [introComplete])

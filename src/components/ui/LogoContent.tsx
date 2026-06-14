@@ -14,6 +14,8 @@ type Props = {
   wordClassName?: string
   showWord?: boolean
   showSun?: boolean
+  /** Sun pulse rings — intro animation only */
+  introEffects?: boolean
 }
 
 /** Monoline T + sun dot + Fraunces wordmark (shared geometry). */
@@ -25,9 +27,23 @@ export default function LogoContent({
   wordClassName,
   showWord = true,
   showSun = true,
+  introEffects = false,
 }: Props) {
   return (
     <g className={groupClassName}>
+      {introEffects && (
+        <>
+          <circle
+            className="li-sun-glow"
+            cx="26"
+            cy="16"
+            r="22"
+            fill="url(#logoSunGlow)"
+            opacity="0"
+          />
+          <circle className="li-sun-pulse" cx="26" cy="16" r="10" fill={LOGO_SUN} opacity="0" />
+        </>
+      )}
       <path
         className={strokeClassName}
         pathLength={strokeClassName ? 1 : undefined}
@@ -59,14 +75,10 @@ export default function LogoContent({
         strokeLinejoin="round"
         opacity={strokeClassName ? 0 : 1}
       />
-      {showSun && (
-        <circle
-          className={['logo-sun', dotClassName].filter(Boolean).join(' ')}
-          cx="26"
-          cy="16"
-          r="3.2"
-          fill={LOGO_SUN}
-        />
+      {dotClassName ? (
+        <circle className={dotClassName} cx="26" cy="16" r="3.2" fill={LOGO_SUN} />
+      ) : (
+        showSun && <circle className="logo-sun" cx="26" cy="16" r="3.2" fill={LOGO_SUN} />
       )}
       {showWord && (
         <text
