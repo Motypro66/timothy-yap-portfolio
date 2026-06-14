@@ -24,7 +24,7 @@ export default function PersonIllustration() {
       />
       <path
         d="M42 95 Q60 110 78 95"
-        stroke="#5bb5e8"
+        stroke="#e8a838"
         strokeWidth="2"
         fill="none"
         strokeLinecap="round"

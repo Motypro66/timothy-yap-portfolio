@@ -36,14 +36,14 @@ const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http:/
   <rect width="1200" height="630" fill="url(#sun)"/>
 
   <circle cx="1000" cy="500" r="150" fill="#ff8c69" opacity="0.16" filter="url(#soft)"/>
-  <circle cx="1130" cy="330" r="110" fill="#5bb5e8" opacity="0.12" filter="url(#soft)"/>
+  <circle cx="1130" cy="330" r="110" fill="#e8a838" opacity="0.14" filter="url(#soft)"/>
   <circle cx="150" cy="560" r="120" fill="#ffd166" opacity="0.18" filter="url(#soft)"/>
 
   <!-- brand lockup -->
   <g transform="translate(92,74) scale(1.7)">
-    <path d="M6 8h16M14 8v22M14 26c6 0 11-3 12-8" stroke="#2a2218" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6 8h16M14 8v22M14 26c6 0 11-3 12-8" stroke="#2a2218" stroke-width="2.35" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <circle cx="26" cy="16" r="3.4" fill="#f5a623"/>
-    <text x="34" y="27" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="700" fill="#2a2218">imothy</text>
+    <text x="30" y="27" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="700" letter-spacing="-0.03em" fill="#2a2218">imothy</text>
   </g>
 
   <text x="92" y="312" font-family="'DejaVu Sans', sans-serif" font-size="23" letter-spacing="7" fill="#9a5a08">PERFORMANCE MARKETING</text>

@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:cf": "tsc -b && vite build",
+    "build": "npm run render:og && tsc -b && vite build",
+    "build:cf": "npm run render:og && tsc -b && vite build",
+    "render:og": "node scripts/render-og.mjs",
     "preview": "vite preview",
     "preview:stop": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop-preview.ps1"
   },

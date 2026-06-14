@@ -6,9 +6,9 @@ export default function AboutIllustrations() {
         <circle cx="44" cy="8" r="3" fill="#ff8c69" />
       </svg>
       <svg viewBox="0 0 48 48" fill="none" className="about-mini about-mini--camera">
-        <rect x="6" y="14" width="36" height="24" rx="4" stroke="#5bb5e8" strokeWidth="2.5" fill="rgba(91,181,232,0.1)" />
-        <circle cx="24" cy="26" r="7" stroke="#5bb5e8" strokeWidth="2.5" />
-        <path d="M16 14L20 8H28L32 14" stroke="#5bb5e8" strokeWidth="2.5" strokeLinecap="round" />
+        <rect x="6" y="14" width="36" height="24" rx="4" stroke="#e8a838" strokeWidth="2.5" fill="rgba(232,168,56,0.1)" />
+        <circle cx="24" cy="26" r="7" stroke="#e8a838" strokeWidth="2.5" />
+        <path d="M16 14L20 8H28L32 14" stroke="#e8a838" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
       <svg viewBox="0 0 48 48" fill="none" className="about-mini about-mini--coffee">
         <path d="M10 18h22v16c0 4-3 6-8 6H18c-5 0-8-2-8-6V18z" stroke="#ff8c69" strokeWidth="2.5" fill="rgba(255,140,105,0.08)" />

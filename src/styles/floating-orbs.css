@@ -29,7 +29,7 @@
   height: 7rem;
   top: 6%;
   right: 33%;
-  background: radial-gradient(circle at 40% 35%, #bfe6fa, #5bb5e8 70%);
+  background: radial-gradient(circle at 40% 35%, #ffe8a8, #e8a838 70%);
   animation: fo-float-c 8s ease-in-out infinite alternate;
 }
 

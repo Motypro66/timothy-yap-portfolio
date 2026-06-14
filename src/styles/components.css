@@ -468,8 +468,8 @@
 }
 
 .magnetic-btn--secondary:hover {
-  border-color: var(--accent-sky);
-  box-shadow: 0 0 20px rgba(91, 181, 232, 0.2);
+  border-color: var(--accent-sun);
+  box-shadow: 0 0 20px rgba(245, 166, 35, 0.22);
 }
 
 .magnetic-btn--ghost {
@@ -934,9 +934,9 @@
   font-weight: 500;
   padding: 0.3rem 0.65rem;
   border-radius: 4px;
-  background: rgba(91, 181, 232, 0.15);
-  color: #3a8fc4;
-  border: 1px solid rgba(91, 181, 232, 0.25);
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  border: 1px solid var(--tag-border);
 }
 
 /* ===== Contact ===== */

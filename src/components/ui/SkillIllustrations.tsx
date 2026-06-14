@@ -14,8 +14,8 @@ function MarketingIcons() {
         <circle cx="46" cy="12" r="3" fill="#ff8c69" />
       </svg>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
-        <circle cx="28" cy="28" r="14" stroke="#5bb5e8" strokeWidth="2.5" fill="rgba(91,181,232,0.08)" />
-        <circle cx="28" cy="28" r="7" stroke="#5bb5e8" strokeWidth="2.5" />
+        <circle cx="28" cy="28" r="14" stroke="#e8a838" strokeWidth="2.5" fill="rgba(232,168,56,0.08)" />
+        <circle cx="28" cy="28" r="7" stroke="#e8a838" strokeWidth="2.5" />
         <circle cx="28" cy="28" r="2.5" fill="#f5a623" />
       </svg>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
@@ -37,10 +37,10 @@ function AiIcons() {
         <path d="M28 8l4 12 12 4-12 4-4 12-4-12-12-4 12-4 4-12z" stroke="#ffd166" strokeWidth="2.2" fill="rgba(255,209,102,0.15)" strokeLinejoin="round" />
       </svg>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
-        <circle cx="16" cy="20" r="4" fill="#5bb5e8" />
+        <circle cx="16" cy="20" r="4" fill="#e8a838" />
         <circle cx="40" cy="16" r="4" fill="#f5a623" />
         <circle cx="32" cy="40" r="4" fill="#ff8c69" />
-        <path d="M19 22l18-4M20 24l10 12M36 20l-2 16" stroke="#5bb5e8" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+        <path d="M19 22l18-4M20 24l10 12M36 20l-2 16" stroke="#e8a838" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
       </svg>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
         <rect x="10" y="14" width="28" height="20" rx="6" stroke="#f5a623" strokeWidth="2.5" fill="rgba(245,166,35,0.08)" />
@@ -61,9 +61,9 @@ function LanguageIcons() {
   return (
     <>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
-        <circle cx="28" cy="28" r="16" stroke="#5bb5e8" strokeWidth="2.5" fill="rgba(91,181,232,0.08)" />
-        <ellipse cx="28" cy="28" rx="7" ry="16" stroke="#5bb5e8" strokeWidth="2" />
-        <path d="M12 28h32M14 20h28M14 36h28" stroke="#5bb5e8" strokeWidth="1.8" strokeLinecap="round" opacity="0.6" />
+        <circle cx="28" cy="28" r="16" stroke="#e8a838" strokeWidth="2.5" fill="rgba(232,168,56,0.08)" />
+        <ellipse cx="28" cy="28" rx="7" ry="16" stroke="#e8a838" strokeWidth="2" />
+        <path d="M12 28h32M14 20h28M14 36h28" stroke="#e8a838" strokeWidth="1.8" strokeLinecap="round" opacity="0.6" />
       </svg>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
         <path d="M12 18c6 0 10 4 10 10s-4 10-10 10" stroke="#f5a623" strokeWidth="2.5" strokeLinecap="round" fill="rgba(245,166,35,0.08)" />
@@ -74,7 +74,7 @@ function LanguageIcons() {
         <path d="M20 26h16M20 32h10" stroke="#ffd166" strokeWidth="2.2" strokeLinecap="round" />
       </svg>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
-        <path d="M18 36l8-24M38 36l-8-24" stroke="#5bb5e8" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M18 36l8-24M38 36l-8-24" stroke="#e8a838" strokeWidth="2.5" strokeLinecap="round" />
         <path d="M22 28h12" stroke="#f5a623" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
     </>
@@ -85,9 +85,9 @@ function CreativeIcons() {
   return (
     <>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
-        <rect x="8" y="16" width="40" height="28" rx="4" stroke="#5bb5e8" strokeWidth="2.5" fill="rgba(91,181,232,0.08)" />
-        <circle cx="28" cy="30" r="8" stroke="#5bb5e8" strokeWidth="2.5" />
-        <path d="M18 16l6-8h8l6 8" stroke="#5bb5e8" strokeWidth="2.5" strokeLinecap="round" />
+        <rect x="8" y="16" width="40" height="28" rx="4" stroke="#e8a838" strokeWidth="2.5" fill="rgba(232,168,56,0.08)" />
+        <circle cx="28" cy="30" r="8" stroke="#e8a838" strokeWidth="2.5" />
+        <path d="M18 16l6-8h8l6 8" stroke="#e8a838" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
       <svg viewBox="0 0 56 56" fill="none" className="skill-mini">
         <rect x="10" y="12" width="36" height="32" rx="4" stroke="#f5a623" strokeWidth="2.5" fill="rgba(245,166,35,0.08)" />

@@ -12,7 +12,7 @@ function buildOptions(mobile: boolean): ISourceOptions {
     fpsLimit: mobile ? 36 : 60,
     particles: {
       number: { value: mobile ? 40 : 65, density: { enable: true } },
-      color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#5bb5e8'] },
+      color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#e8a838'] },
       links: {
         enable: !mobile,
         color: '#f5a623',

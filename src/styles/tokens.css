@@ -5,10 +5,13 @@
   --bg-warm: #fff0e0;
   --accent-sun: #f5a623;
   --accent-peach: #ff8c69;
-  --accent-sky: #5bb5e8;
+  --accent-sky: #e8a838;
   --accent-honey: #ffd166;
   --text-primary: #3d2e2a;
   --text-muted: #7a6560;
+  --tag-bg: rgba(245, 166, 35, 0.14);
+  --tag-text: #a66b12;
+  --tag-border: rgba(245, 166, 35, 0.28);
   --glass-border: rgba(61, 46, 42, 0.1);
   --glass-bg: rgba(255, 255, 255, 0.65);
   --shadow-soft: 0 8px 32px rgba(245, 166, 35, 0.12);
@@ -22,7 +25,7 @@
   --glow-sun: 0 0 48px rgba(245, 166, 35, 0.35);
   --glow-peach: 0 0 40px rgba(255, 140, 105, 0.25);
   /* legacy aliases used in gradient-text */
-  --accent-cyan: var(--accent-sky);
+  --accent-cyan: var(--accent-honey);
   --accent-coral: var(--accent-peach);
   --accent-violet: #e8a838;
 }
