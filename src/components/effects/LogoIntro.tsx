@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import gsap from 'gsap'
 import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
 import LogoContent from '../ui/LogoContent'
@@ -18,8 +18,7 @@ const MOBILE_QUERY = '(max-width: 960px)'
 
 function applyStrokeDash(strokes: SVGPathElement[]) {
   strokes.forEach((p) => {
-    const len = p.getTotalLength()
-    gsap.set(p, { strokeDasharray: len, strokeDashoffset: len })
+    gsap.set(p, { strokeDasharray: 1, strokeDashoffset: 1 })
   })
 }
 
@@ -81,14 +80,6 @@ export default function LogoIntro() {
   const isMobile =
     typeof window !== 'undefined' ? window.matchMedia(MOBILE_QUERY).matches : false
 
-  // Hide strokes before first paint — CSS fallback until GSAP sets exact dash lengths.
-  useLayoutEffect(() => {
-    const mark = markRef.current
-    if (!mark) return
-    const strokes = mark.querySelectorAll<SVGPathElement>('.li-stroke')
-    applyStrokeDash(Array.from(strokes))
-  }, [])
-
   useEffect(() => {
     const root = rootRef.current
     const mark = markRef.current
@@ -136,7 +127,7 @@ export default function LogoIntro() {
         const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
 
         ctx = gsap.context(() => {
-          gsap.set(mark, { force3D: true })
+          gsap.set(mark, { force3D: true, autoAlpha: 0 })
 
           if (mobile) {
             gsap.set('.logo-intro__ambience', { opacity: 0.55 })
@@ -154,6 +145,8 @@ export default function LogoIntro() {
 
           const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
           applyStrokeDash(strokes)
+
+          gsap.set(mark, { autoAlpha: 1 })
 
           gsap.set('.li-dot', {
             attr: { cy: 5 },

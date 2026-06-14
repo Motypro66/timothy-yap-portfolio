@@ -37,21 +37,27 @@ export default function LogoContent({
       )}
       <path
         className={strokeClassName}
+        pathLength={strokeClassName ? 1 : undefined}
         d="M6 8h16"
+        fill="none"
         stroke={ink}
         strokeWidth={LOGO_STROKE_WIDTH}
         strokeLinecap="round"
       />
       <path
         className={strokeClassName}
+        pathLength={strokeClassName ? 1 : undefined}
         d="M14 8v22"
+        fill="none"
         stroke={ink}
         strokeWidth={LOGO_STROKE_WIDTH}
         strokeLinecap="round"
       />
       <path
         className={strokeClassName}
+        pathLength={strokeClassName ? 1 : undefined}
         d="M14 26c6 0 11-3 12-8"
+        fill="none"
         stroke={ink}
         strokeWidth={LOGO_STROKE_WIDTH}
         strokeLinecap="round"

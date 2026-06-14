@@ -131,6 +131,7 @@
   transform-origin: center center;
   will-change: transform, opacity;
   backface-visibility: hidden;
+  visibility: hidden;
 }
 
 .logo-intro__mark-inner {
@@ -165,10 +166,10 @@
   z-index: 2;
 }
 
-/* Keep T strokes hidden until GSAP draw — prevents flash of full paths on refresh */
+/* Normalized pathLength=1 — reliable hide before draw (esp. T curve on refresh) */
 .logo-intro .li-stroke {
-  stroke-dasharray: 999;
-  stroke-dashoffset: 999;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
 }
 
 .logo-intro .li-dot,
