@@ -15,6 +15,7 @@ const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
 const MOTE_COUNT = 4
 const MOBILE_QUERY = '(max-width: 960px)'
+const FONT_WAIT_MS = 280
 
 function applyStrokeDash(strokes: SVGPathElement[]) {
   strokes.forEach((p) => {
@@ -60,17 +61,19 @@ function setTransformOriginToContent(
   gsap.set(mark, { transformOrigin: `${originX}% ${originY}%` })
 }
 
-async function waitForLayout() {
-  if (document.fonts?.ready) {
+async function waitForLogoFont() {
+  const cap = new Promise<void>((resolve) => {
+    window.setTimeout(resolve, FONT_WAIT_MS)
+  })
+  const load = (async () => {
+    if (!document.fonts?.load) return
     try {
-      await document.fonts.ready
+      await document.fonts.load('700 20px Fraunces')
     } catch {
       /* ignore */
     }
-  }
-  await new Promise<void>((resolve) => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-  })
+  })()
+  await Promise.race([load, cap])
 }
 
 export default function LogoIntro() {
@@ -117,24 +120,17 @@ export default function LogoIntro() {
     let ctx: gsap.Context | undefined
     const mobile = window.matchMedia(MOBILE_QUERY).matches
 
-    void waitForLayout().then(() => {
+    void waitForLogoFont().then(() => {
       if (finished) return
 
-      requestAnimationFrame(() => {
-        if (finished) return
+      const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
+      const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
 
-        const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
-        const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
-
-        ctx = gsap.context(() => {
+      ctx = gsap.context(() => {
           gsap.set(mark, { force3D: true, autoAlpha: 0 })
 
-          if (mobile) {
-            gsap.set('.logo-intro__ambience', { opacity: 0.55 })
-          } else {
-            gsap.set('.logo-intro__ambience', { opacity: 0 })
-            gsap.set('.logo-intro__orb', { opacity: 0 })
-          }
+          gsap.set('.logo-intro__ambience', { opacity: 0 })
+          gsap.set('.logo-intro__orb', { opacity: 0 })
 
           gsap.set('.li-mote', { opacity: 0, y: 6 })
           gsap.set('.li-sweep', { x: '-130%' })
@@ -192,10 +188,12 @@ export default function LogoIntro() {
 
           const tl = gsap.timeline({ onComplete: finish })
 
-        if (!mobile) {
-          tl.to('.logo-intro__ambience', { opacity: 1, duration: 0.28, ease: 'power2.out' })
-            .to('.logo-intro__orb', { opacity: 0.85, duration: 0.32, stagger: 0.06, ease: 'power2.out' }, 0)
-        }
+        tl.to('.logo-intro__ambience', { opacity: mobile ? 0.55 : 1, duration: 0.28, ease: 'power2.out' })
+          .to(
+            '.logo-intro__orb',
+            { opacity: mobile ? 0.5 : 0.85, duration: 0.32, stagger: 0.06, ease: 'power2.out' },
+            0,
+          )
 
         tl.to(strokes, {
           strokeDashoffset: 0,
@@ -258,8 +256,7 @@ export default function LogoIntro() {
           .to('.logo-intro__ambience', { opacity: 0, duration: 0.38, ease: 'power2.in' }, 'fly')
           .to('.li-bg', { opacity: 0, duration: 0.42, ease: 'power2.inOut' }, 'fly')
           .to(mark, { opacity: 0, duration: 0.18 }, `fly+=${FLY_DURATION - 0.1}`)
-        }, root)
-      })
+      }, root)
     })
 
     return () => {

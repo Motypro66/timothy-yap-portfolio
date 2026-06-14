@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { preloadParticlesEngine } from './lib/preloadParticles'
+import { LOGO_INTRO_COMPLETE } from './hooks/useIntroComplete'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import LogoIntro from './components/effects/LogoIntro'
@@ -19,7 +20,15 @@ export default function App() {
   useSmoothScroll()
 
   useEffect(() => {
-    preloadParticlesEngine()
+    const preload = () => {
+      void preloadParticlesEngine()
+    }
+    window.addEventListener(LOGO_INTRO_COMPLETE, preload, { once: true })
+    const fallback = window.setTimeout(preload, 4500)
+    return () => {
+      window.removeEventListener(LOGO_INTRO_COMPLETE, preload)
+      window.clearTimeout(fallback)
+    }
   }, [])
 
   return (

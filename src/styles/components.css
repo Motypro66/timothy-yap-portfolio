@@ -51,6 +51,19 @@
   height: 100% !important;
 }
 
+.hero__fx-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__fx-layer .sun-rays,
+.hero__fx-layer .particle-bg {
+  position: absolute;
+  inset: 0;
+}
+
 /* ===== Logo ===== */
 .logo-mark {
   height: 36px;
@@ -1114,13 +1127,27 @@ a.contact__value:hover {
     border-radius: 50%;
     z-index: 1;
     pointer-events: none;
+    opacity: 0;
+    transform: scale(0.82);
     background: radial-gradient(
       circle,
       rgba(255, 209, 102, 0.28) 0%,
       rgba(245, 166, 35, 0.1) 38%,
       transparent 72%
     );
-    animation: hero-mobile-glow 5s ease-in-out infinite;
+  }
+
+  .hero--ui-ready .hero__mobile-glow {
+    animation:
+      hero-mobile-glow-in 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      hero-mobile-glow 5s ease-in-out infinite 0.62s;
+  }
+
+  @keyframes hero-mobile-glow-in {
+    to {
+      opacity: 0.9;
+      transform: scale(1);
+    }
   }
 
   .hero__mobile-glow::after {

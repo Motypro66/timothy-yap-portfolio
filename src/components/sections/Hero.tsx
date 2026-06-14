@@ -69,13 +69,19 @@ export default function Hero() {
   }, [uiReady])
 
   return (
-    <section className="hero" id="hero">
+    <section className={`hero${uiReady ? ' hero--ui-ready' : ''}`} id="hero">
+      {uiReady && <FloatingOrbs />}
       {effectsReady && (
-        <>
+        <motion.div
+          className="hero__fx-layer"
+          aria-hidden="true"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        >
           <SunRays />
           <ParticleBackground active />
-          <FloatingOrbs />
-        </>
+        </motion.div>
       )}
       <div className="hero__mobile-glow" aria-hidden="true" />
       <div className="hero__scrim" aria-hidden="true" />

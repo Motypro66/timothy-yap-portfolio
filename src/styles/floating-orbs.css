@@ -1,69 +1,89 @@
-.fo-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(6px);
-  opacity: 0.6;
-  will-change: transform;
-}
-
-.fo-orb--sun {
-  width: 16rem;
-  height: 16rem;
-  top: 12%;
-  right: 12%;
-  background: radial-gradient(circle at 34% 30%, #ffd98a, #f5a623 70%);
-  animation: fo-float-a 6s ease-in-out infinite alternate;
-}
-
-.fo-orb--peach {
-  width: 11rem;
-  height: 11rem;
-  top: 46%;
-  right: 4%;
-  background: radial-gradient(circle at 34% 30%, #ffc1aa, #ff8c69 70%);
-  animation: fo-float-b 7s ease-in-out infinite alternate;
-}
-
-.fo-orb--sky {
-  width: 7rem;
-  height: 7rem;
-  top: 6%;
-  right: 33%;
-  background: radial-gradient(circle at 40% 35%, #ffe8a8, #e8a838 70%);
-  animation: fo-float-c 5.5s ease-in-out infinite alternate;
-}
-
-/* Replaces the old thin ring — warm coral, same slot */
-.fo-orb--coral {
-  width: 8.5rem;
-  height: 8.5rem;
-  top: 56%;
-  right: 26%;
-  background: radial-gradient(circle at 38% 32%, #ffb899, #ff7555 68%);
-  opacity: 0.58;
-  animation: fo-float-d 6.5s ease-in-out infinite alternate-reverse;
-  animation-delay: -1.5s;
-}
-
-@keyframes fo-float-a {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  100% { transform: translate3d(-2.2rem, 2.6rem, 0) scale(1.08); }
-}
-@keyframes fo-float-b {
-  0% { transform: translate3d(0, 0, 0) scale(1.04); }
-  100% { transform: translate3d(2.4rem, -2.2rem, 0) scale(0.94); }
-}
-@keyframes fo-float-c {
-  0% { transform: translate3d(0, 0, 0) scale(0.96); }
-  100% { transform: translate3d(-2rem, -2.4rem, 0) scale(1.12); }
-}
-@keyframes fo-float-d {
-  0% { transform: translate3d(0, 0, 0) scale(0.94); }
-  100% { transform: translate3d(2.1rem, 2.5rem, 0) scale(1.1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fo-orb {
-    animation: none;
-  }
-}
+.fo-orb-shell {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.fo-orb-shell--sun {
+  width: 16rem;
+  height: 16rem;
+  top: 12%;
+  right: 12%;
+}
+
+.fo-orb-shell--peach {
+  width: 11rem;
+  height: 11rem;
+  top: 46%;
+  right: 4%;
+}
+
+.fo-orb-shell--sky {
+  width: 7rem;
+  height: 7rem;
+  top: 6%;
+  right: 33%;
+}
+
+.fo-orb-shell--coral {
+  width: 8.5rem;
+  height: 8.5rem;
+  top: 56%;
+  right: 26%;
+}
+
+.fo-orb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  filter: blur(6px);
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.fo-orb--sun {
+  background: radial-gradient(circle at 34% 30%, #ffd98a, #f5a623 70%);
+  animation: fo-float-a 6s ease-in-out infinite alternate;
+}
+
+.fo-orb--peach {
+  background: radial-gradient(circle at 34% 30%, #ffc1aa, #ff8c69 70%);
+  animation: fo-float-b 7s ease-in-out infinite alternate;
+}
+
+.fo-orb--sky {
+  background: radial-gradient(circle at 40% 35%, #ffe8a8, #e8a838 70%);
+  animation: fo-float-c 5.5s ease-in-out infinite alternate;
+}
+
+.fo-orb--coral {
+  background: radial-gradient(circle at 38% 32%, #ffb899, #ff7555 68%);
+  opacity: 0.58;
+  animation: fo-float-d 6.5s ease-in-out infinite alternate-reverse;
+  animation-delay: -1.5s;
+}
+
+@keyframes fo-float-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-2.2rem, 2.6rem, 0) scale(1.08); }
+}
+@keyframes fo-float-b {
+  0% { transform: translate3d(0, 0, 0) scale(1.04); }
+  100% { transform: translate3d(2.4rem, -2.2rem, 0) scale(0.94); }
+}
+@keyframes fo-float-c {
+  0% { transform: translate3d(0, 0, 0) scale(0.96); }
+  100% { transform: translate3d(-2rem, -2.4rem, 0) scale(1.12); }
+}
+@keyframes fo-float-d {
+  0% { transform: translate3d(0, 0, 0) scale(0.94); }
+  100% { transform: translate3d(2.1rem, 2.5rem, 0) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fo-orb {
+    animation: none;
+  }
+}
