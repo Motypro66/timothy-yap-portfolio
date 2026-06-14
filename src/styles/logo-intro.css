@@ -13,9 +13,11 @@
 
 .logo-intro__mark {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 240px;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
   will-change: transform, opacity;
 }
 
@@ -28,6 +30,6 @@
 
 @media (max-width: 768px) {
   .logo-intro__mark {
-    width: 196px;
+    width: 210px;
   }
 }

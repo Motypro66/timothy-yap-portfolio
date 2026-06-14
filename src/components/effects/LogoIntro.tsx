@@ -35,14 +35,9 @@ export default function LogoIntro() {
     }
 
     const ctx = gsap.context(() => {
-      const w = mark.offsetWidth
-      const h = mark.offsetHeight
-      gsap.set(mark, {
-        x: (window.innerWidth - w) / 2,
-        y: (window.innerHeight - h) / 2,
-        scale: 1,
-        transformOrigin: 'top left',
-      })
+      // CSS already centres the mark (left/top 50% + translate -50%); mirror that
+      // in GSAP so it stays dead-centre, then we only animate x/y deltas to fly.
+      gsap.set(mark, { xPercent: -50, yPercent: -50, transformOrigin: 'center center' })
 
       const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
       strokes.forEach((p) => {
@@ -78,17 +73,19 @@ export default function LogoIntro() {
         .add(() => {
           const navLogo = document.querySelector('.navbar__logo-link')
           const mr = mark.getBoundingClientRect()
+          const mcx = mr.left + mr.width / 2
+          const mcy = mr.top + mr.height / 2
           if (navLogo) {
             const nr = navLogo.getBoundingClientRect()
             gsap.to(mark, {
-              x: nr.left,
-              y: nr.top,
+              x: nr.left + nr.width / 2 - mcx,
+              y: nr.top + nr.height / 2 - mcy,
               scale: nr.width / mr.width,
               duration: 0.62,
               ease: 'power3.inOut',
             })
           } else {
-            gsap.to(mark, { y: '-=48', scale: 0.4, duration: 0.62, ease: 'power3.inOut' })
+            gsap.to(mark, { y: '-=120', scale: 0.4, duration: 0.62, ease: 'power3.inOut' })
           }
         }, 'fly')
         .to('.li-bg', { opacity: 0, duration: 0.6, ease: 'power2.inOut' }, 'fly')
