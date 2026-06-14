@@ -1,0 +1,24 @@
+---
+description: Kill local Vite preview after portfolio checks; use scripts/stop-preview.ps1
+alwaysApply: true
+---
+
+# Portfolio — dev server cleanup
+
+This repo uses classic Vite (`npm run dev` / `npm run preview`). Servers must be stopped after Agent browser checks.
+
+## Cleanup command
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/stop-preview.ps1
+```
+
+Stops listeners on ports 4173–4180 and 5173.
+
+## Workflow
+
+1. One preview at a time — port **4173** (or `5173` for dev).
+2. After verification, run `stop-preview.ps1` before finishing.
+3. For production checks, use **https://timothy-yap.pages.dev/** instead of spawning preview when possible.
+
+See also user rule `dev-server-auto-cleanup.mdc`.

@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:cf": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preview:stop": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop-preview.ps1"
   },
   "dependencies": {
     "@tsparticles/engine": "^3.8.1",
