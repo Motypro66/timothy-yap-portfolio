@@ -3,10 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { navLinks, profile } from '../../data/resume'
 import { useLanguage } from '../../i18n/LanguageContext'
 import { useIntroStages } from '../../hooks/useIntroStages'
+import { useIntroComplete } from '../../hooks/useIntroComplete'
 import Logo from '../ui/Logo'
 
 export default function Navbar() {
   const { uiReady } = useIntroStages()
+  const introComplete = useIntroComplete()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const { t, lang, setLang } = useLanguage()
@@ -27,7 +29,7 @@ export default function Navbar() {
     >
       <div className="container navbar__inner">
         <a href="#" className="navbar__logo-link" aria-label={profile.name}>
-          <Logo variant="dark" />
+          <Logo variant="dark" showSun={introComplete} />
         </a>
 
         <nav className="navbar__nav" aria-label="Main">

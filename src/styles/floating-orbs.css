@@ -38,29 +38,49 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  filter: blur(6px);
-  opacity: 0.6;
+  filter: blur(12px);
+  opacity: 0.28;
   will-change: transform;
 }
 
 .fo-orb--sun {
-  background: radial-gradient(circle at 34% 30%, #ffd98a, #f5a623 70%);
+  background: radial-gradient(
+    circle at 34% 30%,
+    rgba(255, 244, 225, 0.42) 0%,
+    rgba(255, 232, 205, 0.14) 52%,
+    transparent 74%
+  );
   animation: fo-float-a 6s ease-in-out infinite alternate;
 }
 
 .fo-orb--peach {
-  background: radial-gradient(circle at 34% 30%, #ffc1aa, #ff8c69 70%);
+  background: radial-gradient(
+    circle at 34% 30%,
+    rgba(255, 235, 222, 0.38) 0%,
+    rgba(255, 220, 208, 0.12) 52%,
+    transparent 74%
+  );
   animation: fo-float-b 7s ease-in-out infinite alternate;
 }
 
 .fo-orb--sky {
-  background: radial-gradient(circle at 40% 35%, #ffe8a8, #e8a838 70%);
+  background: radial-gradient(
+    circle at 40% 35%,
+    rgba(255, 248, 232, 0.36) 0%,
+    rgba(255, 238, 215, 0.11) 52%,
+    transparent 74%
+  );
   animation: fo-float-c 5.5s ease-in-out infinite alternate;
 }
 
 .fo-orb--coral {
-  background: radial-gradient(circle at 38% 32%, #ffb899, #ff7555 68%);
-  opacity: 0.58;
+  background: radial-gradient(
+    circle at 38% 32%,
+    rgba(255, 230, 220, 0.34) 0%,
+    rgba(255, 215, 205, 0.1) 52%,
+    transparent 74%
+  );
+  opacity: 0.26;
   animation: fo-float-d 6.5s ease-in-out infinite alternate-reverse;
   animation-delay: -1.5s;
 }

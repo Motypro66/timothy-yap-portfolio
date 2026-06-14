@@ -25,7 +25,7 @@
 
 .logo-intro--lite .logo-intro__orb {
   filter: none;
-  opacity: 0.5;
+  opacity: 0;
   animation: none;
   transform: translateZ(0);
 }
@@ -170,12 +170,14 @@
   overflow: visible;
   position: relative;
   z-index: 2;
+  visibility: hidden;
 }
 
 /* Normalized pathLength=1 — reliable hide before draw (esp. T curve on refresh) */
 .logo-intro .li-stroke {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
+  stroke-linecap: butt;
   opacity: 0;
   visibility: hidden;
 }
@@ -184,6 +186,11 @@
 .logo-intro .li-word,
 .logo-intro .li-sun-pulse,
 .logo-intro .li-sun-glow {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.logo-intro .li-mote {
   opacity: 0;
   visibility: hidden;
 }

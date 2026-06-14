@@ -15,6 +15,61 @@ const MOTE_COUNT = 4
 const MOBILE_QUERY = '(max-width: 960px)'
 const FONT_WAIT_MS = 280
 
+function prependToGroup(group: SVGGraphicsElement, node: SVGElement) {
+  const first = group.firstElementChild
+  if (first) group.insertBefore(node, first)
+  else group.appendChild(node)
+}
+
+function createIntroSunDot(group: SVGGraphicsElement | null) {
+  if (!group || group.querySelector('.li-dot')) return
+  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+  dot.setAttribute('class', 'li-dot')
+  dot.setAttribute('cx', '26')
+  dot.setAttribute('cy', '5')
+  dot.setAttribute('r', '0')
+  dot.setAttribute('fill', LOGO_SUN)
+  dot.setAttribute('opacity', '0')
+  group.appendChild(dot)
+}
+
+function createIntroSunPulse(group: SVGGraphicsElement | null) {
+  if (!group || group.querySelector('.li-sun-pulse')) return
+  const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+  pulse.setAttribute('class', 'li-sun-pulse')
+  pulse.setAttribute('cx', '26')
+  pulse.setAttribute('cy', '16')
+  pulse.setAttribute('r', '10')
+  pulse.setAttribute('fill', LOGO_SUN)
+  pulse.setAttribute('opacity', '0')
+  prependToGroup(group, pulse)
+}
+
+function createIntroSunGlow(group: SVGGraphicsElement | null) {
+  if (!group || group.querySelector('.li-sun-glow')) return
+  const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+  glow.setAttribute('class', 'li-sun-glow')
+  glow.setAttribute('cx', '26')
+  glow.setAttribute('cy', '16')
+  glow.setAttribute('r', '22')
+  glow.setAttribute('fill', 'url(#logoSunGlow)')
+  glow.setAttribute('opacity', '0')
+  prependToGroup(group, glow)
+}
+
+function createIntroSunEffects(group: SVGGraphicsElement | null) {
+  createIntroSunGlow(group)
+  createIntroSunPulse(group)
+  createIntroSunDot(group)
+  gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
+  gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
+  gsap.set('.li-dot', {
+    attr: { cy: 5, r: 0 },
+    fill: LOGO_SUN,
+    autoAlpha: 0,
+  })
+}
+
 function applyStrokeDash(strokes: SVGPathElement[]) {
   strokes.forEach((p) => {
     gsap.set(p, { strokeDasharray: 1, strokeDashoffset: 1 })
@@ -141,19 +196,12 @@ export default function LogoIntro() {
       gsap.set('.logo-intro__orb', { opacity: 0 })
       gsap.set('.li-mote', { opacity: 0, y: 6 })
       gsap.set('.li-sweep', { x: '-130%' })
-      gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
-      gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
 
       centerSvgContent(introGroup)
 
       const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
       applyStrokeDash(strokes)
 
-      gsap.set('.li-dot', {
-        attr: { cy: 5, r: 0 },
-        fill: LOGO_SUN,
-        autoAlpha: 0,
-      })
       gsap.set('.li-word', { autoAlpha: 0, y: 4 })
 
       let flyTarget = { x: 0, y: -150, scale: 0.4 }
@@ -193,6 +241,7 @@ export default function LogoIntro() {
       const tl = gsap.timeline({ onComplete: finish })
 
       tl.set(mark, { autoAlpha: 1 }, 0)
+        .set(introSvg, { visibility: 'visible' }, 0)
         .set(strokes, { opacity: 1, visibility: 'visible' }, 0)
         .to('.logo-intro__ambience', { opacity: mobile ? 0.55 : 1, duration: 0.28, ease: 'power2.out' })
         .to(
@@ -204,12 +253,14 @@ export default function LogoIntro() {
           strokes,
           {
             strokeDashoffset: 0,
+            attr: { 'stroke-linecap': 'round' },
             duration: 0.52,
             ease: 'power2.inOut',
             stagger: 0.08,
           },
           0.04,
         )
+        .call(() => createIntroSunEffects(introGroup), undefined, '-=0.1')
         .to(
           '.li-dot',
           {
@@ -308,10 +359,9 @@ export default function LogoIntro() {
                   </radialGradient>
                 </defs>
                 <LogoContent
-                  introEffects
+                  showSun={false}
                   groupClassName="logo-content li-content"
                   strokeClassName="li-stroke"
-                  dotClassName="li-dot"
                   wordClassName="li-word"
                 />
               </svg>

@@ -13,8 +13,7 @@ type Props = {
   dotClassName?: string
   wordClassName?: string
   showWord?: boolean
-  /** Sun pulse rings — intro animation only */
-  introEffects?: boolean
+  showSun?: boolean
 }
 
 /** Monoline T + sun dot + Fraunces wordmark (shared geometry). */
@@ -25,16 +24,10 @@ export default function LogoContent({
   dotClassName,
   wordClassName,
   showWord = true,
-  introEffects = false,
+  showSun = true,
 }: Props) {
   return (
     <g className={groupClassName}>
-      {introEffects && (
-        <>
-          <circle className="li-sun-glow" cx="26" cy="16" r="22" fill="url(#logoSunGlow)" opacity="0" />
-          <circle className="li-sun-pulse" cx="26" cy="16" r="10" fill={LOGO_SUN} opacity="0" />
-        </>
-      )}
       <path
         className={strokeClassName}
         pathLength={strokeClassName ? 1 : undefined}
@@ -42,7 +35,8 @@ export default function LogoContent({
         fill="none"
         stroke={ink}
         strokeWidth={LOGO_STROKE_WIDTH}
-        strokeLinecap="round"
+        strokeLinecap={strokeClassName ? 'butt' : 'round'}
+        opacity={strokeClassName ? 0 : 1}
       />
       <path
         className={strokeClassName}
@@ -51,7 +45,8 @@ export default function LogoContent({
         fill="none"
         stroke={ink}
         strokeWidth={LOGO_STROKE_WIDTH}
-        strokeLinecap="round"
+        strokeLinecap={strokeClassName ? 'butt' : 'round'}
+        opacity={strokeClassName ? 0 : 1}
       />
       <path
         className={strokeClassName}
@@ -60,16 +55,19 @@ export default function LogoContent({
         fill="none"
         stroke={ink}
         strokeWidth={LOGO_STROKE_WIDTH}
-        strokeLinecap="round"
+        strokeLinecap={strokeClassName ? 'butt' : 'round'}
         strokeLinejoin="round"
+        opacity={strokeClassName ? 0 : 1}
       />
-      <circle
-        className={dotClassName}
-        cx="26"
-        cy="16"
-        r={dotClassName ? 0 : 3.2}
-        fill={dotClassName ? 'none' : LOGO_SUN}
-      />
+      {showSun && (
+        <circle
+          className={dotClassName}
+          cx="26"
+          cy="16"
+          r="3.2"
+          fill={LOGO_SUN}
+        />
+      )}
       {showWord && (
         <text
           className={wordClassName}
