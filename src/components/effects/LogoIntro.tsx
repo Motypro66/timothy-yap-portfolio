@@ -2,75 +2,122 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 
 /**
- * Cinematic studio-ident style intro — "Sunrise + Luxo dot" (refs: Disney light
- * sweep, MGM shockwave, Pixar's bouncy lamp):
+ * Flashy on-load intro:
+ *  1. warm particles streak in from all over the screen and ASSEMBLE into the
+ *     Timothy logo
+ *  2. a rotating sun-corona of god-rays blasts out behind it with a white flash
+ *     and an expanding shockwave ring
+ *  3. the crisp logo resolves and flies up to dock into the navbar as the warm
+ *     backdrop wipes away
  *
- *  1. the orange dot (the sun) bounces playfully in
- *  2. a warm light sweep glides across, drawing the monoline "T"
- *  3. at the apex the sun pulses, rays bloom and a shockwave ring expands
- *  4. the whole mark flies up and docks into the navbar logo as the warm
- *     backdrop wipes away to reveal the hero
- *
- * ~1.8s, no tagline text, reduced-motion aware, pure CSS/SVG + GSAP.
+ * Pure canvas + CSS + GSAP. Centred on the viewport (works on mobile too).
+ * Reduced-motion aware, with a safety timeout so it can never block the page.
  */
+
+const COLORS = ['#f5a623', '#ff8c69', '#ffd166', '#ffe2a6']
+
+type P = {
+  sx: number
+  sy: number
+  tx: number
+  ty: number
+  r: number
+  color: string
+  delay: number
+}
+
 export default function LogoIntro() {
   const [done, setDone] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const markRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     const root = rootRef.current
     const mark = markRef.current
-    if (!root || !mark) {
+    const canvas = canvasRef.current
+    if (!root || !mark || !canvas) {
       setDone(true)
       return
     }
 
-    const finish = () => setDone(true)
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    if (reduce) {
-      const t = window.setTimeout(finish, 350)
-      return () => window.clearTimeout(t)
+    let finished = false
+    const finish = () => {
+      if (finished) return
+      finished = true
+      setDone(true)
     }
 
-    const ctx = gsap.context(() => {
-      // CSS already centres the mark (left/top 50% + translate -50%); mirror that
-      // in GSAP so it stays dead-centre, then we only animate x/y deltas to fly.
-      gsap.set(mark, { xPercent: -50, yPercent: -50, transformOrigin: 'center center' })
+    // Never let the overlay get stuck.
+    const safety = window.setTimeout(finish, 3600)
 
-      const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
-      strokes.forEach((p) => {
-        const len = p.getTotalLength()
-        gsap.set(p, { strokeDasharray: len, strokeDashoffset: len })
-      })
-      // sun starts above centre, smaller — so it visibly drops & bounces in
-      gsap.set('.li-dot', { y: -38, scale: 0.7, svgOrigin: '26 16' })
-      gsap.set('.li-rays', { scale: 0, opacity: 0, svgOrigin: '26 16' })
-      gsap.set('.li-shock', { scale: 0, opacity: 0, svgOrigin: '26 16' })
-      gsap.set('.li-flare', { opacity: 0, attr: { cx: -16 } })
-      gsap.set('.li-word', { opacity: 0 })
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const ctx = canvas.getContext('2d')
+    if (reduce || !ctx) {
+      const t = window.setTimeout(finish, 350)
+      return () => {
+        window.clearTimeout(t)
+        window.clearTimeout(safety)
+      }
+    }
+
+    const W = window.innerWidth
+    const H = window.innerHeight
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = W * dpr
+    canvas.height = H * dpr
+    ctx.scale(dpr, dpr)
+
+    const cx = W / 2
+    const cy = H / 2
+
+    const prog = { a: 0 } // assemble progress 0..1
+    let raf = 0
+    const particles: P[] = []
+
+    const render = () => {
+      ctx.clearRect(0, 0, W, H)
+      ctx.globalCompositeOperation = 'lighter'
+      const a = prog.a
+      for (const p of particles) {
+        const local = Math.min(1, Math.max(0, (a - p.delay) / (1 - 0.4)))
+        const e = 1 - Math.pow(1 - local, 3) // easeOutCubic
+        const x = p.sx + (p.tx - p.sx) * e
+        const y = p.sy + (p.ty - p.sy) * e
+        ctx.globalAlpha = Math.min(1, a * 1.4)
+        ctx.fillStyle = p.color
+        ctx.beginPath()
+        ctx.arc(x, y, p.r, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
+      raf = requestAnimationFrame(render)
+    }
+
+    const start = () => {
+      raf = requestAnimationFrame(render)
 
       const tl = gsap.timeline({ onComplete: finish })
 
-      // 1) Luxo-style: the sun drops from above and bounces into place
-      tl.to('.li-dot', { y: 0, scale: 1, duration: 0.85, ease: 'bounce.out' })
+      // 1) assemble
+      tl.to(prog, { a: 1, duration: 1.0, ease: 'power2.out' }, 0)
 
-      // 2) sunrise light sweep draws the T
-      tl.to('.li-flare', { opacity: 1, duration: 0.12 }, 0.6)
-        .to('.li-flare', { attr: { cx: 188 }, duration: 0.62, ease: 'power1.inOut' }, 0.6)
-        .to(strokes, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out', stagger: 0.07 }, 0.64)
-        .to('.li-word', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 0.94)
-        .to('.li-flare', { opacity: 0, duration: 0.25 }, 1.08)
+      // 2) sun corona blast + flash + shockwave ring
+      tl.fromTo(
+        '.li-corona',
+        { scale: 0.25, opacity: 0, rotate: 0 },
+        { scale: 1, opacity: 0.95, rotate: 95, duration: 0.9, ease: 'power2.out' },
+        0.85,
+      )
+        .to('.li-corona', { opacity: 0, rotate: 140, duration: 0.7, ease: 'power1.in' }, 1.55)
+        .fromTo('.li-flash', { scale: 0.3, opacity: 0 }, { scale: 1.5, opacity: 0.95, duration: 0.22, ease: 'power2.out' }, 0.98)
+        .to('.li-flash', { opacity: 0, duration: 0.4, ease: 'power1.out' }, 1.18)
+        .fromTo('.li-ring', { scale: 0, opacity: 0.7 }, { scale: 1, opacity: 0, duration: 0.7, ease: 'power2.out' }, 1.0)
 
-      // 3) apex: sun pulse + rays bloom + shockwave ring
-      tl.to('.li-dot', { scale: 1.2, duration: 0.16, yoyo: true, repeat: 1, ease: 'power2.inOut' }, 1.2)
-        .to('.li-rays', { scale: 1.3, opacity: 1, duration: 0.28, ease: 'power2.out' }, 1.2)
-        .to('.li-rays', { scale: 2, opacity: 0, duration: 0.42, ease: 'power1.out' }, '>-0.08')
-        .to('.li-shock', { scale: 6, opacity: 0, duration: 0.6, ease: 'power2.out' }, 1.22)
-
-      // 4) fly into the navbar logo + wipe backdrop
-      tl.addLabel('fly', '>-0.1')
+      // 3) resolve to the crisp logo, then fly into the navbar
+      tl.to('.li-canvas', { opacity: 0, duration: 0.4, ease: 'power1.inOut' }, 1.5)
+        .to(mark, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 1.5)
+        .addLabel('fly', '>-0.02')
         .add(() => {
           const navLogo = document.querySelector('.navbar__logo-link')
           const mr = mark.getBoundingClientRect()
@@ -86,63 +133,100 @@ export default function LogoIntro() {
               ease: 'power3.inOut',
             })
           } else {
-            gsap.to(mark, { y: '-=120', scale: 0.4, duration: 0.62, ease: 'power3.inOut' })
+            gsap.to(mark, { y: '-=160', scale: 0.4, duration: 0.62, ease: 'power3.inOut' })
           }
         }, 'fly')
         .to('.li-bg', { opacity: 0, duration: 0.6, ease: 'power2.inOut' }, 'fly')
-        .to(mark, { opacity: 0, duration: 0.2 }, 'fly+=0.55')
-    }, root)
+        .to(mark, { opacity: 0, duration: 0.2 }, 'fly+=0.6')
+    }
 
-    return () => ctx.revert()
+    // Centre the crisp mark and size the particle target to match it.
+    gsap.set(mark, { xPercent: -50, yPercent: -50, transformOrigin: 'center center', opacity: 0 })
+    const drawW = mark.offsetWidth || 320
+    const drawH = mark.offsetHeight || Math.round((drawW * 40) / 168)
+
+    // Rasterise the logo to sample its shape into particle targets.
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 168 40'>
+      <path d='M6 8h16M14 8v22M14 26c6 0 11-3 12-8' fill='none' stroke='#fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/>
+      <circle cx='26' cy='16' r='3.6' fill='#fff'/>
+      <text x='34' y='27' fill='#fff' font-family='Georgia, serif' font-size='20' font-weight='700'>imothy</text>
+    </svg>`
+    const oc = document.createElement('canvas')
+    const ocW = Math.max(160, Math.round(drawW))
+    const ocH = Math.max(40, Math.round(drawH))
+    oc.width = ocW
+    oc.height = ocH
+    const octx = oc.getContext('2d')
+
+    const buildAndStart = () => {
+      if (octx) {
+        const data = octx.getImageData(0, 0, ocW, ocH).data
+        const stride = W < 768 ? 4 : 3
+        const left = cx - drawW / 2
+        const top = cy - drawH / 2
+        for (let y = 0; y < ocH; y += stride) {
+          for (let x = 0; x < ocW; x += stride) {
+            if (data[(y * ocW + x) * 4 + 3] > 130) {
+              const tx = left + (x / ocW) * drawW
+              const ty = top + (y / ocH) * drawH
+              const ang = Math.random() * Math.PI * 2
+              const dist = Math.max(W, H) * (0.5 + Math.random() * 0.6)
+              particles.push({
+                tx,
+                ty,
+                sx: cx + Math.cos(ang) * dist,
+                sy: cy + Math.sin(ang) * dist,
+                r: 1.1 + Math.random() * 1.6,
+                color: COLORS[(Math.random() * COLORS.length) | 0],
+                delay: Math.random() * 0.4,
+              })
+            }
+          }
+        }
+      }
+      if (particles.length < 30) {
+        // sampling failed somehow — skip straight to the fly/reveal
+        gsap.set(mark, { opacity: 1 })
+        gsap.set('.li-canvas', { opacity: 0 })
+      }
+      start()
+    }
+
+    const img = new Image()
+    img.onload = () => {
+      octx?.drawImage(img, 0, 0, ocW, ocH)
+      buildAndStart()
+    }
+    img.onerror = buildAndStart
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg)
+
+    return () => {
+      window.clearTimeout(safety)
+      cancelAnimationFrame(raf)
+      gsap.killTweensOf([prog, mark, '.li-corona', '.li-flash', '.li-ring', '.li-canvas', '.li-bg'])
+    }
   }, [])
 
   if (done) return null
 
-  const rays = Array.from({ length: 12 }).map((_, i) => {
-    const a = (i / 12) * Math.PI * 2
-    return (
-      <line
-        key={i}
-        x1={26 + Math.cos(a) * 7}
-        y1={16 + Math.sin(a) * 7}
-        x2={26 + Math.cos(a) * 15}
-        y2={16 + Math.sin(a) * 15}
-      />
-    )
-  })
-
   return (
     <div className="logo-intro" ref={rootRef} role="presentation" aria-hidden="true">
       <div className="logo-intro__bg li-bg" />
+      <div className="li-corona" />
+      <canvas className="li-canvas" ref={canvasRef} />
+      <div className="li-ring" />
       <div className="logo-intro__mark" ref={markRef}>
         <svg className="logo-intro__svg" viewBox="0 0 168 40" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="liFlare" cx="0.5" cy="0.5" r="0.5">
-              <stop offset="0" stopColor="#fff6e0" stopOpacity="0.95" />
-              <stop offset="1" stopColor="#fff6e0" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
-          {/* expanding sunrise shockwave ring (the dark halo) */}
-          <circle className="li-shock" cx="26" cy="16" r="6" fill="none" stroke="rgba(61,46,42,0.5)" strokeWidth="1.4" />
-
-          <g className="li-rays" stroke="#f5a623" strokeWidth="2" strokeLinecap="round">
-            {rays}
-          </g>
-
-          <path className="li-stroke" d="M6 8h16" stroke="#3d2e2a" strokeWidth="2.8" strokeLinecap="round" />
-          <path className="li-stroke" d="M14 8v22" stroke="#3d2e2a" strokeWidth="2.8" strokeLinecap="round" />
           <path
-            className="li-stroke"
-            d="M14 26c6 0 11-3 12-8"
+            d="M6 8h16M14 8v22M14 26c6 0 11-3 12-8"
+            fill="none"
             stroke="#3d2e2a"
             strokeWidth="2.8"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <circle className="li-dot" cx="26" cy="16" r="3.2" fill="#f5a623" />
+          <circle cx="26" cy="16" r="3.2" fill="#f5a623" />
           <text
-            className="li-word"
             x="34"
             y="27"
             fill="#3d2e2a"
@@ -153,11 +237,9 @@ export default function LogoIntro() {
           >
             imothy
           </text>
-
-          {/* warm light sweep that travels across as the T draws */}
-          <ellipse className="li-flare" cx="-16" cy="18" rx="20" ry="24" fill="url(#liFlare)" />
         </svg>
       </div>
+      <div className="li-flash" />
     </div>
   )
 }
