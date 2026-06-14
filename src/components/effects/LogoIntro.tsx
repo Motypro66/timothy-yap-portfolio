@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import gsap from 'gsap'
 import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
 import LogoContent from '../ui/LogoContent'
@@ -7,6 +7,7 @@ import { LOGO_VIEWBOX } from '../ui/logoTokens'
 const VIEWBOX_CX = 84
 const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
+const MOTE_COUNT = 6
 
 function centerSvgContent(content: SVGGraphicsElement | null) {
   if (!content) return
@@ -80,7 +81,7 @@ export default function LogoIntro() {
       setDone(true)
       window.dispatchEvent(new CustomEvent(LOGO_INTRO_COMPLETE))
     }
-    const safety = window.setTimeout(finish, 3200)
+    const safety = window.setTimeout(finish, 3800)
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const t = window.setTimeout(finish, 300)
@@ -97,9 +98,16 @@ export default function LogoIntro() {
 
       const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
       const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
+      const markInner = mark.querySelector('.logo-intro__mark-inner') as HTMLElement | null
 
       ctx = gsap.context(() => {
         gsap.set(mark, { force3D: true })
+        gsap.set('.logo-intro__ambience', { opacity: 0 })
+        gsap.set('.logo-intro__orb', { scale: 0.85, opacity: 0 })
+        gsap.set('.li-mote', { opacity: 0, y: 8 })
+        gsap.set('.li-sweep', { x: '-130%' })
+        gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
+        gsap.set('.li-sun-glow', { scale: 0.7, opacity: 0, svgOrigin: '26 16' })
 
         centerSvgContent(introGroup)
 
@@ -142,15 +150,53 @@ export default function LogoIntro() {
 
         const tl = gsap.timeline({ onComplete: finish })
 
-        tl.to(strokes, {
-          strokeDashoffset: 0,
-          duration: 0.58,
-          ease: 'power2.inOut',
-          stagger: 0.1,
-        })
+        tl.to('.logo-intro__ambience', { opacity: 1, duration: 0.45, ease: 'power2.out' })
+          .to(
+            '.logo-intro__orb',
+            { scale: 1, opacity: 1, duration: 0.8, stagger: 0.12, ease: 'power2.out' },
+            0,
+          )
+          .to('.li-bg', { '--li-bg-shift': 1, duration: 2.4, ease: 'none' }, 0)
+          .to(strokes, {
+            strokeDashoffset: 0,
+            duration: 0.58,
+            ease: 'power2.inOut',
+            stagger: 0.1,
+          })
           .to('.li-dot', { scale: 1, duration: 0.42, ease: 'back.out(2)' }, '-=0.2')
-          .to('.li-word', { opacity: 1, y: 0, duration: 0.48, ease: 'power2.out' }, '-=0.26')
-          .to({}, { duration: 0.5 })
+          .to(
+            '.li-sun-pulse',
+            { scale: 1.6, opacity: 0.32, duration: 0.48, ease: 'power2.out' },
+            '-=0.32',
+          )
+          .to('.li-sun-pulse', { scale: 2.4, opacity: 0, duration: 0.42, ease: 'power2.in' }, '-=0.08')
+          .to(
+            '.li-sun-glow',
+            { scale: 1.15, opacity: 0.5, duration: 0.55, ease: 'power2.out' },
+            '-=0.55',
+          )
+          .to('.li-sun-glow', { opacity: 0.28, duration: 0.35, ease: 'sine.inOut' })
+          .to(
+            '.li-mote',
+            {
+              opacity: 0.55,
+              y: -18,
+              duration: 0.75,
+              stagger: 0.06,
+              ease: 'power2.out',
+            },
+            '-=0.45',
+          )
+          .to('.li-word', { opacity: 1, y: 0, duration: 0.48, ease: 'power2.out' }, '-=0.38')
+          .to('.li-sweep', { x: '130%', duration: 0.62, ease: 'power2.inOut' }, '-=0.42')
+          .addLabel('hold')
+          .to(
+            markInner,
+            { scale: 1.018, duration: 0.85, ease: 'sine.inOut', yoyo: true, repeat: 1 },
+            'hold',
+          )
+          .to('.li-sun-glow', { opacity: 0.38, scale: 1.22, duration: 0.85, ease: 'sine.inOut' }, 'hold')
+          .to({}, { duration: 0.28 }, 'hold')
           .addLabel('fly')
           .add(() => {
             if (introSvg && introGroup) {
@@ -169,6 +215,7 @@ export default function LogoIntro() {
             },
             'fly',
           )
+          .to('.logo-intro__ambience', { opacity: 0, duration: 0.55, ease: 'power2.in' }, 'fly')
           .to('.li-bg', { opacity: 0, duration: 0.62, ease: 'power2.inOut' }, 'fly')
           .to(mark, { opacity: 0, duration: 0.22 }, 'fly+=0.58')
       }, root)
@@ -185,16 +232,37 @@ export default function LogoIntro() {
   return (
     <div className="logo-intro" ref={rootRef} role="presentation" aria-hidden="true">
       <div className="logo-intro__bg li-bg" />
+      <div className="logo-intro__ambience" aria-hidden="true">
+        <span className="logo-intro__orb logo-intro__orb--sun" />
+        <span className="logo-intro__orb logo-intro__orb--peach" />
+        <span className="logo-intro__orb logo-intro__orb--sky" />
+      </div>
       <div className="logo-intro__center">
         <div className="logo-intro__mark" ref={markRef}>
-          <svg className="logo-intro__svg" viewBox={LOGO_VIEWBOX} xmlns="http://www.w3.org/2000/svg">
-            <LogoContent
-              groupClassName="logo-content li-content"
-              strokeClassName="li-stroke"
-              dotClassName="li-dot"
-              wordClassName="li-word"
-            />
-          </svg>
+          <div className="logo-intro__mark-inner">
+            <div className="logo-intro__sweep li-sweep" aria-hidden="true" />
+            <div className="logo-intro__motes" aria-hidden="true">
+              {Array.from({ length: MOTE_COUNT }, (_, i) => (
+                <span key={i} className="li-mote" style={{ '--i': i } as CSSProperties} />
+              ))}
+            </div>
+            <svg className="logo-intro__svg" viewBox={LOGO_VIEWBOX} xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="logoSunGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#ffd166" stopOpacity="0.65" />
+                  <stop offset="55%" stopColor="#f5a623" stopOpacity="0.22" />
+                  <stop offset="100%" stopColor="#f5a623" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <LogoContent
+                introEffects
+                groupClassName="logo-content li-content"
+                strokeClassName="li-stroke"
+                dotClassName="li-dot"
+                wordClassName="li-word"
+              />
+            </svg>
+          </div>
         </div>
       </div>
     </div>
