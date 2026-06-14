@@ -1,14 +1,23 @@
 {
-  "name": "Timothy Yap",
+  "name": "Timothy Yap | Performance Marketing",
   "short_name": "Timothy",
+  "description": "Performance Marketing Specialist portfolio — Google Ads, GTM, GA4, lead generation.",
+  "start_url": ".",
   "icons": [
     {
       "src": "favicon.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ],
   "theme_color": "#fff8f0",
-  "background_color": "#fff8f0",
+  "background_color": "#e8dfd4",
   "display": "standalone"
 }
