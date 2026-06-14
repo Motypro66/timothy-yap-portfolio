@@ -1,5 +1,6 @@
+import { useEffect } from 'react'
 import { LanguageProvider } from './i18n/LanguageContext'
-import { CommandProvider } from './context/CommandContext'
+import { CommandProvider, useCommand } from './context/CommandContext'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import AuroraBackground from './components/effects/AuroraBackground'
 import LogoIntro from './components/effects/LogoIntro'
@@ -11,12 +12,17 @@ import Skills from './components/sections/Skills'
 import Experience from './components/sections/Experience'
 import Contact from './components/sections/Contact'
 import './styles/components.css'
-import './styles/command.css'
 import './styles/room-journey.css'
 import './styles/aurora.css'
 
 function Portfolio() {
   useSmoothScroll()
+  const { setBootComplete } = useCommand()
+
+  // Skip the old dark "system boot" overlay; reveal the warm hero right away.
+  useEffect(() => {
+    setBootComplete(true)
+  }, [setBootComplete])
 
   return (
     <>
