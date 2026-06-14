@@ -8,9 +8,9 @@ const MOBILE_QUERY = '(max-width: 960px)'
 function buildOptions(mobile: boolean): ISourceOptions {
   return {
     fullScreen: { enable: false },
-    fpsLimit: mobile ? 45 : 60,
+    fpsLimit: mobile ? 40 : 60,
     particles: {
-      number: { value: mobile ? 95 : 70, density: { enable: true } },
+      number: { value: mobile ? 52 : 70, density: { enable: true } },
       color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#5bb5e8'] },
       links: {
         enable: true,
@@ -41,7 +41,7 @@ function buildOptions(mobile: boolean): ISourceOptions {
         push: { quantity: mobile ? 4 : 3 },
       },
     },
-    detectRetina: true,
+    detectRetina: !mobile,
   }
 }
 

@@ -4,6 +4,9 @@
   z-index: 300;
   pointer-events: none;
   overflow: hidden;
+  /* dvh keeps vertical centre stable when mobile browser chrome shows/hides */
+  height: 100vh;
+  height: 100dvh;
 }
 
 .logo-intro__bg {
@@ -12,14 +15,28 @@
   background: radial-gradient(circle at 50% 44%, #fff6ea 0%, #ffedd6 55%, #f6d9b6 100%);
 }
 
+.logo-intro__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
 .logo-intro__mark {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: min(72vw, 360px);
-  transform: translate(-50%, -50%);
+  position: relative;
+  width: min(78vw, 360px);
   transform-origin: center center;
   will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+@media (max-width: 960px) {
+  .logo-intro__mark {
+    width: min(84vw, 320px);
+  }
 }
 
 .logo-intro__svg {

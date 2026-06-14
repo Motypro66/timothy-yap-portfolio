@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { profile } from '../../data/resume'
 import { useLanguage } from '../../i18n/LanguageContext'
+import { useIntroComplete } from '../../hooks/useIntroComplete'
 import FloatingOrbs from '../effects/FloatingOrbs'
 import ParticleBackground from '../effects/ParticleBackground'
 import SunRays from '../effects/SunRays'
@@ -36,6 +37,7 @@ function MetricValue({ metric, rollStarted }: { metric: Metric; rollStarted: boo
 }
 
 export default function Hero() {
+  const introComplete = useIntroComplete()
   const [rollStarted, setRollStarted] = useState(false)
   const { t, lang } = useLanguage()
   const title = lang === 'zh' ? profile.titleZh : profile.title
@@ -66,8 +68,12 @@ export default function Hero() {
 
   return (
     <section className="hero" id="hero">
-      <SunRays />
-      <ParticleBackground />
+      {introComplete && (
+        <>
+          <SunRays />
+          <ParticleBackground />
+        </>
+      )}
       <FloatingOrbs />
       <div className="hero__mobile-glow" aria-hidden="true" />
       <div className="hero__scrim" aria-hidden="true" />
@@ -78,8 +84,8 @@ export default function Hero() {
           <motion.div
             className="hero__badge"
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            animate={introComplete ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            transition={{ delay: 0.05, duration: 0.5 }}
           >
             <span className="hero__badge-dot" />
             {t.hero.badge}
@@ -89,8 +95,8 @@ export default function Hero() {
             <motion.span
               className="hero__name type-display"
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ delay: 0.12, duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
             >
               {profile.displayName}
             </motion.span>
@@ -102,8 +108,8 @@ export default function Hero() {
           <motion.p
             className="hero__tagline type-body"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
+            animate={introComplete ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ delay: 0.45, duration: 0.7 }}
           >
             {t.hero.tagline}
           </motion.p>
@@ -111,8 +117,8 @@ export default function Hero() {
           <motion.div
             className="hero__metrics"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.7 }}
+            animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ delay: 0.58, duration: 0.65 }}
           >
             {t.hero.metrics.map((m) => (
               <InteractiveBox key={m.label} className="hero__metric">
@@ -125,8 +131,8 @@ export default function Hero() {
           <motion.div
             className="hero__actions"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6, duration: 0.7 }}
+            animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ delay: 0.72, duration: 0.65 }}
           >
             <MagneticButton href="#contact" variant="primary">
               {t.hero.getInTouch}
@@ -143,8 +149,8 @@ export default function Hero() {
         <motion.div
           className="hero__scroll type-label"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.8 }}
+          animate={introComplete ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ delay: 0.95, duration: 0.7 }}
         >
           <span>{t.hero.scroll}</span>
           <motion.div

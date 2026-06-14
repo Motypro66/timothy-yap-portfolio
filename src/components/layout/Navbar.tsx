@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { navLinks, profile } from '../../data/resume'
 import { useLanguage } from '../../i18n/LanguageContext'
+import { useIntroComplete } from '../../hooks/useIntroComplete'
 import Logo from '../ui/Logo'
 
 export default function Navbar() {
+  const introComplete = useIntroComplete()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const { t, lang, setLang } = useLanguage()
@@ -19,9 +21,9 @@ export default function Navbar() {
   return (
     <motion.header
       className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ y: 0, opacity: 0 }}
+      animate={introComplete ? { y: 0, opacity: 1 } : { y: 0, opacity: 0 }}
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="container navbar__inner">
         <a href="#" className="navbar__logo-link" aria-label={profile.name}>
