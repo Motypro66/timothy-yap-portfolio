@@ -27,12 +27,12 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  opacity: 0.32;
+  opacity: 0.5;
 }
 
 .floating-orbs--side {
   clip-path: polygon(38% 0, 100% 0, 100% 100%, 22% 100%);
-  opacity: 0.28;
+  opacity: 0.46;
 }
 
 .hero__mobile-glow {
