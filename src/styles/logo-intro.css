@@ -1,0 +1,33 @@
+.logo-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+}
+
+.logo-intro__bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, #fff6ea 0%, #ffedd6 55%, #f6d9b6 100%);
+}
+
+.logo-intro__mark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  will-change: transform, opacity;
+}
+
+.logo-intro__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .logo-intro__mark {
+    width: 196px;
+  }
+}

@@ -1,0 +1,67 @@
+.fo-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(6px);
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.fo-orb--sun {
+  width: 16rem;
+  height: 16rem;
+  top: 12%;
+  right: 12%;
+  background: radial-gradient(circle at 34% 30%, #ffd98a, #f5a623 70%);
+  animation: fo-float-a 9s ease-in-out infinite alternate;
+}
+
+.fo-orb--peach {
+  width: 11rem;
+  height: 11rem;
+  top: 46%;
+  right: 4%;
+  background: radial-gradient(circle at 34% 30%, #ffc1aa, #ff8c69 70%);
+  animation: fo-float-b 11s ease-in-out infinite alternate;
+}
+
+.fo-orb--sky {
+  width: 7rem;
+  height: 7rem;
+  top: 6%;
+  right: 33%;
+  background: radial-gradient(circle at 40% 35%, #bfe6fa, #5bb5e8 70%);
+  animation: fo-float-c 8s ease-in-out infinite alternate;
+}
+
+/* the thin dark ring */
+.fo-ring {
+  position: absolute;
+  width: 9rem;
+  height: 9rem;
+  top: 58%;
+  right: 28%;
+  border-radius: 50%;
+  border: 2px solid rgba(61, 46, 42, 0.32);
+  opacity: 0.55;
+  animation: fo-float-c 13s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes fo-float-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-1.4rem, 1.8rem, 0) scale(1.07); }
+}
+@keyframes fo-float-b {
+  0% { transform: translate3d(0, 0, 0) scale(1.04); }
+  100% { transform: translate3d(1.6rem, -1.4rem, 0) scale(0.95); }
+}
+@keyframes fo-float-c {
+  0% { transform: translate3d(0, 0, 0) scale(0.96); }
+  100% { transform: translate3d(-1.2rem, -1.6rem, 0) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fo-orb,
+  .fo-ring {
+    animation: none;
+  }
+}

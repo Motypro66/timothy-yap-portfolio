@@ -8,8 +8,8 @@ export default function Experience() {
   const { t } = useLanguage()
 
   return (
-    <ScrollRevealSection id="experience" className="experience command-section journey-station">
-      <div className="container journey-station__inner">
+    <ScrollRevealSection id="experience" className="experience">
+      <div className="container">
         <SectionHeading
           eyebrow={t.experience.eyebrow}
           title={t.experience.title}

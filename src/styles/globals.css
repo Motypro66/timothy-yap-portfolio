@@ -14,9 +14,8 @@ html {
 
 body {
   font-family: var(--font-body);
-  background: #e8dfd4;
-  background: var(--bg-deep, #e8dfd4);
-  color: var(--text-primary, #2a2218);
+  background: var(--bg-deep);
+  color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -44,7 +43,7 @@ img {
 }
 
 ::selection {
-  background: rgba(245, 166, 35, 0.25);
+  background: rgba(245, 166, 35, 0.35);
   color: var(--text-primary);
 }
 

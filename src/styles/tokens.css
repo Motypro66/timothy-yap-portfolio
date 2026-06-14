@@ -1,20 +1,17 @@
 :root {
-  /* Campaign Command — dark ops cockpit + amber signal */
-  --bg-deep: #070b12;
-  --bg-surface: #0d1219;
-  --bg-warm: #121a24;
-  --bg-panel: rgba(13, 18, 25, 0.72);
+  /* Sunny personal palette — warm, approachable, optimistic */
+  --bg-deep: #fff8f0;
+  --bg-surface: #fffdf9;
+  --bg-warm: #fff0e0;
   --accent-sun: #f5a623;
   --accent-peach: #ff8c69;
   --accent-sky: #5bb5e8;
   --accent-honey: #ffd166;
-  --accent-signal: #f5a623;
-  --accent-tracking: #5bb5e8;
-  --text-primary: #e8e0d8;
-  --text-muted: #8a959e;
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --text-primary: #3d2e2a;
+  --text-muted: #7a6560;
+  --glass-border: rgba(61, 46, 42, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --shadow-soft: 0 8px 32px rgba(245, 166, 35, 0.12);
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Outfit', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -22,12 +19,10 @@
   --container-max: 72rem;
   --radius-lg: 1.25rem;
   --radius-md: 0.75rem;
-  --glow-sun: 0 0 48px rgba(245, 166, 35, 0.45);
+  --glow-sun: 0 0 48px rgba(245, 166, 35, 0.35);
   --glow-peach: 0 0 40px rgba(255, 140, 105, 0.25);
-  --glow-signal: 0 0 20px rgba(245, 166, 35, 0.65);
+  /* legacy aliases used in gradient-text */
   --accent-cyan: var(--accent-sky);
   --accent-coral: var(--accent-peach);
   --accent-violet: #e8a838;
-  --hud-height: 3.75rem;
-  --rail-width: 4.5rem;
 }
