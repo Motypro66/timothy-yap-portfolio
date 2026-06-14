@@ -8,26 +8,26 @@ const MOBILE_QUERY = '(max-width: 960px)'
 function buildOptions(mobile: boolean): ISourceOptions {
   return {
     fullScreen: { enable: false },
-    fpsLimit: mobile ? 30 : 60,
+    fpsLimit: mobile ? 36 : 60,
     particles: {
-      number: { value: mobile ? 32 : 65, density: { enable: true } },
-      color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#e8a838'] },
+      number: { value: mobile ? 52 : 65, density: { enable: true } },
+      color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#e8a838', '#ff7555'] },
       links: {
-        enable: !mobile,
+        enable: true,
         color: '#f5a623',
-        opacity: mobile ? 0.22 : 0.18,
-        distance: mobile ? 100 : 140,
-        width: 1,
+        opacity: mobile ? 0.28 : 0.18,
+        distance: mobile ? 110 : 140,
+        width: mobile ? 1.15 : 1,
       },
       move: {
         enable: true,
-        speed: mobile ? 0.72 : 0.82,
+        speed: mobile ? 0.88 : 0.82,
         direction: 'none',
         random: true,
         outModes: { default: 'bounce' },
       },
-      opacity: { value: { min: mobile ? 0.3 : 0.25, max: mobile ? 0.65 : 0.55 } },
-      size: { value: { min: mobile ? 1.25 : 1, max: mobile ? 3.5 : 3.5 } },
+      opacity: { value: { min: mobile ? 0.38 : 0.25, max: mobile ? 0.82 : 0.55 } },
+      size: { value: { min: mobile ? 1.5 : 1, max: mobile ? 4.75 : 3.5 } },
     },
     interactivity: {
       detectsOn: 'window',
@@ -38,7 +38,7 @@ function buildOptions(mobile: boolean): ISourceOptions {
       },
       modes: {
         grab: { distance: 160, links: { opacity: 0.35 } },
-        push: { quantity: mobile ? 3 : 3 },
+        push: { quantity: mobile ? 4 : 3 },
       },
     },
     detectRetina: !mobile,

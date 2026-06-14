@@ -9,7 +9,7 @@ export default function FloatingOrbs() {
       <span className="fo-orb fo-orb--sun" />
       <span className="fo-orb fo-orb--peach" />
       <span className="fo-orb fo-orb--sky" />
-      <span className="fo-ring" />
+      <span className="fo-orb fo-orb--coral" />
     </div>
   )
 }

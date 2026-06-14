@@ -165,6 +165,17 @@
   z-index: 2;
 }
 
+/* Keep T strokes hidden until GSAP draw — prevents flash of full paths on refresh */
+.logo-intro .li-stroke {
+  stroke-dasharray: 999;
+  stroke-dashoffset: 999;
+}
+
+.logo-intro .li-dot,
+.logo-intro .li-word {
+  opacity: 0;
+}
+
 .logo-intro__sweep {
   position: absolute;
   inset: -15% -40%;

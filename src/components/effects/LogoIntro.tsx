@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import gsap from 'gsap'
 import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
 import LogoContent from '../ui/LogoContent'
 import { LOGO_VIEWBOX } from '../ui/logoTokens'
 
-const HOLD_BEFORE_FLY = 0.35
+const HOLD_BEFORE_FLY = 0.15
 const FLY_DURATION = 0.82
 /** If layout/GSAP never starts (fonts hang, etc.) */
 const LAYOUT_SAFETY_MS = 5200
@@ -15,8 +15,13 @@ const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
 const MOTE_COUNT = 4
 const MOBILE_QUERY = '(max-width: 960px)'
-/** Static path lengths — avoids getTotalLength during intro setup. */
-const STROKE_LENGTHS = [16, 22, 14.8]
+
+function applyStrokeDash(strokes: SVGPathElement[]) {
+  strokes.forEach((p) => {
+    const len = p.getTotalLength()
+    gsap.set(p, { strokeDasharray: len, strokeDashoffset: len })
+  })
+}
 
 function centerSvgContent(content: SVGGraphicsElement | null) {
   if (!content) return
@@ -75,6 +80,14 @@ export default function LogoIntro() {
   const markRef = useRef<HTMLDivElement>(null)
   const isMobile =
     typeof window !== 'undefined' ? window.matchMedia(MOBILE_QUERY).matches : false
+
+  // Hide strokes before first paint — CSS fallback until GSAP sets exact dash lengths.
+  useLayoutEffect(() => {
+    const mark = markRef.current
+    if (!mark) return
+    const strokes = mark.querySelectorAll<SVGPathElement>('.li-stroke')
+    applyStrokeDash(Array.from(strokes))
+  }, [])
 
   useEffect(() => {
     const root = rootRef.current
@@ -140,10 +153,7 @@ export default function LogoIntro() {
           centerSvgContent(introGroup)
 
           const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
-          strokes.forEach((p, i) => {
-            const len = STROKE_LENGTHS[i] ?? p.getTotalLength()
-            gsap.set(p, { strokeDasharray: len, strokeDashoffset: len })
-          })
+          applyStrokeDash(strokes)
 
           gsap.set('.li-dot', {
             attr: { cy: 5 },
