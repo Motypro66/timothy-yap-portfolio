@@ -44,13 +44,15 @@ export default function Hero() {
   const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
 
   useEffect(() => {
+    if (!introComplete) return
+
     let cancelled = false
 
     const beginRoll = () => {
       if (!cancelled) setRollStarted(true)
     }
 
-    const timer = window.setTimeout(beginRoll, 1500)
+    const timer = window.setTimeout(beginRoll, 900)
     const onPageShow = (event: PageTransitionEvent) => {
       if (event.persisted) {
         setRollStarted(false)
@@ -64,7 +66,7 @@ export default function Hero() {
       window.clearTimeout(timer)
       window.removeEventListener('pageshow', onPageShow)
     }
-  }, [])
+  }, [introComplete])
 
   return (
     <section className="hero" id="hero">
@@ -72,9 +74,9 @@ export default function Hero() {
         <>
           <SunRays />
           <ParticleBackground />
+          <FloatingOrbs />
         </>
       )}
-      <FloatingOrbs />
       <div className="hero__mobile-glow" aria-hidden="true" />
       <div className="hero__scrim" aria-hidden="true" />
       <div className="hero__grid" aria-hidden="true" />
@@ -96,12 +98,12 @@ export default function Hero() {
               className="hero__name type-display"
               initial={{ opacity: 0, y: 30 }}
               animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ delay: 0.08, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: 0.06, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
             >
               {profile.displayName}
             </motion.span>
             <span className="hero__role type-body-strong">
-              <StaggeredText text={title} start={introComplete} delay={0.95} />
+              <StaggeredText text={title} start={introComplete} delay={0.52} />
             </span>
           </h1>
 
@@ -109,7 +111,7 @@ export default function Hero() {
             className="hero__tagline type-body"
             initial={{ opacity: 0 }}
             animate={introComplete ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ delay: 1.35, duration: 0.7 }}
+            transition={{ delay: 0.82, duration: 0.55 }}
           >
             {t.hero.tagline}
           </motion.p>
@@ -118,7 +120,7 @@ export default function Hero() {
             className="hero__metrics"
             initial={{ opacity: 0, y: 20 }}
             animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 1.55, duration: 0.65 }}
+            transition={{ delay: 0.96, duration: 0.55 }}
           >
             {t.hero.metrics.map((m) => (
               <InteractiveBox key={m.label} className="hero__metric">
@@ -132,7 +134,7 @@ export default function Hero() {
             className="hero__actions"
             initial={{ opacity: 0, y: 20 }}
             animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 1.75, duration: 0.65 }}
+            transition={{ delay: 1.1, duration: 0.55 }}
           >
             <MagneticButton href="#contact" variant="primary">
               {t.hero.getInTouch}
@@ -150,7 +152,7 @@ export default function Hero() {
           className="hero__scroll type-label"
           initial={{ opacity: 0 }}
           animate={introComplete ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ delay: 2.05, duration: 0.7 }}
+          transition={{ delay: 1.28, duration: 0.55 }}
         >
           <span>{t.hero.scroll}</span>
           <motion.div

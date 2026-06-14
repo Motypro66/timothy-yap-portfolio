@@ -4,10 +4,12 @@ import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
 import LogoContent from '../ui/LogoContent'
 import { LOGO_VIEWBOX } from '../ui/logoTokens'
 
+const INTRO_MS = 1600
 const VIEWBOX_CX = 84
 const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
-const MOTE_COUNT = 6
+const MOTE_COUNT = 4
+const MOBILE_QUERY = '(max-width: 960px)'
 
 function centerSvgContent(content: SVGGraphicsElement | null) {
   if (!content) return
@@ -64,6 +66,8 @@ export default function LogoIntro() {
   const [done, setDone] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const markRef = useRef<HTMLDivElement>(null)
+  const isMobile =
+    typeof window !== 'undefined' ? window.matchMedia(MOBILE_QUERY).matches : false
 
   useEffect(() => {
     const root = rootRef.current
@@ -81,7 +85,7 @@ export default function LogoIntro() {
       setDone(true)
       window.dispatchEvent(new CustomEvent(LOGO_INTRO_COMPLETE))
     }
-    const safety = window.setTimeout(finish, 3800)
+    const safety = window.setTimeout(finish, INTRO_MS)
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const t = window.setTimeout(finish, 300)
@@ -92,22 +96,28 @@ export default function LogoIntro() {
     }
 
     let ctx: gsap.Context | undefined
+    const mobile = window.matchMedia(MOBILE_QUERY).matches
 
     void waitForLayout().then(() => {
       if (finished) return
 
       const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
       const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
-      const markInner = mark.querySelector('.logo-intro__mark-inner') as HTMLElement | null
 
       ctx = gsap.context(() => {
         gsap.set(mark, { force3D: true })
-        gsap.set('.logo-intro__ambience', { opacity: 0 })
-        gsap.set('.logo-intro__orb', { scale: 0.85, opacity: 0 })
-        gsap.set('.li-mote', { opacity: 0, y: 8 })
+
+        if (mobile) {
+          gsap.set('.logo-intro__ambience', { opacity: 0.55 })
+        } else {
+          gsap.set('.logo-intro__ambience', { opacity: 0 })
+          gsap.set('.logo-intro__orb', { opacity: 0 })
+        }
+
+        gsap.set('.li-mote', { opacity: 0, y: 6 })
         gsap.set('.li-sweep', { x: '-130%' })
         gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
-        gsap.set('.li-sun-glow', { scale: 0.7, opacity: 0, svgOrigin: '26 16' })
+        gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
 
         centerSvgContent(introGroup)
 
@@ -116,8 +126,14 @@ export default function LogoIntro() {
           const len = p.getTotalLength()
           gsap.set(p, { strokeDasharray: len, strokeDashoffset: len })
         })
-        gsap.set('.li-dot', { scale: 0, svgOrigin: '26 16' })
-        gsap.set('.li-word', { opacity: 0, y: 6 })
+
+        gsap.set('.li-dot', {
+          attr: { cy: 5 },
+          opacity: 0,
+          scale: 0.45,
+          svgOrigin: '26 16',
+        })
+        gsap.set('.li-word', { opacity: 0, y: 4 })
 
         let flyTarget = { x: 0, y: -150, scale: 0.4 }
 
@@ -150,54 +166,51 @@ export default function LogoIntro() {
 
         const tl = gsap.timeline({ onComplete: finish })
 
-        tl.to('.logo-intro__ambience', { opacity: 1, duration: 0.45, ease: 'power2.out' })
+        if (!mobile) {
+          tl.to('.logo-intro__ambience', { opacity: 1, duration: 0.18, ease: 'power2.out' })
+            .to('.logo-intro__orb', { opacity: 0.85, duration: 0.22, stagger: 0.04, ease: 'power2.out' }, 0)
+        }
+
+        tl.to(strokes, {
+          strokeDashoffset: 0,
+          duration: 0.3,
+          ease: 'power2.inOut',
+          stagger: 0.04,
+        }, 0.02)
           .to(
-            '.logo-intro__orb',
-            { scale: 1, opacity: 1, duration: 0.8, stagger: 0.12, ease: 'power2.out' },
-            0,
+            '.li-dot',
+            {
+              attr: { cy: 16 },
+              opacity: 1,
+              duration: 0.26,
+              ease: 'power2.in',
+            },
+            '-=0.06',
           )
-          .to('.li-bg', { '--li-bg-shift': 1, duration: 2.4, ease: 'none' }, 0)
-          .to(strokes, {
-            strokeDashoffset: 0,
-            duration: 0.58,
-            ease: 'power2.inOut',
-            stagger: 0.1,
-          })
-          .to('.li-dot', { scale: 1, duration: 0.42, ease: 'back.out(2)' }, '-=0.2')
+          .to('.li-dot', { scale: 1, duration: 0.16, ease: 'back.out(2.4)' }, '-=0.08')
           .to(
             '.li-sun-pulse',
-            { scale: 1.6, opacity: 0.32, duration: 0.48, ease: 'power2.out' },
-            '-=0.32',
+            { scale: 1.55, opacity: 0.34, duration: 0.16, ease: 'power2.out' },
+            '-=0.1',
           )
-          .to('.li-sun-pulse', { scale: 2.4, opacity: 0, duration: 0.42, ease: 'power2.in' }, '-=0.08')
+          .to('.li-sun-pulse', { scale: 2.1, opacity: 0, duration: 0.14, ease: 'power2.in' })
           .to(
             '.li-sun-glow',
-            { scale: 1.15, opacity: 0.5, duration: 0.55, ease: 'power2.out' },
-            '-=0.55',
+            { scale: 1.08, opacity: 0.42, duration: 0.18, ease: 'power2.out' },
+            '-=0.16',
           )
-          .to('.li-sun-glow', { opacity: 0.28, duration: 0.35, ease: 'sine.inOut' })
-          .to(
-            '.li-mote',
-            {
-              opacity: 0.55,
-              y: -18,
-              duration: 0.75,
-              stagger: 0.06,
-              ease: 'power2.out',
-            },
-            '-=0.45',
-          )
-          .to('.li-word', { opacity: 1, y: 0, duration: 0.48, ease: 'power2.out' }, '-=0.38')
-          .to('.li-sweep', { x: '130%', duration: 0.62, ease: 'power2.inOut' }, '-=0.42')
-          .addLabel('hold')
-          .to(
-            markInner,
-            { scale: 1.018, duration: 0.85, ease: 'sine.inOut', yoyo: true, repeat: 1 },
-            'hold',
-          )
-          .to('.li-sun-glow', { opacity: 0.38, scale: 1.22, duration: 0.85, ease: 'sine.inOut' }, 'hold')
-          .to({}, { duration: 0.28 }, 'hold')
-          .addLabel('fly')
+          .to('.li-word', { opacity: 1, y: 0, duration: 0.22, ease: 'power2.out' }, '-=0.14')
+
+        if (!mobile) {
+          tl.to('.li-sweep', { x: '130%', duration: 0.34, ease: 'power2.inOut' }, '-=0.18')
+            .to(
+              '.li-mote',
+              { opacity: 0.45, y: -12, duration: 0.4, stagger: 0.03, ease: 'power2.out' },
+              '-=0.28',
+            )
+        }
+
+        tl.addLabel('fly', '+=0.06')
           .add(() => {
             if (introSvg && introGroup) {
               setTransformOriginToContent(mark, introSvg, introGroup)
@@ -210,14 +223,14 @@ export default function LogoIntro() {
               x: () => flyTarget.x,
               y: () => flyTarget.y,
               scale: () => flyTarget.scale,
-              duration: 0.72,
+              duration: 0.42,
               ease: 'power3.inOut',
             },
             'fly',
           )
-          .to('.logo-intro__ambience', { opacity: 0, duration: 0.55, ease: 'power2.in' }, 'fly')
-          .to('.li-bg', { opacity: 0, duration: 0.62, ease: 'power2.inOut' }, 'fly')
-          .to(mark, { opacity: 0, duration: 0.22 }, 'fly+=0.58')
+          .to('.logo-intro__ambience', { opacity: 0, duration: 0.28, ease: 'power2.in' }, 'fly')
+          .to('.li-bg', { opacity: 0, duration: 0.32, ease: 'power2.inOut' }, 'fly')
+          .to(mark, { opacity: 0, duration: 0.12 }, 'fly+=0.34')
       }, root)
     })
 
@@ -230,7 +243,12 @@ export default function LogoIntro() {
   if (done) return null
 
   return (
-    <div className="logo-intro" ref={rootRef} role="presentation" aria-hidden="true">
+    <div
+      className={`logo-intro${isMobile ? ' logo-intro--lite' : ''}`}
+      ref={rootRef}
+      role="presentation"
+      aria-hidden="true"
+    >
       <div className="logo-intro__bg li-bg" />
       <div className="logo-intro__ambience" aria-hidden="true">
         <span className="logo-intro__orb logo-intro__orb--sun" />
@@ -240,12 +258,14 @@ export default function LogoIntro() {
       <div className="logo-intro__center">
         <div className="logo-intro__mark" ref={markRef}>
           <div className="logo-intro__mark-inner">
-            <div className="logo-intro__sweep li-sweep" aria-hidden="true" />
-            <div className="logo-intro__motes" aria-hidden="true">
-              {Array.from({ length: MOTE_COUNT }, (_, i) => (
-                <span key={i} className="li-mote" style={{ '--i': i } as CSSProperties} />
-              ))}
-            </div>
+            {!isMobile && <div className="logo-intro__sweep li-sweep" aria-hidden="true" />}
+            {!isMobile && (
+              <div className="logo-intro__motes" aria-hidden="true">
+                {Array.from({ length: MOTE_COUNT }, (_, i) => (
+                  <span key={i} className="li-mote" style={{ '--i': i } as CSSProperties} />
+                ))}
+              </div>
+            )}
             <svg className="logo-intro__svg" viewBox={LOGO_VIEWBOX} xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <radialGradient id="logoSunGlow" cx="50%" cy="50%" r="50%">

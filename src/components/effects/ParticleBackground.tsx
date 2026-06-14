@@ -2,32 +2,33 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Particles, { initParticlesEngine } from '@tsparticles/react'
 import { loadSlim } from '@tsparticles/slim'
 import type { ISourceOptions } from '@tsparticles/engine'
+import { useIntroComplete } from '../../hooks/useIntroComplete'
 
 const MOBILE_QUERY = '(max-width: 960px)'
 
 function buildOptions(mobile: boolean): ISourceOptions {
   return {
     fullScreen: { enable: false },
-    fpsLimit: mobile ? 40 : 60,
+    fpsLimit: mobile ? 36 : 60,
     particles: {
-      number: { value: mobile ? 52 : 70, density: { enable: true } },
+      number: { value: mobile ? 40 : 65, density: { enable: true } },
       color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#5bb5e8'] },
       links: {
-        enable: true,
+        enable: !mobile,
         color: '#f5a623',
-        opacity: mobile ? 0.28 : 0.18,
-        distance: mobile ? 110 : 140,
-        width: mobile ? 1.2 : 1,
+        opacity: mobile ? 0.22 : 0.18,
+        distance: mobile ? 100 : 140,
+        width: 1,
       },
       move: {
         enable: true,
-        speed: mobile ? 0.75 : 0.6,
+        speed: mobile ? 0.55 : 0.6,
         direction: 'none',
         random: true,
         outModes: { default: 'bounce' },
       },
-      opacity: { value: { min: mobile ? 0.35 : 0.25, max: mobile ? 0.75 : 0.55 } },
-      size: { value: { min: mobile ? 1.5 : 1, max: mobile ? 4.5 : 3.5 } },
+      opacity: { value: { min: mobile ? 0.3 : 0.25, max: mobile ? 0.65 : 0.55 } },
+      size: { value: { min: mobile ? 1.25 : 1, max: mobile ? 3.5 : 3.5 } },
     },
     interactivity: {
       detectsOn: 'window',
@@ -38,7 +39,7 @@ function buildOptions(mobile: boolean): ISourceOptions {
       },
       modes: {
         grab: { distance: 160, links: { opacity: 0.35 } },
-        push: { quantity: mobile ? 4 : 3 },
+        push: { quantity: mobile ? 3 : 3 },
       },
     },
     detectRetina: !mobile,
@@ -62,19 +63,29 @@ function useIsMobile() {
 }
 
 export default function ParticleBackground() {
+  const introComplete = useIntroComplete()
   const [ready, setReady] = useState(false)
   const isMobile = useIsMobile()
   const options = useMemo(() => buildOptions(isMobile), [isMobile])
 
   useEffect(() => {
+    if (!introComplete) return
+
+    let cancelled = false
     initParticlesEngine(async (engine) => {
       await loadSlim(engine)
-    }).then(() => setReady(true))
-  }, [])
+    }).then(() => {
+      if (!cancelled) setReady(true)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [introComplete])
 
   const particlesLoaded = useCallback(async () => {}, [])
 
-  if (!ready) return null
+  if (!introComplete || !ready) return null
 
   return (
     <div className={`particle-bg${isMobile ? ' particle-bg--mobile' : ''}`} aria-hidden="true">
