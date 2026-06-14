@@ -6,7 +6,7 @@
   overflow: hidden;
   height: 100vh;
   height: 100dvh;
-  contain: strict;
+  contain: layout style;
 }
 
 /* Nav logo sits underneath — hide until intro overlay unmounts */
@@ -59,6 +59,15 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation-direction: alternate;
+  animation-play-state: paused;
+}
+
+.logo-intro--orbs-live .logo-intro__orb {
+  animation-play-state: running;
+}
+
+.logo-intro--drawing .logo-intro__ambience {
+  opacity: 0 !important;
 }
 
 .logo-intro__orb--sun {
@@ -135,7 +144,6 @@
   position: relative;
   width: min(78vw, 360px);
   transform-origin: center center;
-  will-change: transform, opacity;
   backface-visibility: hidden;
   visibility: hidden;
 }
@@ -143,7 +151,7 @@
 .logo-intro__mark-inner {
   position: relative;
   transform-origin: center center;
-  will-change: transform;
+  transform: translateZ(0);
 }
 
 @media (max-width: 960px) {

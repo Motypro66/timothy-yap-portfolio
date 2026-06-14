@@ -13,7 +13,9 @@ const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
 const MOTE_COUNT = 4
 const MOBILE_QUERY = '(max-width: 960px)'
-const FONT_WAIT_MS = 280
+const FONT_WAIT_MS = 180
+const STROKE_DRAW_DUR = 0.38
+const STROKE_STAGGER = 0.12
 
 function prependToGroup(group: SVGGraphicsElement, node: SVGElement) {
   const first = group.firstElementChild
@@ -72,7 +74,14 @@ function createIntroSunEffects(group: SVGGraphicsElement | null) {
 
 function applyStrokeDash(strokes: SVGPathElement[]) {
   strokes.forEach((p) => {
+    p.style.willChange = 'stroke-dashoffset, opacity'
     gsap.set(p, { strokeDasharray: 1, strokeDashoffset: 1 })
+  })
+}
+
+function clearStrokeWillChange(strokes: SVGPathElement[]) {
+  strokes.forEach((p) => {
+    p.style.willChange = ''
   })
 }
 
@@ -186,10 +195,12 @@ export default function LogoIntro() {
     }
 
     let ctx: gsap.Context | undefined
+    let startFrame = 0
     const mobile = window.matchMedia(MOBILE_QUERY).matches
     const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
     const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
 
+    startFrame = requestAnimationFrame(() => {
     ctx = gsap.context(() => {
       gsap.set(mark, { force3D: true, autoAlpha: 0 })
       gsap.set('.logo-intro__ambience', { opacity: 0 })
@@ -240,49 +251,59 @@ export default function LogoIntro() {
 
       const tl = gsap.timeline({ onComplete: finish })
 
-      tl.set(mark, { autoAlpha: 1 }, 0)
+      tl.set(mark, { autoAlpha: 1, force3D: true }, 0)
         .set(introSvg, { visibility: 'visible' }, 0)
         .set(strokes, { opacity: 1, visibility: 'visible' }, 0)
-        .to('.logo-intro__ambience', { opacity: mobile ? 0.55 : 1, duration: 0.28, ease: 'power2.out' })
-        .to(
-          '.logo-intro__orb',
-          { opacity: mobile ? 0.5 : 0.85, duration: 0.32, stagger: 0.06, ease: 'power2.out' },
-          0,
-        )
+        .add(() => root.classList.add('logo-intro--drawing'), 0)
         .to(
           strokes,
           {
             strokeDashoffset: 0,
-            attr: { 'stroke-linecap': 'round' },
-            duration: 0.52,
-            ease: 'power2.inOut',
-            stagger: 0.08,
+            duration: STROKE_DRAW_DUR,
+            ease: 'none',
+            stagger: STROKE_STAGGER,
           },
-          0.04,
+          0.05,
         )
-        .call(() => createIntroSunEffects(introGroup), undefined, '-=0.1')
+        .set(strokes, { attr: { 'stroke-linecap': 'round' } })
+        .add(() => {
+          clearStrokeWillChange(strokes)
+          root.classList.remove('logo-intro--drawing')
+          createIntroSunEffects(introGroup)
+        })
         .to(
           '.li-dot',
           {
             attr: { cy: 16, r: 3.2 },
             autoAlpha: 1,
-            duration: 0.36,
+            duration: 0.34,
             ease: 'power2.in',
           },
-          '-=0.1',
+          '-=0.02',
         )
         .to(
           '.li-sun-pulse',
           { scale: 1.55, opacity: 0.34, duration: 0.22, ease: 'power2.out' },
-          '-=0.12',
+          '-=0.1',
         )
         .to('.li-sun-pulse', { scale: 2.1, opacity: 0, duration: 0.18, ease: 'power2.in' })
         .to(
           '.li-sun-glow',
           { scale: 1.08, opacity: 0.42, duration: 0.24, ease: 'power2.out' },
-          '-=0.2',
+          '-=0.18',
         )
-        .to('.li-word', { autoAlpha: 1, y: 0, duration: 0.34, ease: 'power2.out' }, '-=0.18')
+        .to('.li-word', { autoAlpha: 1, y: 0, duration: 0.32, ease: 'power2.out' }, '-=0.16')
+        .to(
+          '.logo-intro__ambience',
+          { opacity: mobile ? 0.55 : 1, duration: 0.32, ease: 'power2.out' },
+          '-=0.28',
+        )
+        .add(() => root.classList.add('logo-intro--orbs-live'))
+        .to(
+          '.logo-intro__orb',
+          { opacity: mobile ? 0.5 : 0.85, duration: 0.28, stagger: 0.05, ease: 'power2.out' },
+          '<',
+        )
 
       if (!mobile) {
         tl.to('.li-sweep', { x: '130%', duration: 0.42, ease: 'power2.inOut' }, '-=0.24').to(
@@ -315,10 +336,13 @@ export default function LogoIntro() {
         .to('.li-bg', { opacity: 0, duration: 0.42, ease: 'power2.inOut' }, 'fly')
         .to(mark, { opacity: 0, duration: 0.18 }, `fly+=${FLY_DURATION - 0.1}`)
     }, root)
+    })
 
     return () => {
+      cancelAnimationFrame(startFrame)
       window.clearTimeout(safetyLayout)
       window.clearTimeout(safetyTimeline)
+      root.classList.remove('logo-intro--drawing', 'logo-intro--orbs-live')
       ctx?.revert()
     }
   }, [svgReady])
