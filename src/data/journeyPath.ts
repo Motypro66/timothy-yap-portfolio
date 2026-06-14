@@ -1,51 +1,4 @@
-import * as THREE from 'three'
 import type { SectionId } from '../context/CommandContext'
-import { defaultCameraPath, type RoomShot } from '../utils/roomScene'
-
-export type CameraKeyframe = {
-  t: number
-  section: SectionId
-  pos: THREE.Vector3
-  target: THREE.Vector3
-  fov: number
-}
-
-
-/** Map 5 storyboard shots to scroll sections; hold window shot through t=1. */
-function shotsToKeyframes(shots: RoomShot[]): CameraKeyframe[] {
-  const pick = (i: number) => shots[i] ?? shots[shots.length - 1]
-  const pairs: { section: SectionId; t: number; shot: RoomShot }[] = [
-    { section: 'hero', t: 0, shot: pick(0) },
-    { section: 'about', t: 0.22, shot: pick(1) },
-    { section: 'skills', t: 0.4, shot: pick(2) },
-    { section: 'experience', t: 0.62, shot: pick(3) },
-    { section: 'contact', t: 0.82, shot: pick(4) },
-    { section: 'contact', t: 1, shot: pick(4) },
-  ]
-  return pairs.map(({ section, t, shot }) => ({
-    t,
-    section,
-    pos: new THREE.Vector3(...shot.pos),
-    target: new THREE.Vector3(...shot.target),
-    fov: shot.fov,
-  }))
-}
-
-let runtimeKeyframes: CameraKeyframe[] = shotsToKeyframes(defaultCameraPath())
-let runtimePathVersion = 0
-
-export function setRuntimeJourneyKeyframes(shots: RoomShot[]) {
-  runtimeKeyframes = shotsToKeyframes(shots)
-  runtimePathVersion += 1
-}
-
-export function getCameraPathVersion() {
-  return runtimePathVersion
-}
-
-export function getJourneyKeyframes() {
-  return runtimeKeyframes
-}
 
 export type SectionJourneyConfig = {
   id: SectionId
@@ -62,31 +15,6 @@ export const SECTION_JOURNEY: SectionJourneyConfig[] = [
   { id: 'experience', pin: '155%', weight: 0.2, beatEn: 'WHERE I IMPACT', beatZh: '经历与成果' },
   { id: 'contact', pin: '145%', weight: 0.22, beatEn: 'SAY HELLO', beatZh: '联系我' },
 ]
-
-export function sampleJourneyPath(progress: number) {
-  const frames = runtimeKeyframes
-  const p = Math.max(0, Math.min(1, progress))
-  let i = 0
-  while (i < frames.length - 1 && frames[i + 1].t < p) i += 1
-  const a = frames[i]
-  const b = frames[Math.min(i + 1, frames.length - 1)]
-  const local = b.t === a.t ? 0 : (p - a.t) / (b.t - a.t)
-  const ease = local * local * (3 - 2 * local)
-  return {
-    position: a.pos.clone().lerp(b.pos, ease),
-    target: a.target.clone().lerp(b.target, ease),
-    fov: THREE.MathUtils.lerp(a.fov, b.fov, ease),
-    section: local > 0.5 ? b.section : a.section,
-  }
-}
-
-export function progressFromSections(sectionProgress: Record<SectionId, number>) {
-  let total = 0
-  for (const s of SECTION_JOURNEY) {
-    total += (sectionProgress[s.id] ?? 0) * s.weight
-  }
-  return Math.max(0, Math.min(1, total))
-}
 
 const SECTION_THRESHOLDS = SECTION_JOURNEY.reduce<{ id: SectionId; start: number }[]>(
   (acc, s) => {
