@@ -10,35 +10,25 @@ export type CameraKeyframe = {
   fov: number
 }
 
-const SECTION_AT: { section: SectionId; t: number }[] = [
-  { section: 'hero', t: 0 },
-  { section: 'about', t: 0.22 },
-  { section: 'skills', t: 0.4 },
-  { section: 'experience', t: 0.62 },
-  { section: 'contact', t: 0.82 },
-  { section: 'contact', t: 1 },
-]
 
-/** Map 5 storyboard shots (+ closing beat) to scroll sections. */
+/** Map 5 storyboard shots to scroll sections; hold window shot through t=1. */
 function shotsToKeyframes(shots: RoomShot[]): CameraKeyframe[] {
-  const storyboard = [
-    shots[0],
-    shots[1] ?? shots[0],
-    shots[2] ?? shots[1] ?? shots[0],
-    shots[3] ?? shots[2] ?? shots[0],
-    shots[4] ?? shots[3] ?? shots[0],
-    shots[5] ?? shots[4] ?? shots[0],
+  const pick = (i: number) => shots[i] ?? shots[shots.length - 1]
+  const pairs: { section: SectionId; t: number; shot: RoomShot }[] = [
+    { section: 'hero', t: 0, shot: pick(0) },
+    { section: 'about', t: 0.22, shot: pick(1) },
+    { section: 'skills', t: 0.4, shot: pick(2) },
+    { section: 'experience', t: 0.62, shot: pick(3) },
+    { section: 'contact', t: 0.82, shot: pick(4) },
+    { section: 'contact', t: 1, shot: pick(4) },
   ]
-  return SECTION_AT.map(({ section, t }, i) => {
-    const shot = storyboard[i] ?? storyboard[storyboard.length - 1]
-    return {
-      t,
-      section,
-      pos: new THREE.Vector3(...shot.pos),
-      target: new THREE.Vector3(...shot.target),
-      fov: shot.fov,
-    }
-  })
+  return pairs.map(({ section, t, shot }) => ({
+    t,
+    section,
+    pos: new THREE.Vector3(...shot.pos),
+    target: new THREE.Vector3(...shot.target),
+    fov: shot.fov,
+  }))
 }
 
 let runtimeKeyframes: CameraKeyframe[] = shotsToKeyframes(defaultCameraPath())

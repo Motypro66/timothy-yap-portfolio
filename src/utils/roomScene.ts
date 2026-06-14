@@ -122,13 +122,10 @@ export function analyzeRoomLayout(root: THREE.Object3D, box: THREE.Box3): RoomLa
     'Shelf',
     new THREE.Vector3(box.min.x + size.x * 0.18, floor + interiorHeight * 0.38, box.min.z + size.z * 0.28),
   )
-  const entrance = objectCenter(root, 'Entrance', new THREE.Vector3(NaN, NaN, NaN))
   const depthDir = desk.z >= center.z ? 1 : -1
   const frontZ = depthDir > 0 ? box.min.z : box.max.z
   const backZ = depthDir > 0 ? box.max.z : box.min.z
-  if (!Number.isFinite(entrance.x)) {
-    entrance.set(center.x, floor, frontZ)
-  }
+  const entrance = new THREE.Vector3(center.x, floor, frontZ)
 
   const eye = floor + interiorHeight * 0.56
   const look = floor + interiorHeight * 0.4
@@ -193,13 +190,13 @@ export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
     ),
     shot(
       layout,
-      [desk.x - size.x * 0.3, eye - h * 0.02, desk.z - depthDir * size.z * 0.06],
-      [desk.x + size.x * 0.05, lookDesk, monitor.z],
+      [desk.x - size.x * 0.32, eye - h * 0.02, frontZ + depthDir * size.z * 0.34],
+      [desk.x + size.x * 0.04, lookDesk, monitor.z],
       46,
     ),
     shot(
       layout,
-      [desk.x, eye + h * 0.01, inward(0.44)],
+      [desk.x + size.x * 0.1, eye + h * 0.01, frontZ + depthDir * size.z * 0.38],
       [monitor.x, lookScreen, monitor.z],
       42,
     ),
@@ -214,12 +211,6 @@ export function buildCameraPathFromLayout(layout: RoomLayout): RoomShot[] {
       [window.x - size.x * 0.26, eye, window.z + depthDir * size.z * 0.02],
       [window.x, lookDesk + h * 0.14, window.z],
       38,
-    ),
-    shot(
-      layout,
-      [center.x, eye, inward(0.16)],
-      [desk.x, lookDesk, desk.z],
-      36,
     ),
   ]
 }
