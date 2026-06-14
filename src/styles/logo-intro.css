@@ -18,13 +18,22 @@
 }
 
 .logo-intro--lite .logo-intro__orb {
-  filter: blur(28px);
+  filter: none;
   opacity: 0.5;
+  animation: none;
+  transform: translateZ(0);
 }
 
 .logo-intro--lite .logo-intro__orb--sun {
   width: 10rem;
   height: 10rem;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 217, 138, 0.42) 0%,
+    rgba(245, 166, 35, 0.14) 55%,
+    transparent 72%
+  );
 }
 
 .logo-intro__ambience {
@@ -39,7 +48,7 @@
   border-radius: 50%;
   filter: blur(42px);
   opacity: 0;
-  will-change: transform, opacity;
+  contain: layout style paint;
   animation-duration: 9s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
@@ -210,5 +219,9 @@
   .li-sun-pulse,
   .li-sun-glow {
     display: none;
+  }
+
+  .logo-intro__orb {
+    animation: none;
   }
 }

@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { preloadParticlesEngine } from './lib/preloadParticles'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import LogoIntro from './components/effects/LogoIntro'
@@ -15,6 +17,10 @@ import './styles/polish.css'
 
 export default function App() {
   useSmoothScroll()
+
+  useEffect(() => {
+    preloadParticlesEngine()
+  }, [])
 
   return (
     <LanguageProvider>

@@ -11,6 +11,8 @@ const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
 const MOTE_COUNT = 4
 const MOBILE_QUERY = '(max-width: 960px)'
+/** Static path lengths — avoids getTotalLength during intro setup. */
+const STROKE_LENGTHS = [16, 22, 14.8]
 
 function centerSvgContent(content: SVGGraphicsElement | null) {
   if (!content) return
@@ -83,8 +85,10 @@ export default function LogoIntro() {
     const finish = () => {
       if (finished) return
       finished = true
-      setDone(true)
       window.dispatchEvent(new CustomEvent(LOGO_INTRO_COMPLETE))
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setDone(true))
+      })
     }
     const safety = window.setTimeout(finish, INTRO_MS)
 
@@ -102,70 +106,75 @@ export default function LogoIntro() {
     void waitForLayout().then(() => {
       if (finished) return
 
-      const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
-      const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
+      requestAnimationFrame(() => {
+        if (finished) return
 
-      ctx = gsap.context(() => {
-        gsap.set(mark, { force3D: true })
+        const introSvg = mark.querySelector('.logo-intro__svg') as SVGSVGElement | null
+        const introGroup = mark.querySelector('.logo-content') as SVGGraphicsElement | null
 
-        if (mobile) {
-          gsap.set('.logo-intro__ambience', { opacity: 0.55 })
-        } else {
-          gsap.set('.logo-intro__ambience', { opacity: 0 })
-          gsap.set('.logo-intro__orb', { opacity: 0 })
-        }
+        ctx = gsap.context(() => {
+          gsap.set(mark, { force3D: true })
 
-        gsap.set('.li-mote', { opacity: 0, y: 6 })
-        gsap.set('.li-sweep', { x: '-130%' })
-        gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
-        gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
+          if (mobile) {
+            gsap.set('.logo-intro__ambience', { opacity: 0.55 })
+          } else {
+            gsap.set('.logo-intro__ambience', { opacity: 0 })
+            gsap.set('.logo-intro__orb', { opacity: 0 })
+          }
 
-        centerSvgContent(introGroup)
+          gsap.set('.li-mote', { opacity: 0, y: 6 })
+          gsap.set('.li-sweep', { x: '-130%' })
+          gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
+          gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
 
-        const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
-        strokes.forEach((p) => {
-          const len = p.getTotalLength()
-          gsap.set(p, { strokeDasharray: len, strokeDashoffset: len })
-        })
+          centerSvgContent(introGroup)
 
-        gsap.set('.li-dot', {
-          attr: { cy: 5 },
-          opacity: 0,
-          scale: 0.45,
-          svgOrigin: '26 16',
-        })
-        gsap.set('.li-word', { opacity: 0, y: 4 })
+          const strokes = gsap.utils.toArray<SVGPathElement>('.li-stroke')
+          strokes.forEach((p, i) => {
+            const len = STROKE_LENGTHS[i] ?? p.getTotalLength()
+            gsap.set(p, { strokeDasharray: len, strokeDashoffset: len })
+          })
 
-        let flyTarget = { x: 0, y: -150, scale: 0.4 }
+          gsap.set('.li-dot', {
+            attr: { cy: 5 },
+            opacity: 0,
+            scale: 0.45,
+            svgOrigin: '26 16',
+          })
+          gsap.set('.li-word', { opacity: 0, y: 4 })
 
-        const measureFly = () => {
-          const navSvg = document.querySelector('.navbar__logo-link .logo-mark') as SVGSVGElement | null
-          const navGroup = navSvg?.querySelector('.logo-content') as SVGGraphicsElement | null
+          let flyTarget = { x: 0, y: -150, scale: 0.4 }
 
-          if (!introSvg || !introGroup || !navSvg || !navGroup) {
+          const measureFly = () => {
+            const navSvg = document.querySelector('.navbar__logo-link .logo-mark') as SVGSVGElement | null
+            const navGroup = navSvg?.querySelector('.logo-content') as SVGGraphicsElement | null
+
+            if (!introSvg || !introGroup || !navSvg || !navGroup) {
+              return flyTarget
+            }
+
+            const from = getGroupScreenCenter(introSvg, introGroup)
+            const to = getGroupScreenCenter(navSvg, navGroup)
+            if (!from || !to) {
+              return flyTarget
+            }
+
+            const navRect = navSvg.getBoundingClientRect()
+            const introRect = introSvg.getBoundingClientRect()
+            const scale =
+              navRect.height > 0 && introRect.height > 0 ? navRect.height / introRect.height : 0.4
+
+            flyTarget = {
+              x: to.x - from.x,
+              y: to.y - from.y,
+              scale,
+            }
             return flyTarget
           }
 
-          const from = getGroupScreenCenter(introSvg, introGroup)
-          const to = getGroupScreenCenter(navSvg, navGroup)
-          if (!from || !to) {
-            return flyTarget
-          }
+          measureFly()
 
-          const navRect = navSvg.getBoundingClientRect()
-          const introRect = introSvg.getBoundingClientRect()
-          const scale =
-            navRect.height > 0 && introRect.height > 0 ? navRect.height / introRect.height : 0.4
-
-          flyTarget = {
-            x: to.x - from.x,
-            y: to.y - from.y,
-            scale,
-          }
-          return flyTarget
-        }
-
-        const tl = gsap.timeline({ onComplete: finish })
+          const tl = gsap.timeline({ onComplete: finish })
 
         if (!mobile) {
           tl.to('.logo-intro__ambience', { opacity: 1, duration: 0.28, ease: 'power2.out' })
@@ -233,7 +242,8 @@ export default function LogoIntro() {
           .to('.logo-intro__ambience', { opacity: 0, duration: 0.32, ease: 'power2.in' }, 'fly')
           .to('.li-bg', { opacity: 0, duration: 0.36, ease: 'power2.inOut' }, 'fly')
           .to(mark, { opacity: 0, duration: 0.14 }, 'fly+=0.42')
-      }, root)
+        }, root)
+      })
     })
 
     return () => {

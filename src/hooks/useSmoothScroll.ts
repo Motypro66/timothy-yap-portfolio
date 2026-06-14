@@ -38,12 +38,17 @@ export function useSmoothScroll() {
       gsap.ticker.lagSmoothing(0)
     }
 
-    window.addEventListener(LOGO_INTRO_COMPLETE, start, { once: true })
-    const safety = window.setTimeout(start, 2500)
+    const scheduleStart = () => {
+      const mobile = window.matchMedia('(max-width: 960px)').matches
+      window.setTimeout(start, mobile ? 320 : 180)
+    }
+
+    window.addEventListener(LOGO_INTRO_COMPLETE, scheduleStart, { once: true })
+    const safety = window.setTimeout(scheduleStart, 2500)
 
     return () => {
       window.clearTimeout(safety)
-      window.removeEventListener(LOGO_INTRO_COMPLETE, start)
+      window.removeEventListener(LOGO_INTRO_COMPLETE, scheduleStart)
       if (onTick) gsap.ticker.remove(onTick)
       lenis?.destroy()
     }

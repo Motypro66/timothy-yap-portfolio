@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import Particles, { initParticlesEngine } from '@tsparticles/react'
-import { loadSlim } from '@tsparticles/slim'
+import Particles from '@tsparticles/react'
 import type { ISourceOptions } from '@tsparticles/engine'
-import { useIntroComplete } from '../../hooks/useIntroComplete'
+import { preloadParticlesEngine } from '../../lib/preloadParticles'
 
 const MOBILE_QUERY = '(max-width: 960px)'
 
 function buildOptions(mobile: boolean): ISourceOptions {
   return {
     fullScreen: { enable: false },
-    fpsLimit: mobile ? 36 : 60,
+    fpsLimit: mobile ? 30 : 60,
     particles: {
-      number: { value: mobile ? 40 : 65, density: { enable: true } },
+      number: { value: mobile ? 32 : 65, density: { enable: true } },
       color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#e8a838'] },
       links: {
         enable: !mobile,
@@ -22,7 +21,7 @@ function buildOptions(mobile: boolean): ISourceOptions {
       },
       move: {
         enable: true,
-        speed: mobile ? 0.55 : 0.6,
+        speed: mobile ? 0.5 : 0.6,
         direction: 'none',
         random: true,
         outModes: { default: 'bounce' },
@@ -62,30 +61,34 @@ function useIsMobile() {
   return mobile
 }
 
-export default function ParticleBackground() {
-  const introComplete = useIntroComplete()
+type Props = {
+  active: boolean
+}
+
+export default function ParticleBackground({ active }: Props) {
   const [ready, setReady] = useState(false)
   const isMobile = useIsMobile()
   const options = useMemo(() => buildOptions(isMobile), [isMobile])
 
   useEffect(() => {
-    if (!introComplete) return
+    if (!active) {
+      setReady(false)
+      return
+    }
 
     let cancelled = false
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine)
-    }).then(() => {
+    preloadParticlesEngine().then(() => {
       if (!cancelled) setReady(true)
     })
 
     return () => {
       cancelled = true
     }
-  }, [introComplete])
+  }, [active])
 
   const particlesLoaded = useCallback(async () => {}, [])
 
-  if (!introComplete || !ready) return null
+  if (!active || !ready) return null
 
   return (
     <div className={`particle-bg${isMobile ? ' particle-bg--mobile' : ''}`} aria-hidden="true">

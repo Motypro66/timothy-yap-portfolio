@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 
-/** Warm golden sun rays — NEW hero effect (keeps particles + 3D orbs) */
+const MOBILE_QUERY = '(max-width: 960px)'
+
+/** Warm golden sun rays — static glow on mobile, animated on desktop. */
 export default function SunRays() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -11,6 +13,10 @@ export default function SunRays() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const mobile = window.matchMedia(MOBILE_QUERY).matches
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const animate = !mobile && !prefersReduced
+
     let animId = 0
     let w = 0
     let h = 0
@@ -18,16 +24,16 @@ export default function SunRays() {
     const resize = () => {
       w = canvas.offsetWidth
       h = canvas.offsetHeight
-      canvas.width = w * devicePixelRatio
-      canvas.height = h * devicePixelRatio
-      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+      const dpr = Math.min(window.devicePixelRatio || 1, animate ? 2 : 1.5)
+      canvas.width = w * dpr
+      canvas.height = h * dpr
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
     resize()
     window.addEventListener('resize', resize)
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const rays = Array.from({ length: 12 }, (_, i) => ({
+    const rays = Array.from({ length: animate ? 12 : 0 }, (_, i) => ({
       angle: (i / 12) * Math.PI * 2,
       length: 0.6 + Math.random() * 0.4,
       speed: 0.0003 + Math.random() * 0.0002,
@@ -40,7 +46,6 @@ export default function SunRays() {
       const cx = w * 0.85
       const cy = h * 0.08
 
-      // Soft radial glow
       const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, w * 0.55)
       glow.addColorStop(0, 'rgba(255, 209, 102, 0.35)')
       glow.addColorStop(0.4, 'rgba(245, 166, 35, 0.12)')
@@ -48,7 +53,7 @@ export default function SunRays() {
       ctx.fillStyle = glow
       ctx.fillRect(0, 0, w, h)
 
-      if (!prefersReduced) {
+      if (animate) {
         rays.forEach((ray) => {
           const angle = ray.angle + Math.sin(time * ray.speed + ray.offset) * 0.08
           const len = w * ray.length
@@ -66,24 +71,23 @@ export default function SunRays() {
           ctx.lineWidth = 2
           ctx.stroke()
         })
-      }
 
-      // Floating light motes
-      for (let i = 0; i < 8; i++) {
-        const t = time * 0.001 + i * 1.3
-        const mx = w * (0.1 + (i % 4) * 0.22) + Math.sin(t) * 20
-        const my = h * (0.2 + (i % 3) * 0.25) + Math.cos(t * 0.7) * 15
-        const alpha = 0.15 + Math.sin(t * 2) * 0.1
-        ctx.beginPath()
-        ctx.arc(mx, my, 2 + (i % 2), 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 209, 102, ${alpha})`
-        ctx.fill()
-      }
+        for (let i = 0; i < 8; i++) {
+          const t = time * 0.001 + i * 1.3
+          const mx = w * (0.1 + (i % 4) * 0.22) + Math.sin(t) * 20
+          const my = h * (0.2 + (i % 3) * 0.25) + Math.cos(t * 0.7) * 15
+          const alpha = 0.15 + Math.sin(t * 2) * 0.1
+          ctx.beginPath()
+          ctx.arc(mx, my, 2 + (i % 2), 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(255, 209, 102, ${alpha})`
+          ctx.fill()
+        }
 
-      animId = requestAnimationFrame(draw)
+        animId = requestAnimationFrame(draw)
+      }
     }
 
-    animId = requestAnimationFrame(draw)
+    draw(0)
 
     return () => {
       cancelAnimationFrame(animId)

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { profile } from '../../data/resume'
 import { useLanguage } from '../../i18n/LanguageContext'
-import { useIntroComplete } from '../../hooks/useIntroComplete'
+import { useIntroStages } from '../../hooks/useIntroStages'
 import FloatingOrbs from '../effects/FloatingOrbs'
 import ParticleBackground from '../effects/ParticleBackground'
 import SunRays from '../effects/SunRays'
@@ -37,14 +37,14 @@ function MetricValue({ metric, rollStarted }: { metric: Metric; rollStarted: boo
 }
 
 export default function Hero() {
-  const introComplete = useIntroComplete()
+  const { uiReady, effectsReady } = useIntroStages()
   const [rollStarted, setRollStarted] = useState(false)
   const { t, lang } = useLanguage()
   const title = lang === 'zh' ? profile.titleZh : profile.title
   const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
 
   useEffect(() => {
-    if (!introComplete) return
+    if (!uiReady) return
 
     let cancelled = false
 
@@ -66,14 +66,14 @@ export default function Hero() {
       window.clearTimeout(timer)
       window.removeEventListener('pageshow', onPageShow)
     }
-  }, [introComplete])
+  }, [uiReady])
 
   return (
     <section className="hero" id="hero">
-      {introComplete && (
+      {effectsReady && (
         <>
           <SunRays />
-          <ParticleBackground />
+          <ParticleBackground active />
           <FloatingOrbs />
         </>
       )}
@@ -86,7 +86,7 @@ export default function Hero() {
           <motion.div
             className="hero__badge"
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={introComplete ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            animate={uiReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ delay: 0.05, duration: 0.5 }}
           >
             <span className="hero__badge-dot" />
@@ -97,20 +97,20 @@ export default function Hero() {
             <motion.span
               className="hero__name type-display"
               initial={{ opacity: 0, y: 30 }}
-              animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              animate={uiReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ delay: 0.06, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
             >
               {profile.displayName}
             </motion.span>
             <span className="hero__role type-body-strong">
-              <StaggeredText text={title} start={introComplete} delay={0.52} />
+              <StaggeredText text={title} start={uiReady} delay={0.52} />
             </span>
           </h1>
 
           <motion.p
             className="hero__tagline type-body"
             initial={{ opacity: 0 }}
-            animate={introComplete ? { opacity: 1 } : { opacity: 0 }}
+            animate={uiReady ? { opacity: 1 } : { opacity: 0 }}
             transition={{ delay: 0.82, duration: 0.55 }}
           >
             {t.hero.tagline}
@@ -119,7 +119,7 @@ export default function Hero() {
           <motion.div
             className="hero__metrics"
             initial={{ opacity: 0, y: 20 }}
-            animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={uiReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ delay: 0.96, duration: 0.55 }}
           >
             {t.hero.metrics.map((m) => (
@@ -133,7 +133,7 @@ export default function Hero() {
           <motion.div
             className="hero__actions"
             initial={{ opacity: 0, y: 20 }}
-            animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={uiReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ delay: 1.1, duration: 0.55 }}
           >
             <MagneticButton href="#contact" variant="primary">
@@ -151,7 +151,7 @@ export default function Hero() {
         <motion.div
           className="hero__scroll type-label"
           initial={{ opacity: 0 }}
-          animate={introComplete ? { opacity: 1 } : { opacity: 0 }}
+          animate={uiReady ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: 1.28, duration: 0.55 }}
         >
           <span>{t.hero.scroll}</span>
