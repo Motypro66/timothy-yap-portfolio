@@ -83,7 +83,7 @@ export default function LogoContent({
       {showWord && (
         <text
           className={wordClassName}
-          x="30"
+          x="36"
           y="27"
           fill={ink}
           fontFamily={LOGO_FONT}
