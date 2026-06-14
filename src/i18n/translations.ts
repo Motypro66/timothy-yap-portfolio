@@ -3,10 +3,10 @@ export type Lang = 'en' | 'zh'
 export const translations = {
   en: {
     intro: {
-      initializing: 'INITIALIZING SIGNAL TERRAIN',
-      title: 'Campaign Command',
-      tagline: 'Scroll-driven portfolio · Lead gen operator · AI on the signal',
-      enter: 'Enter Terrain',
+      initializing: '',
+      title: 'Timothy Yap',
+      tagline: 'Performance Marketing Specialist',
+      enter: 'Enter',
       skip: 'Skip intro',
     },
     nav: {
@@ -19,7 +19,7 @@ export const translations = {
       downloadCv: 'Download CV',
     },
     hero: {
-      badge: 'Operator online · Open to roles',
+      badge: 'Performance Marketing · Kuala Lumpur',
       tagline: 'Turning search intent into measurable leads.',
       operatorLine: 'AI on the signal. Human on the spend.',
       systemOnline: 'SYSTEM ONLINE',
@@ -27,8 +27,8 @@ export const translations = {
       runBrief: 'Run Brief Simulator',
       getInTouch: 'Get in Touch',
       viewExperience: 'View Experience',
-      nodeHint: 'Click glowing nodes in the 3D terrain — simulated data',
-      journeyHint: 'Scroll to move through the room',
+      nodeHint: '',
+      journeyHint: '',
       metrics: [
         { type: 'count', count: 30, suffix: '+', label: 'Active Campaigns' },
         { type: 'text', value: 'Full-Funnel', label: 'Tracking Setup' },
@@ -47,7 +47,7 @@ export const translations = {
     },
     skills: {
       eyebrow: 'Skills',
-      title: 'Tools & expertise',
+      title: 'Tools and expertise',
       subtitle: 'From campaign management to AI-assisted workflows',
       marketing: 'Marketing Analytics',
       ai: 'AI Automation',
@@ -57,7 +57,7 @@ export const translations = {
     experience: {
       eyebrow: 'Experience',
       title: "Where I've made impact",
-      subtitle: 'Campaign optimization & live commerce',
+      subtitle: 'Campaign optimization and live commerce',
       currentRole: 'Current Role',
       pastRole: 'Past Role',
     },
@@ -96,7 +96,7 @@ export const translations = {
     contact: {
       eyebrow: 'Contact',
       title: "Let's connect",
-      subtitle: 'Open to performance marketing roles in KL and remote',
+      subtitle: 'Performance marketing · Kuala Lumpur and remote',
       email: 'Email',
       phone: 'Phone',
       location: 'Location',
@@ -105,7 +105,7 @@ export const translations = {
       viewSocial: 'Follow on Social',
     },
     footer: {
-      built: 'Campaign Command · React · GSAP · Framer Motion',
+      built: '',
       operator: 'Performance Marketing Operator',
       email: 'Email',
     },
@@ -182,10 +182,10 @@ export const translations = {
   },
   zh: {
     intro: {
-      initializing: '正在初始化信号地形',
-      title: 'Campaign Command',
-      tagline: '滚动驱动作品集 · Lead Gen 操作员 · AI 读信号',
-      enter: '进入地形',
+      initializing: '',
+      title: 'Timothy Yap',
+      tagline: 'Performance Marketing 专员',
+      enter: '进入',
       skip: '跳过开场',
     },
     nav: {
@@ -198,7 +198,7 @@ export const translations = {
       downloadCv: '下载简历',
     },
     hero: {
-      badge: 'Operator 在线 · 开放机会',
+      badge: 'Performance Marketing · 吉隆坡',
       tagline: '把搜索意图，变成可衡量的 leads。',
       operatorLine: 'AI 读信号，人定预算。',
       systemOnline: '系统在线',
@@ -206,8 +206,8 @@ export const translations = {
       runBrief: '运行 Brief 模拟器',
       getInTouch: '联系我',
       viewExperience: '查看经历',
-      nodeHint: '点击 3D 地形中的发光节点 — 模拟数据',
-      journeyHint: '滚动在房间里穿梭',
+      nodeHint: '',
+      journeyHint: '',
       metrics: [
         { type: 'count', count: 30, suffix: '+', label: '活跃广告活动' },
         { type: 'text', value: '全漏斗', label: '转化追踪' },
@@ -226,7 +226,7 @@ export const translations = {
     },
     skills: {
       eyebrow: '技能',
-      title: '工具 专长',
+      title: '工具与专长',
       subtitle: '从 campaign 管理到 AI 辅助工作流',
       marketing: '营销分析',
       ai: 'AI 自动化',
@@ -236,7 +236,7 @@ export const translations = {
     experience: {
       eyebrow: '经历',
       title: '我做出过影响的地方',
-      subtitle: 'Campaign 优化 & 直播电商',
+      subtitle: 'Campaign 优化与直播电商',
       currentRole: '现任',
       pastRole: '过往',
     },
@@ -275,7 +275,7 @@ export const translations = {
     contact: {
       eyebrow: '联系',
       title: '保持联系',
-      subtitle: '开放吉隆坡及远程 Performance Marketing 机会',
+      subtitle: 'Performance Marketing · 吉隆坡与远程',
       email: '邮箱',
       phone: '电话',
       location: '地址',
@@ -284,7 +284,7 @@ export const translations = {
       viewSocial: '关注社交账号',
     },
     footer: {
-      built: 'Campaign Command · React · GSAP · Framer Motion',
+      built: '',
       operator: 'Performance Marketing Operator',
       email: '邮箱',
     },

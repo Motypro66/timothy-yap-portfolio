@@ -41,14 +41,17 @@ export default function Hero() {
   const title = lang === 'zh' ? profile.titleZh : profile.title
   const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
 
+  // Reveal the hero content immediately (no dark boot screen).
+  useEffect(() => {
+    setBootComplete(true)
+  }, [setBootComplete])
+
+  // Roll the metrics the moment the logo intro clears — visible, no long wait.
   useEffect(() => {
     if (!introComplete) return
-    const timer = window.setTimeout(() => {
-      setBootComplete(true)
-      setRollStarted(true)
-    }, 2200)
+    const timer = window.setTimeout(() => setRollStarted(true), 250)
     return () => window.clearTimeout(timer)
-  }, [introComplete, setBootComplete])
+  }, [introComplete])
 
   return (
     <section className="hero hero--command journey-station" id="hero">
@@ -151,8 +154,8 @@ export default function Hero() {
             animate={bootComplete ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 1.3, duration: 0.7 }}
           >
-            <MagneticButton href="#brief" variant="primary">
-              {t.hero.runBrief}
+            <MagneticButton href="#contact" variant="primary">
+              {t.hero.getInTouch}
             </MagneticButton>
             <MagneticButton href="#experience" variant="secondary">
               {t.hero.viewExperience}
@@ -161,18 +164,6 @@ export default function Hero() {
               {t.nav.downloadCv}
             </MagneticButton>
           </motion.div>
-
-          <motion.p
-            className="hero__hint type-caption"
-            initial={{ opacity: 0 }}
-            animate={bootComplete ? { opacity: 1 } : {}}
-            transition={{ delay: 1.5 }}
-          >
-            {t.hero.nodeHint}
-          </motion.p>
-          <motion.p className="hero__journey-hint type-label" initial={{ opacity: 0 }} animate={bootComplete ? { opacity: 0.7 } : {}} transition={{ delay: 1.6 }}>
-            {t.hero.journeyHint}
-          </motion.p>
         </div>
 
         <motion.div
