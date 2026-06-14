@@ -1,40 +1,37 @@
-import { useEffect } from 'react'
-import { useScrollJourney } from './hooks/useScrollJourney'
-import { useCommand } from './context/CommandContext'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { CommandProvider } from './context/CommandContext'
-import MinimalHud, { JourneyOverlay } from './components/layout/MinimalHud'
-import ScrollProgress from './components/layout/ScrollProgress'
-import CorridorScene from './components/effects/CorridorScene'
+import { useSmoothScroll } from './hooks/useSmoothScroll'
+import AuroraBackground from './components/effects/AuroraBackground'
 import LogoIntro from './components/effects/LogoIntro'
-import { SECTION_JOURNEY } from './data/journeyPath'
+import Navbar from './components/layout/Navbar'
+import Footer from './components/layout/Footer'
+import Hero from './components/sections/Hero'
+import About from './components/sections/About'
+import Skills from './components/sections/Skills'
+import Experience from './components/sections/Experience'
+import Contact from './components/sections/Contact'
 import './styles/components.css'
+import './styles/command.css'
 import './styles/room-journey.css'
-import './styles/corridor.css'
+import './styles/aurora.css'
 
-function RoomApp() {
-  useScrollJourney()
-  const { setBootComplete } = useCommand()
-
-  useEffect(() => {
-    setBootComplete(true)
-  }, [setBootComplete])
+function Portfolio() {
+  useSmoothScroll()
 
   return (
-    <div className="room-shell">
-      <CorridorScene />
+    <>
+      <AuroraBackground />
       <LogoIntro />
-      <MinimalHud />
-      <JourneyOverlay />
-      <ScrollProgress />
-      <main className="journey-scroll">
-        {SECTION_JOURNEY.map(({ id }) => (
-          <section key={id} id={id} className="journey-anchor journey-station" aria-label={id}>
-            <div className="journey-station__inner" />
-          </section>
-        ))}
+      <Navbar />
+      <main>
+        <Hero />
+        <About />
+        <Skills />
+        <Experience />
+        <Contact />
       </main>
-    </div>
+      <Footer />
+    </>
   )
 }
 
@@ -42,7 +39,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <CommandProvider>
-        <RoomApp />
+        <Portfolio />
       </CommandProvider>
     </LanguageProvider>
   )
