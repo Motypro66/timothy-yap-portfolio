@@ -39,7 +39,7 @@ export function useSmoothScroll() {
     }
 
     window.addEventListener(LOGO_INTRO_COMPLETE, start, { once: true })
-    const safety = window.setTimeout(start, 1700)
+    const safety = window.setTimeout(start, 2500)
 
     return () => {
       window.clearTimeout(safety)

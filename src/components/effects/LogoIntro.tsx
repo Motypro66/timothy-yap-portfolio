@@ -4,7 +4,8 @@ import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
 import LogoContent from '../ui/LogoContent'
 import { LOGO_VIEWBOX } from '../ui/logoTokens'
 
-const INTRO_MS = 1600
+const INTRO_MS = 2400
+const HOLD_BEFORE_FLY = 0.2
 const VIEWBOX_CX = 84
 const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
@@ -167,50 +168,51 @@ export default function LogoIntro() {
         const tl = gsap.timeline({ onComplete: finish })
 
         if (!mobile) {
-          tl.to('.logo-intro__ambience', { opacity: 1, duration: 0.18, ease: 'power2.out' })
-            .to('.logo-intro__orb', { opacity: 0.85, duration: 0.22, stagger: 0.04, ease: 'power2.out' }, 0)
+          tl.to('.logo-intro__ambience', { opacity: 1, duration: 0.28, ease: 'power2.out' })
+            .to('.logo-intro__orb', { opacity: 0.85, duration: 0.32, stagger: 0.06, ease: 'power2.out' }, 0)
         }
 
         tl.to(strokes, {
           strokeDashoffset: 0,
-          duration: 0.3,
+          duration: 0.52,
           ease: 'power2.inOut',
-          stagger: 0.04,
-        }, 0.02)
+          stagger: 0.08,
+        }, 0.04)
           .to(
             '.li-dot',
             {
               attr: { cy: 16 },
               opacity: 1,
-              duration: 0.26,
+              duration: 0.36,
               ease: 'power2.in',
             },
-            '-=0.06',
-          )
-          .to('.li-dot', { scale: 1, duration: 0.16, ease: 'back.out(2.4)' }, '-=0.08')
-          .to(
-            '.li-sun-pulse',
-            { scale: 1.55, opacity: 0.34, duration: 0.16, ease: 'power2.out' },
             '-=0.1',
           )
-          .to('.li-sun-pulse', { scale: 2.1, opacity: 0, duration: 0.14, ease: 'power2.in' })
+          .to('.li-dot', { scale: 1, duration: 0.22, ease: 'back.out(2.2)' }, '-=0.1')
+          .to(
+            '.li-sun-pulse',
+            { scale: 1.55, opacity: 0.34, duration: 0.22, ease: 'power2.out' },
+            '-=0.12',
+          )
+          .to('.li-sun-pulse', { scale: 2.1, opacity: 0, duration: 0.18, ease: 'power2.in' })
           .to(
             '.li-sun-glow',
-            { scale: 1.08, opacity: 0.42, duration: 0.18, ease: 'power2.out' },
-            '-=0.16',
+            { scale: 1.08, opacity: 0.42, duration: 0.24, ease: 'power2.out' },
+            '-=0.2',
           )
-          .to('.li-word', { opacity: 1, y: 0, duration: 0.22, ease: 'power2.out' }, '-=0.14')
+          .to('.li-word', { opacity: 1, y: 0, duration: 0.34, ease: 'power2.out' }, '-=0.18')
 
         if (!mobile) {
-          tl.to('.li-sweep', { x: '130%', duration: 0.34, ease: 'power2.inOut' }, '-=0.18')
+          tl.to('.li-sweep', { x: '130%', duration: 0.42, ease: 'power2.inOut' }, '-=0.24')
             .to(
               '.li-mote',
-              { opacity: 0.45, y: -12, duration: 0.4, stagger: 0.03, ease: 'power2.out' },
-              '-=0.28',
+              { opacity: 0.45, y: -12, duration: 0.48, stagger: 0.04, ease: 'power2.out' },
+              '-=0.32',
             )
         }
 
-        tl.addLabel('fly', '+=0.06')
+        tl.to({}, { duration: HOLD_BEFORE_FLY })
+          .addLabel('fly')
           .add(() => {
             if (introSvg && introGroup) {
               setTransformOriginToContent(mark, introSvg, introGroup)
@@ -223,14 +225,14 @@ export default function LogoIntro() {
               x: () => flyTarget.x,
               y: () => flyTarget.y,
               scale: () => flyTarget.scale,
-              duration: 0.42,
+              duration: 0.5,
               ease: 'power3.inOut',
             },
             'fly',
           )
-          .to('.logo-intro__ambience', { opacity: 0, duration: 0.28, ease: 'power2.in' }, 'fly')
-          .to('.li-bg', { opacity: 0, duration: 0.32, ease: 'power2.inOut' }, 'fly')
-          .to(mark, { opacity: 0, duration: 0.12 }, 'fly+=0.34')
+          .to('.logo-intro__ambience', { opacity: 0, duration: 0.32, ease: 'power2.in' }, 'fly')
+          .to('.li-bg', { opacity: 0, duration: 0.36, ease: 'power2.inOut' }, 'fly')
+          .to(mark, { opacity: 0, duration: 0.14 }, 'fly+=0.42')
       }, root)
     })
 

@@ -15,7 +15,7 @@ export function useIntroComplete() {
 
     const onDone = () => setComplete(true)
     window.addEventListener(LOGO_INTRO_COMPLETE, onDone)
-    const safety = window.setTimeout(onDone, 1700)
+    const safety = window.setTimeout(onDone, 2500)
 
     return () => {
       window.removeEventListener(LOGO_INTRO_COMPLETE, onDone)
