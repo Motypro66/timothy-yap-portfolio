@@ -44,7 +44,8 @@ export default function LogoIntro() {
         const len = p.getTotalLength()
         gsap.set(p, { strokeDasharray: len, strokeDashoffset: len })
       })
-      gsap.set('.li-dot', { scale: 0, svgOrigin: '26 16' })
+      // sun starts above centre, smaller — so it visibly drops & bounces in
+      gsap.set('.li-dot', { y: -38, scale: 0.7, svgOrigin: '26 16' })
       gsap.set('.li-rays', { scale: 0, opacity: 0, svgOrigin: '26 16' })
       gsap.set('.li-shock', { scale: 0, opacity: 0, svgOrigin: '26 16' })
       gsap.set('.li-flare', { opacity: 0, attr: { cx: -16 } })
@@ -52,21 +53,21 @@ export default function LogoIntro() {
 
       const tl = gsap.timeline({ onComplete: finish })
 
-      // 1) Luxo-style bouncy sun arrival
-      tl.to('.li-dot', { scale: 1, duration: 0.6, ease: 'bounce.out' })
+      // 1) Luxo-style: the sun drops from above and bounces into place
+      tl.to('.li-dot', { y: 0, scale: 1, duration: 0.85, ease: 'bounce.out' })
 
       // 2) sunrise light sweep draws the T
-      tl.to('.li-flare', { opacity: 1, duration: 0.12 }, 0.38)
-        .to('.li-flare', { attr: { cx: 188 }, duration: 0.62, ease: 'power1.inOut' }, 0.38)
-        .to(strokes, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out', stagger: 0.07 }, 0.42)
-        .to('.li-word', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 0.72)
-        .to('.li-flare', { opacity: 0, duration: 0.25 }, 0.86)
+      tl.to('.li-flare', { opacity: 1, duration: 0.12 }, 0.6)
+        .to('.li-flare', { attr: { cx: 188 }, duration: 0.62, ease: 'power1.inOut' }, 0.6)
+        .to(strokes, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out', stagger: 0.07 }, 0.64)
+        .to('.li-word', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 0.94)
+        .to('.li-flare', { opacity: 0, duration: 0.25 }, 1.08)
 
       // 3) apex: sun pulse + rays bloom + shockwave ring
-      tl.to('.li-dot', { scale: 1.18, duration: 0.16, yoyo: true, repeat: 1, ease: 'power2.inOut' }, 0.98)
-        .to('.li-rays', { scale: 1.25, opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.98)
-        .to('.li-rays', { scale: 1.95, opacity: 0, duration: 0.42, ease: 'power1.out' }, '>-0.08')
-        .to('.li-shock', { scale: 5.5, opacity: 0, duration: 0.6, ease: 'power2.out' }, 1.0)
+      tl.to('.li-dot', { scale: 1.2, duration: 0.16, yoyo: true, repeat: 1, ease: 'power2.inOut' }, 1.2)
+        .to('.li-rays', { scale: 1.3, opacity: 1, duration: 0.28, ease: 'power2.out' }, 1.2)
+        .to('.li-rays', { scale: 2, opacity: 0, duration: 0.42, ease: 'power1.out' }, '>-0.08')
+        .to('.li-shock', { scale: 6, opacity: 0, duration: 0.6, ease: 'power2.out' }, 1.22)
 
       // 4) fly into the navbar logo + wipe backdrop
       tl.addLabel('fly', '>-0.1')
