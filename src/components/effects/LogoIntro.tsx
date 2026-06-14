@@ -4,8 +4,12 @@ import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
 import LogoContent from '../ui/LogoContent'
 import { LOGO_VIEWBOX } from '../ui/logoTokens'
 
-const INTRO_MS = 2400
-const HOLD_BEFORE_FLY = 0.2
+const HOLD_BEFORE_FLY = 0.35
+const FLY_DURATION = 0.82
+/** If layout/GSAP never starts (fonts hang, etc.) */
+const LAYOUT_SAFETY_MS = 5200
+/** After the timeline starts — must exceed draw + hold + fly */
+const TIMELINE_SAFETY_MS = 3600
 const VIEWBOX_CX = 84
 const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
@@ -82,21 +86,27 @@ export default function LogoIntro() {
     }
 
     let finished = false
+    let safetyLayout = 0
+    let safetyTimeline = 0
+
     const finish = () => {
       if (finished) return
       finished = true
+      window.clearTimeout(safetyLayout)
+      window.clearTimeout(safetyTimeline)
       window.dispatchEvent(new CustomEvent(LOGO_INTRO_COMPLETE))
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setDone(true))
       })
     }
-    const safety = window.setTimeout(finish, INTRO_MS)
+
+    safetyLayout = window.setTimeout(finish, LAYOUT_SAFETY_MS)
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const t = window.setTimeout(finish, 300)
       return () => {
         window.clearTimeout(t)
-        window.clearTimeout(safety)
+        window.clearTimeout(safetyLayout)
       }
     }
 
@@ -174,6 +184,9 @@ export default function LogoIntro() {
 
           measureFly()
 
+          window.clearTimeout(safetyLayout)
+          safetyTimeline = window.setTimeout(finish, TIMELINE_SAFETY_MS)
+
           const tl = gsap.timeline({ onComplete: finish })
 
         if (!mobile) {
@@ -234,20 +247,21 @@ export default function LogoIntro() {
               x: () => flyTarget.x,
               y: () => flyTarget.y,
               scale: () => flyTarget.scale,
-              duration: 0.5,
+              duration: FLY_DURATION,
               ease: 'power3.inOut',
             },
             'fly',
           )
-          .to('.logo-intro__ambience', { opacity: 0, duration: 0.32, ease: 'power2.in' }, 'fly')
-          .to('.li-bg', { opacity: 0, duration: 0.36, ease: 'power2.inOut' }, 'fly')
-          .to(mark, { opacity: 0, duration: 0.14 }, 'fly+=0.42')
+          .to('.logo-intro__ambience', { opacity: 0, duration: 0.38, ease: 'power2.in' }, 'fly')
+          .to('.li-bg', { opacity: 0, duration: 0.42, ease: 'power2.inOut' }, 'fly')
+          .to(mark, { opacity: 0, duration: 0.18 }, `fly+=${FLY_DURATION - 0.1}`)
         }, root)
       })
     })
 
     return () => {
-      window.clearTimeout(safety)
+      window.clearTimeout(safetyLayout)
+      window.clearTimeout(safetyTimeline)
       ctx?.revert()
     }
   }, [])
