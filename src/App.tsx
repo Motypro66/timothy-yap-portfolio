@@ -11,6 +11,7 @@ import Contact from './components/sections/Contact'
 import './styles/components.css'
 import './styles/logo-intro.css'
 import './styles/floating-orbs.css'
+import './styles/polish.css'
 
 export default function App() {
   useSmoothScroll()

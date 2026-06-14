@@ -1,0 +1,62 @@
+/* ===== Premium polish: typography rhythm, motion & a11y ===== */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* fixed navbar — keep anchored sections from hiding underneath */
+  scroll-padding-top: 5.5rem;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+/* balanced, no-orphan headlines + tidy paragraph wrapping */
+h1,
+h2,
+h3,
+.hero__name,
+.hero__title,
+.section-heading__title {
+  text-wrap: balance;
+}
+
+.hero__tagline,
+.section-heading__subtitle,
+p {
+  text-wrap: pretty;
+}
+
+/* refined, springy card lift */
+.glass-card {
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s ease,
+    border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+}
+
+/* accessible focus ring on the warm palette */
+:focus-visible {
+  outline: 2px solid var(--accent-sun);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* avoid accidental image/icon drag selection */
+img,
+svg {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .glass-card:hover {
+    transform: none;
+  }
+}

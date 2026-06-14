@@ -19,15 +19,15 @@ export default function ScrollRevealSection({ children, className = '', id }: Pr
       gsap.utils.toArray<HTMLElement>('.reveal-item').forEach((el) => {
         gsap.fromTo(
           el,
-          { opacity: 0, y: 48 },
+          { opacity: 0, y: 38 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
+            duration: 1.0,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: el,
-              start: 'top 85%',
+              start: 'top 88%',
               toggleActions: 'play none none reverse',
             },
           },
