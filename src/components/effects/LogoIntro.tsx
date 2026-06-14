@@ -6,7 +6,7 @@ import { LOGO_VIEWBOX } from '../ui/logoTokens'
 
 const VIEWBOX_CX = 84
 const VIEWBOX_CY = 20
-const CONTENT_OFFSET_FALLBACK = { x: 26.5, y: 0.5 }
+const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
 
 function centerSvgContent(content: SVGGraphicsElement | null) {
   if (!content) return

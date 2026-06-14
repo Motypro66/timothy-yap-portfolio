@@ -96,12 +96,12 @@ export default function Hero() {
               className="hero__name type-display"
               initial={{ opacity: 0, y: 30 }}
               animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ delay: 0.12, duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: 0.08, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               {profile.displayName}
             </motion.span>
             <span className="hero__role type-body-strong">
-              <StaggeredText text={title} delay={0.5} />
+              <StaggeredText text={title} start={introComplete} delay={0.95} />
             </span>
           </h1>
 
@@ -109,7 +109,7 @@ export default function Hero() {
             className="hero__tagline type-body"
             initial={{ opacity: 0 }}
             animate={introComplete ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ delay: 0.45, duration: 0.7 }}
+            transition={{ delay: 1.35, duration: 0.7 }}
           >
             {t.hero.tagline}
           </motion.p>
@@ -118,7 +118,7 @@ export default function Hero() {
             className="hero__metrics"
             initial={{ opacity: 0, y: 20 }}
             animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 0.58, duration: 0.65 }}
+            transition={{ delay: 1.55, duration: 0.65 }}
           >
             {t.hero.metrics.map((m) => (
               <InteractiveBox key={m.label} className="hero__metric">
@@ -132,7 +132,7 @@ export default function Hero() {
             className="hero__actions"
             initial={{ opacity: 0, y: 20 }}
             animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 0.72, duration: 0.65 }}
+            transition={{ delay: 1.75, duration: 0.65 }}
           >
             <MagneticButton href="#contact" variant="primary">
               {t.hero.getInTouch}
@@ -150,7 +150,7 @@ export default function Hero() {
           className="hero__scroll type-label"
           initial={{ opacity: 0 }}
           animate={introComplete ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ delay: 0.95, duration: 0.7 }}
+          transition={{ delay: 2.05, duration: 0.7 }}
         >
           <span>{t.hero.scroll}</span>
           <motion.div

@@ -3,10 +3,12 @@ import { motion } from 'framer-motion'
 type Props = {
   text: string
   className?: string
+  /** Seconds after `start` becomes true */
   delay?: number
+  start?: boolean
 }
 
-export default function StaggeredText({ text, className = '', delay = 0 }: Props) {
+export default function StaggeredText({ text, className = '', delay = 0, start = true }: Props) {
   const words = text.split(' ')
 
   return (
@@ -16,7 +18,7 @@ export default function StaggeredText({ text, className = '', delay = 0 }: Props
           <motion.span
             style={{ display: 'inline-block' }}
             initial={{ y: '100%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            animate={start ? { y: 0, opacity: 1 } : { y: '100%', opacity: 0 }}
             transition={{
               duration: 0.6,
               delay: delay + i * 0.08,

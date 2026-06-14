@@ -52,13 +52,13 @@ export default function LogoContent({
       {showWord && (
         <text
           className={wordClassName}
-          x="34"
+          x="30"
           y="27"
           fill={ink}
           fontFamily={LOGO_FONT}
           fontSize="20"
           fontWeight="700"
-          letterSpacing="-0.02em"
+          letterSpacing="-0.03em"
         >
           imothy
         </text>
