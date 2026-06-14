@@ -61,7 +61,7 @@ export default function LogoContent({
       />
       {showSun && (
         <circle
-          className={dotClassName}
+          className={['logo-sun', dotClassName].filter(Boolean).join(' ')}
           cx="26"
           cy="16"
           r="3.2"

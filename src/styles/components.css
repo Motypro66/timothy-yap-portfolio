@@ -77,6 +77,11 @@
   align-items: center;
 }
 
+html.intro-active .navbar__logo-link .logo-sun {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
 /* ===== Navbar ===== */
 .navbar {
   position: fixed;
