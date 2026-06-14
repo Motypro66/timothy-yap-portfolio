@@ -13,7 +13,10 @@ export function useIntroComplete() {
   useEffect(() => {
     if (complete) return
 
-    const onDone = () => setComplete(true)
+    const onDone = () => {
+      document.documentElement.classList.remove('intro-active')
+      setComplete(true)
+    }
     window.addEventListener(LOGO_INTRO_COMPLETE, onDone)
     const safety = window.setTimeout(onDone, 4800)
 

@@ -67,9 +67,8 @@ export default function LogoContent({
         className={dotClassName}
         cx="26"
         cy="16"
-        r="3.2"
-        fill={LOGO_SUN}
-        opacity={dotClassName ? 0 : 1}
+        r={dotClassName ? 0 : 3.2}
+        fill={dotClassName ? 'none' : LOGO_SUN}
       />
       {showWord && (
         <text

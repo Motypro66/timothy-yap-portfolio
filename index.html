@@ -1,7 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="intro-active">
   <head>
     <meta charset="UTF-8" />
+    <style>
+      /* First paint — no nav logo dot before React/GSAP */
+      html.intro-active .navbar__logo-link,
+      html.intro-active .navbar__logo-link .logo-mark,
+      html.intro-active .navbar__logo-link .logo-mark circle,
+      html.intro-active .navbar__logo-link .logo-mark path {
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+    </style>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4" />
     <link rel="alternate icon" href="/favicon.svg?v=4" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.svg?v=4" />
