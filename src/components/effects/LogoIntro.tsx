@@ -139,7 +139,8 @@ export default function LogoIntro() {
         gsap.set('.li-mote', { opacity: 0, y: 6 })
         gsap.set('.li-sweep', { x: '-130%' })
         gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
-        gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
+        // Fade only — scaling a gradient-filled circle repaints the gradient each frame
+        gsap.set('.li-sun-glow', { opacity: 0 })
         gsap.set('.li-spark-burst', { scale: 0.3, svgOrigin: '26 16' })
         gsap.set('.li-spark', { opacity: 0 })
 
@@ -217,38 +218,27 @@ export default function LogoIntro() {
               y: 0,
               scale: 1,
               autoAlpha: 1,
-              duration: 0.26,
+              duration: 0.24,
               ease: 'power2.in',
             },
             '-=0.06',
           )
           .addLabel('land')
-          .to('.li-dot', { scaleX: 1.4, scaleY: 0.65, duration: 0.09, ease: 'power2.out' }, 'land')
-          .to('.li-dot', { scaleX: 1, scaleY: 1, duration: 0.22, ease: 'elastic.out(1, 0.5)' })
+          // Single squash + one clean overshoot — back.out settles smoother than oscillating elastic
+          .to('.li-dot', { scaleX: 1.32, scaleY: 0.72, duration: 0.08, ease: 'power2.out' }, 'land')
+          .to('.li-dot', { scaleX: 1, scaleY: 1, duration: 0.3, ease: 'back.out(2.4)' })
           .to(
             '.li-sun-pulse',
             { scale: 1.55, opacity: 0.34, duration: 0.16, ease: 'power2.out' },
-            'land-=0.02',
+            'land',
           )
           .to('.li-sun-pulse', { scale: 2.1, opacity: 0, duration: 0.14, ease: 'power2.in' })
-          .to(
-            '.li-sun-glow',
-            { scale: 1.08, opacity: 0.42, duration: 0.18, ease: 'power2.out' },
-            'land',
-          )
+          .to('.li-sun-glow', { opacity: 0.42, duration: 0.18, ease: 'power2.out' }, 'land')
           .to('.li-spark-burst', { scale: 1, duration: 0.1, ease: 'power2.out' }, 'land')
-          .to(
-            '.li-spark',
-            { opacity: 0.9, duration: 0.1, ease: 'power2.out', stagger: 0.012 },
-            'land',
-          )
-          .to('.li-spark-burst', { scale: 1.7, duration: 0.24, ease: 'power2.in' }, 'land+=0.06')
-          .to(
-            '.li-spark',
-            { opacity: 0, duration: 0.24, ease: 'power2.in', stagger: 0.012 },
-            'land+=0.06',
-          )
-          .to('.li-word', { autoAlpha: 1, y: 0, duration: 0.22, ease: 'power2.out' }, '-=0.14')
+          .to('.li-spark', { opacity: 0.9, duration: 0.1, ease: 'power2.out' }, 'land')
+          .to('.li-spark-burst', { scale: 1.7, duration: 0.26, ease: 'power2.in' }, 'land+=0.06')
+          .to('.li-spark', { opacity: 0, duration: 0.26, ease: 'power2.in' }, 'land+=0.06')
+          .to('.li-word', { autoAlpha: 1, y: 0, duration: 0.22, ease: 'power2.out' }, '-=0.16')
 
         if (mobile) {
           tl.to('.logo-intro__ambience', { opacity: 0.55, duration: 0.18, ease: 'power2.out' }, '-=0.18')
