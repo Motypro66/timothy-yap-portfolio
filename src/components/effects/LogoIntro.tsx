@@ -140,7 +140,8 @@ export default function LogoIntro() {
         gsap.set('.li-sweep', { x: '-130%' })
         gsap.set('.li-sun-pulse', { scale: 0, opacity: 0, svgOrigin: '26 16' })
         gsap.set('.li-sun-glow', { scale: 0.75, opacity: 0, svgOrigin: '26 16' })
-        gsap.set('.li-spark', { scale: 0.3, opacity: 0, svgOrigin: '26 16' })
+        gsap.set('.li-spark-burst', { scale: 0.3, svgOrigin: '26 16' })
+        gsap.set('.li-spark', { opacity: 0 })
 
         centerSvgContent(introGroup)
 
@@ -210,11 +211,6 @@ export default function LogoIntro() {
             strokes.forEach((p) => p.setAttribute('stroke-linecap', 'round'))
             root.classList.remove('logo-intro--drawing')
           })
-          .fromTo(
-            '.li-content',
-            { rotate: -2.5, scale: 0.97 },
-            { rotate: 0, scale: 1, duration: 0.2, ease: 'back.out(1.6)', svgOrigin: '26 16' },
-          )
           .to(
             '.li-dot',
             {
@@ -224,7 +220,7 @@ export default function LogoIntro() {
               duration: 0.26,
               ease: 'power2.in',
             },
-            '-=0.18',
+            '-=0.06',
           )
           .addLabel('land')
           .to('.li-dot', { scaleX: 1.4, scaleY: 0.65, duration: 0.09, ease: 'power2.out' }, 'land')
@@ -240,14 +236,16 @@ export default function LogoIntro() {
             { scale: 1.08, opacity: 0.42, duration: 0.18, ease: 'power2.out' },
             'land',
           )
+          .to('.li-spark-burst', { scale: 1, duration: 0.1, ease: 'power2.out' }, 'land')
           .to(
             '.li-spark',
-            { scale: 1, opacity: 0.9, duration: 0.1, ease: 'power2.out', stagger: 0.012 },
+            { opacity: 0.9, duration: 0.1, ease: 'power2.out', stagger: 0.012 },
             'land',
           )
+          .to('.li-spark-burst', { scale: 1.7, duration: 0.24, ease: 'power2.in' }, 'land+=0.06')
           .to(
             '.li-spark',
-            { scale: 1.7, opacity: 0, duration: 0.24, ease: 'power2.in' },
+            { opacity: 0, duration: 0.24, ease: 'power2.in', stagger: 0.012 },
             'land+=0.06',
           )
           .to('.li-word', { autoAlpha: 1, y: 0, duration: 0.22, ease: 'power2.out' }, '-=0.14')
