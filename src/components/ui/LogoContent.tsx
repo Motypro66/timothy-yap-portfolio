@@ -42,6 +42,14 @@ export default function LogoContent({
             opacity="0"
           />
           <circle className="li-sun-pulse" cx="26" cy="16" r="10" fill={LOGO_SUN} opacity="0" />
+          <g className="li-spark-burst">
+            <line className="li-spark" x1="30.5" y1="16" x2="33.5" y2="16" />
+            <line className="li-spark" x1="28.25" y1="19.9" x2="29.75" y2="22.5" />
+            <line className="li-spark" x1="23.75" y1="19.9" x2="22.25" y2="22.5" />
+            <line className="li-spark" x1="21.5" y1="16" x2="18.5" y2="16" />
+            <line className="li-spark" x1="23.75" y1="12.1" x2="22.25" y2="9.5" />
+            <line className="li-spark" x1="28.25" y1="12.1" x2="29.75" y2="9.5" />
+          </g>
         </>
       )}
       <path
