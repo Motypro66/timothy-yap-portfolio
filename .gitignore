@@ -1,5 +1,11 @@
 node_modules
 dist
+out
+.next
+_build-*
+_agent_*
+npm-install.log
+*.log
 .DS_Store
 *.local
 .env

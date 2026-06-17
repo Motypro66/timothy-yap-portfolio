@@ -1,6 +1,7 @@
 # 部署指南
 
-项目路径：`sites/timothy-yap-portfolio`
+项目路径：`sites/timothy-yap-portfolio`  
+**栈：** Next.js 15（`output: 'export'` 静态导出）
 
 ---
 
@@ -8,31 +9,14 @@
 
 **网址：** https://timothy-yap.pages.dev/
 
-已连接 GitHub 仓库 `Motypro66/timothy-yap-portfolio`，推送到 `main` 后自动部署。
-
-### Cloudflare 构建设置（重要 — 空白页通常是这里没填对）
-
 | 项目 | 值 |
 |------|-----|
 | Production branch | `main` |
 | **Build command** | **`npm run build:cf`** |
-| **Build output directory** | **`dist`** |
-| Root directory | 留空（`/） |
-| Environment variable | `NODE_VERSION` = `20`（可选，已有 `.node-version`） |
+| **Build output directory** | **`out`** |
+| Environment | `NODE_VERSION` = `20`（可选） |
 
-> 若 Build command 留空，Cloudflare 只会上传源码，`index.html` 会指向 `/src/main.tsx`，页面就会**一片空白**。
-
-Cloudflare 构建时会自动设置 `CF_PAGES=1`；`build:cf` 也会强制 `base: /`。
-
-### 以后每次改完
-
-```powershell
-git add .
-git commit -m "描述你的改动"
-git push
-```
-
-Cloudflare 约 1–2 分钟自动重新部署。
+Cloudflare 会自动设置 `CF_PAGES=1` → `basePath` 为 `/`（根路径）。
 
 ---
 
@@ -40,12 +24,7 @@ Cloudflare 约 1–2 分钟自动重新部署。
 
 **网址：** https://motypro66.github.io/timothy-yap-portfolio/
 
-GitHub Actions 同样监听 `main` 分支，使用子路径 `base: '/timothy-yap-portfolio/'`。
-
-### 开启 GitHub Pages（一次性）
-
-1. https://github.com/Motypro66/timothy-yap-portfolio/settings/pages
-2. **Build and deployment → Source** 选 **GitHub Actions**
+GitHub Actions 使用 `npm run build`（无 `CF_PAGES`）→ `basePath` = `/timothy-yap-portfolio`。
 
 ---
 
@@ -57,15 +36,31 @@ npm install
 npm run dev
 ```
 
-浏览器打开 http://localhost:5173/timothy-yap-portfolio/
+- **Cloudflare 模拟：** http://localhost:3000/  
+  ```powershell
+  $env:CF_PAGES='1'; npm run dev
+  ```
 
-模拟 Cloudflare 构建：
+- **GitHub Pages 子路径模拟：** http://localhost:3000/timothy-yap-portfolio  
+  ```powershell
+  npm run dev
+  ```
+
+### 本地预览生产构建
 
 ```powershell
-$env:CF_PAGES='1'; npm run build; npm run preview
+$env:CF_PAGES='1'; npm run build:cf; npm run preview
 ```
 
-预览地址 http://localhost:4173/
+打开 http://localhost:4173/
+
+---
+
+## 架构说明
+
+- **SSG：** `next build` 预渲染完整 HTML（修复纯 CSR 空 `#root` 问题）
+- **SEO：** `app/layout.tsx` metadata + `sitemap.ts` + `robots.ts` + JSON-LD Person
+- **动效：** GSAP / Framer / particles 保留在 `'use client'` 的 `App` 组件树
 
 ---
 
@@ -73,8 +68,7 @@ $env:CF_PAGES='1'; npm run build; npm run preview
 
 | 问题 | 处理 |
 |------|------|
-| **Cloudflare 空白页** | Settings → Builds：Build command 填 **`npm run build:cf`**，Output 填 **`dist`**，然后 **Retry deployment** |
-| Cloudflare 白屏 / 404 | 确认 Build output 是 `dist`，且 Cloudflare 已连对仓库 |
-| GitHub Pages 白屏 | 确认 `vite.config.ts` 在非 CF 环境用 `base: '/timothy-yap-portfolio/'` |
-| Favicon 仍是旧的 | 浏览器 **Ctrl+Shift+R** 硬刷新 |
-| 本地 npm 报错 | 需要 Node.js 20+ |
+| Cloudflare 空白页 | Build command = `npm run build:cf`，Output = **`out`** |
+| GitHub Pages 白屏 | 确认 Actions 上传的是 `out` 目录 |
+| 资源 404 | CF 用 `CF_PAGES=1`；GH 不要设 `CF_PAGES` |
+| Favicon 旧缓存 | Ctrl+Shift+R 硬刷新 |

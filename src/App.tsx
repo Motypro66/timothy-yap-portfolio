@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect } from 'react'
 import { preloadParticlesEngine } from './lib/preloadParticles'
 import { LOGO_INTRO_COMPLETE } from './hooks/useIntroComplete'

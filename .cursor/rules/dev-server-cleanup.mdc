@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Portfolio — dev server cleanup
 
-This repo uses classic Vite (`npm run dev` / `npm run preview`). Servers must be stopped after Agent browser checks.
+This repo uses **Next.js** (`npm run dev` on port 3000 / `npm run preview` on 4173). Servers must be stopped after Agent browser checks.
 
 ## Cleanup command
 
@@ -13,11 +13,11 @@ This repo uses classic Vite (`npm run dev` / `npm run preview`). Servers must be
 powershell -ExecutionPolicy Bypass -File scripts/stop-preview.ps1
 ```
 
-Stops listeners on ports 4173–4180 and 5173.
+Stops listeners on ports 3000, 4173–4180, and 5173 (legacy).
 
 ## Workflow
 
-1. One preview at a time — port **4173** (or `5173` for dev).
+1. One preview at a time — **3000** (dev) or **4173** (static preview).
 2. After verification, run `stop-preview.ps1` before finishing.
 3. For production checks, use **https://timothy-yap.pages.dev/** instead of spawning preview when possible.
 

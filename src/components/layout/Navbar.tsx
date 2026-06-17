@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { navLinks, profile } from '../../data/resume'
+import { assetUrl } from '../../lib/assetUrl'
 import { useLanguage } from '../../i18n/LanguageContext'
 import { useIntroStages } from '../../hooks/useIntroStages'
 import Logo from '../ui/Logo'
@@ -10,7 +11,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const { t, lang, setLang } = useLanguage()
-  const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
+  const cvUrl = assetUrl(profile.resumePdf)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)

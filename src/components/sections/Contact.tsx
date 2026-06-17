@@ -1,4 +1,5 @@
 import { profile } from '../../data/resume'
+import { assetUrl } from '../../lib/assetUrl'
 import { useLanguage } from '../../i18n/LanguageContext'
 import ScrollRevealSection from '../effects/ScrollRevealSection'
 import SectionHeading from '../ui/SectionHeading'
@@ -8,7 +9,7 @@ import SocialIcons from '../ui/SocialIcons'
 
 export default function Contact() {
   const { t } = useLanguage()
-  const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
+  const cvUrl = assetUrl(profile.resumePdf)
 
   return (
     <ScrollRevealSection id="contact" className="contact">

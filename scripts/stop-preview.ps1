@@ -1,6 +1,6 @@
 # Stop stray Vite preview/dev servers on common local ports (4173-4180, 5173).
 param(
-  [int[]]$Ports = @(4173, 4174, 4175, 4176, 4177, 4178, 4179, 4180, 5173)
+  [int[]]$Ports = @(3000, 4173, 4174, 4175, 4176, 4177, 4178, 4179, 4180, 5173)
 )
 
 $stopped = @()

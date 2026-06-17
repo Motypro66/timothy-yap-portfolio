@@ -1,5 +1,14 @@
 @import './tokens.css';
 
+/* First paint — hide nav logo before React/GSAP intro */
+html.intro-active .navbar__logo-link,
+html.intro-active .navbar__logo-link .logo-mark,
+html.intro-active .navbar__logo-link .logo-mark .logo-sun,
+html.intro-active .navbar__logo-link .logo-mark path {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
 *,
 *::before,
 *::after {
@@ -19,10 +28,8 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-}
-
-#root {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 a {

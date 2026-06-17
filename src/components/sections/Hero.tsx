@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { profile } from '../../data/resume'
+import { assetUrl } from '../../lib/assetUrl'
 import { useLanguage } from '../../i18n/LanguageContext'
 import { useIntroStages } from '../../hooks/useIntroStages'
 import FloatingOrbs from '../effects/FloatingOrbs'
@@ -41,7 +42,7 @@ export default function Hero() {
   const [rollStarted, setRollStarted] = useState(false)
   const { t, lang } = useLanguage()
   const title = lang === 'zh' ? profile.titleZh : profile.title
-  const cvUrl = `${import.meta.env.BASE_URL}${profile.resumePdf}`
+  const cvUrl = assetUrl(profile.resumePdf)
 
   useEffect(() => {
     if (!uiReady) return
