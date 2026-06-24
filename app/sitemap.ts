@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/siteConfig'
 
 export const dynamic = 'force-static'
 
-const siteUrl = 'https://timothy-yap.pages.dev'
+const siteUrl = SITE_URL
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

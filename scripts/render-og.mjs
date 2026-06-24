@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const out = join(__dirname, '..', 'public', 'og-image.png')
+const out = join(__dirname, '..', 'public', 'og-image.webp')
 
 /** Square canvas — WhatsApp / iMessage crop link previews to ~1:1; wide layouts get chopped. */
 const SIZE = 1200
@@ -61,5 +61,5 @@ const svg = `<svg width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}"
   </g>
 </svg>`
 
-await sharp(Buffer.from(svg)).png().toFile(out)
+await sharp(Buffer.from(svg)).webp({ quality: 90 }).toFile(out)
 console.log('wrote', out)

@@ -45,6 +45,15 @@ p {
   border-radius: 4px;
 }
 
+.magnetic-btn:focus-visible,
+.navbar__cta:focus-visible,
+.navbar__cv:focus-visible,
+.lang-toggle__btn:focus-visible,
+.social-icons__link:focus-visible,
+.skill-pill:focus-visible {
+  border-radius: 999px;
+}
+
 /* avoid accidental image/icon drag selection */
 img,
 svg {

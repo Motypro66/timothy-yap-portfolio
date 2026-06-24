@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import gsap from 'gsap'
 import { LOGO_INTRO_COMPLETE } from '../../hooks/useIntroComplete'
+import { isMobileOnce, MOBILE_QUERY } from '../../hooks/useMediaQuery'
 import LogoContent from '../ui/LogoContent'
 import { LOGO_VIEWBOX } from '../ui/logoTokens'
 
@@ -14,7 +15,6 @@ const VIEWBOX_CX = 84
 const VIEWBOX_CY = 20
 const CONTENT_OFFSET_FALLBACK = { x: 24.5, y: 0.5 }
 const MOTE_COUNT = 4
-const MOBILE_QUERY = '(max-width: 960px)'
 
 function applyStrokeDash(strokes: SVGPathElement[]) {
   strokes.forEach((p) => {
@@ -88,8 +88,7 @@ export default function LogoIntro() {
   const [done, setDone] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const markRef = useRef<HTMLDivElement>(null)
-  const isMobile =
-    typeof window !== 'undefined' ? window.matchMedia(MOBILE_QUERY).matches : false
+  const isMobile = isMobileOnce()
 
   useLayoutEffect(() => {
     document.documentElement.classList.add('intro-active')

@@ -1,5 +1,6 @@
 :root {
-  /* Sunny personal palette — warm, approachable, optimistic */
+  /* Sunny personal palette — warm, approachable, optimistic
+     Breakpoint: 960px — mirrored in src/hooks/useMediaQuery.ts */
   --bg-deep: #fff8f0;
   --bg-surface: #fffdf9;
   --bg-warm: #fff0e0;
@@ -15,9 +16,9 @@
   --glass-border: rgba(61, 46, 42, 0.1);
   --glass-bg: rgba(255, 255, 255, 0.65);
   --shadow-soft: 0 8px 32px rgba(245, 166, 35, 0.12);
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Outfit', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: var(--font-fraunces, 'Fraunces'), Georgia, serif;
+  --font-body: var(--font-outfit, 'Outfit'), system-ui, sans-serif;
+  --font-mono: var(--font-jbmono, 'JetBrains Mono'), ui-monospace, monospace;
   --section-padding: clamp(4rem, 10vw, 7rem);
   --container-max: 72rem;
   --radius-lg: 1.25rem;

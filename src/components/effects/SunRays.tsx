@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
-
-const MOBILE_QUERY = '(max-width: 960px)'
+import { MOBILE_QUERY } from '../../hooks/useMediaQuery'
 
 /** Warm golden sun rays — static glow on mobile, animated on desktop. */
 export default function SunRays() {

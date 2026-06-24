@@ -1092,6 +1092,32 @@ a.contact__value:hover {
   color: var(--accent-sun);
 }
 
+/* ===== Scroll to top ===== */
+.scroll-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.scroll-top:hover {
+  border-color: var(--accent-sun);
+  box-shadow: var(--glow-sun);
+  transform: translateY(-2px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero__mobile-glow {
     animation: none !important;

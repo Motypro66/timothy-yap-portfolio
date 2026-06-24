@@ -3,6 +3,7 @@ import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { LOGO_INTRO_COMPLETE } from './useIntroComplete'
+import { MOBILE_QUERY } from './useMediaQuery'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -39,7 +40,7 @@ export function useSmoothScroll() {
     }
 
     const scheduleStart = () => {
-      const mobile = window.matchMedia('(max-width: 960px)').matches
+      const mobile = window.matchMedia(MOBILE_QUERY).matches
       window.setTimeout(start, mobile ? 320 : 180)
     }
 

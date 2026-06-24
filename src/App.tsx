@@ -13,10 +13,7 @@ import About from './components/sections/About'
 import Skills from './components/sections/Skills'
 import Experience from './components/sections/Experience'
 import Contact from './components/sections/Contact'
-import './styles/components.css'
-import './styles/logo-intro.css'
-import './styles/floating-orbs.css'
-import './styles/polish.css'
+import ScrollToTop from './components/ui/ScrollToTop'
 
 export default function App() {
   useSmoothScroll()
@@ -45,6 +42,7 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
+      <ScrollToTop />
     </LanguageProvider>
   )
 }

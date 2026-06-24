@@ -2,13 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Particles from '@tsparticles/react'
 import type { ISourceOptions } from '@tsparticles/engine'
 import { preloadParticlesEngine } from '../../lib/preloadParticles'
-
-const MOBILE_QUERY = '(max-width: 960px)'
+import { useIsMobile } from '../../hooks/useMediaQuery'
 
 function buildOptions(mobile: boolean): ISourceOptions {
   return {
     fullScreen: { enable: false },
-    fpsLimit: mobile ? 36 : 60,
+    fpsLimit: mobile ? 36 : 45,
     particles: {
       number: { value: mobile ? 52 : 65, density: { enable: true } },
       color: { value: ['#f5a623', '#ffd166', '#ff8c69', '#e8a838', '#ff7555'] },
@@ -43,22 +42,6 @@ function buildOptions(mobile: boolean): ISourceOptions {
     },
     detectRetina: !mobile,
   }
-}
-
-function useIsMobile() {
-  const [mobile, setMobile] = useState(() =>
-    typeof window !== 'undefined' ? window.matchMedia(MOBILE_QUERY).matches : false,
-  )
-
-  useEffect(() => {
-    const mq = window.matchMedia(MOBILE_QUERY)
-    const onChange = () => setMobile(mq.matches)
-    onChange()
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-
-  return mobile
 }
 
 type Props = {

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useIntroComplete } from './useIntroComplete'
-
-const MOBILE_QUERY = '(max-width: 960px)'
+import { MOBILE_QUERY } from './useMediaQuery'
 
 /**
  * Splits post-intro work across frames so Lenis, canvas, and WebGL-style
