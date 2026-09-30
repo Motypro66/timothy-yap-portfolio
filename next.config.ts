@@ -14,9 +14,10 @@ const basePath = isRootDeploy ? '' : '/timothy-yap-portfolio'
 
 const nextConfig: NextConfig = {
   output: 'export',
+  trailingSlash: true,
   outputFileTracingRoot: projectDir,
   ...(basePath ? { basePath, assetPrefix: `${basePath}/` } : {}),
-  images: { unoptimized: true },
+  images: { deviceSizes: [640, 960, 1159], imageSizes: [] },
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath,
   },

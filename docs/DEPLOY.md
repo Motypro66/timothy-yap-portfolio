@@ -1,74 +1,28 @@
-# 部署指南
+# Deployment
 
-项目路径：`sites/timothy-yap-portfolio`  
-**栈：** Next.js 15（`output: 'export'` 静态导出）
+## GitHub Pages
 
----
+- Repository: `Motypro66/timothy-yap-portfolio`
+- Published URL: https://motypro66.github.io/timothy-yap-portfolio/
+- Production branch: `main`
+- Workflow: `.github/workflows/deploy.yml`
+- Build: `npm ci` then `npm run build`
+- Artifact: `out/`
 
-## 主站 — Cloudflare Pages（推荐）
+The workflow already grants `pages: write` and `id-token: write` and uses the `github-pages` environment. It uploads the static export, then deploys with `actions/deploy-pages`.
 
-**网址：** https://timothy-yap.pages.dev/
+## Paths and assets
 
-| 项目 | 值 |
-|------|-----|
-| Production branch | `main` |
-| **Build command** | **`npm run build:cf`** |
-| **Build output directory** | **`out`** |
-| Environment | `NODE_VERSION` = `20`（可选） |
+`next.config.ts` sets `output: 'export'`, trailing slashes and the `/timothy-yap-portfolio` base path. `assetUrl()` prefixes public image and favicon paths. Next.js manages hashed JS, CSS and font URLs. The hero uses a custom static image loader; the About image is pre-optimized and does not require the Next.js image server.
 
-Cloudflare 会自动设置 `CF_PAGES=1` → `basePath` 为 `/`（根路径）。
+The canonical URL, sitemap and social metadata use the GitHub Pages address. Existing root-hosted builds remain supported by `CF_PAGES=1` or `NEXT_PUBLIC_ROOT_BASE=1`; the public canonical remains GitHub Pages.
 
----
+## Local preview
 
-## 镜像 — GitHub Pages
+`npm run dev` starts Next.js. Open `http://localhost:3000/timothy-yap-portfolio/`. The dev wrapper also accepts hosted preview flags (`--host`, `--port`, `--strictPort`).
 
-**网址：** https://motypro66.github.io/timothy-yap-portfolio/
+To verify a production export, serve `out/` under the `/timothy-yap-portfolio/` mount path. Serving it only at `/` does not reproduce GitHub Pages asset URLs.
 
-GitHub Actions 使用 `npm run build`（无 `CF_PAGES`）→ `basePath` = `/timothy-yap-portfolio`。
+## Verify after deployment
 
----
-
-## 本地开发
-
-```powershell
-cd "C:\Users\timot\Documents\I Have a Plan\sites\timothy-yap-portfolio"
-npm install
-npm run dev
-```
-
-- **Cloudflare 模拟：** http://localhost:3000/  
-  ```powershell
-  $env:CF_PAGES='1'; npm run dev
-  ```
-
-- **GitHub Pages 子路径模拟：** http://localhost:3000/timothy-yap-portfolio  
-  ```powershell
-  npm run dev
-  ```
-
-### 本地预览生产构建
-
-```powershell
-$env:CF_PAGES='1'; npm run build:cf; npm run preview
-```
-
-打开 http://localhost:4173/
-
----
-
-## 架构说明
-
-- **SSG：** `next build` 预渲染完整 HTML（修复纯 CSR 空 `#root` 问题）
-- **SEO：** `app/layout.tsx` metadata + `sitemap.ts` + `robots.ts` + JSON-LD Person
-- **动效：** GSAP / Framer / particles 保留在 `'use client'` 的 `App` 组件树
-
----
-
-## 常见问题
-
-| 问题 | 处理 |
-|------|------|
-| Cloudflare 空白页 | Build command = `npm run build:cf`，Output = **`out`** |
-| GitHub Pages 白屏 | 确认 Actions 上传的是 `out` 目录 |
-| 资源 404 | CF 用 `CF_PAGES=1`；GH 不要设 `CF_PAGES` |
-| Favicon 旧缓存 | Ctrl+Shift+R 硬刷新 |
+Check the workflow completes, then open the live URL and confirm images/fonts load, the People controls show 2/3/4, the tabs and accordions respond, and WhatsApp opens the intended `wa.me/60182982325` destination. Verify narrow mobile widths and motion controls. To roll back, revert the deployment commit; do not rewrite branch history.

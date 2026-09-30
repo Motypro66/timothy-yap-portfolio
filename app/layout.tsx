@@ -1,93 +1,48 @@
 import type { Metadata, Viewport } from 'next'
-import { profile } from '@/data/resume'
-import '@/styles/globals.css'
-import '@/styles/components.css'
-import '@/styles/logo-intro.css'
-import '@/styles/floating-orbs.css'
-import '@/styles/polish.css'
+import { assetUrl } from '@/lib/assetUrl'
+import { bricolage, dmSans, caveat } from './fonts'
+import './globals.css'
 
-const siteUrl = 'https://timothy-yap.pages.dev'
+const siteUrl = 'https://motypro66.github.io/timothy-yap-portfolio/'
+const title = 'Timothy — This is an ad. For a human.'
+const description = 'Meet Timothy Yap: a performance marketer in Kuala Lumpur connecting ads, data and ideas. Experience, approach and the Kongsi personal project.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Timothy Yap | Performance Marketing Specialist',
-  description:
-    'Timothy Yap — Data-driven Performance Marketing Specialist. Google Ads, GTM, GA4, conversion tracking & lead generation.',
-  keywords: ['Timothy Yap', 'Performance Marketing', 'Google Ads', 'GTM', 'GA4', 'Kuala Lumpur'],
-  authors: [{ name: profile.name }],
+  title,
+  description,
+  alternates: { canonical: siteUrl },
+  authors: [{ name: 'Timothy Yap Wei Zhong' }],
   openGraph: {
-    title: 'Timothy Yap | Performance Marketing Specialist',
-    description: 'Google Ads & GA4 · 30+ Search campaigns · Lead generation · Kuala Lumpur',
+    title,
+    description,
     type: 'website',
-    siteName: profile.name,
+    siteName: 'Timothy Yap Portfolio',
     url: siteUrl,
-    images: [
-      {
-        url: '/og-image.png?v=2',
-        width: 1200,
-        height: 1200,
-        alt: 'Timothy Yap — Performance Marketing Specialist',
-      },
-    ],
+    images: [{
+      url: `${siteUrl}timothy-in-real-life.webp`,
+      width: 1536,
+      height: 1148,
+      alt: 'Timothy smiling outdoors by the water',
+    }],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Timothy Yap | Performance Marketing Specialist',
-    description: 'Google Ads & GA4 · 30+ Search campaigns · Lead generation · Kuala Lumpur',
-    images: ['/og-image.png?v=2'],
-  },
+  twitter: { card: 'summary_large_image', title, description },
   icons: {
-    icon: [{ url: '/favicon.svg?v=4', type: 'image/svg+xml' }],
-    apple: '/apple-touch-icon.svg?v=4',
+    icon: assetUrl('/favicon.svg'),
+    shortcut: assetUrl('/favicon.svg'),
   },
-  manifest: '/site.webmanifest?v=4',
-  appleWebApp: { title: 'Timothy' },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#fff8f0',
+  themeColor: '#f7e56a',
   width: 'device-width',
   initialScale: 1,
 }
 
-const personJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: profile.fullName,
-  jobTitle: profile.title,
-  url: siteUrl,
-  email: profile.email,
-  telephone: profile.phone,
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Kuala Lumpur',
-    addressCountry: 'MY',
-  },
-  sameAs: [profile.linkedin, profile.instagram],
-  description: profile.summary,
-}
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="intro-active">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="preload"
-          as="style"
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&display=swap"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
-        />
-      </head>
-      <body>{children}</body>
+    <html lang="en" className={`${bricolage.variable} ${dmSans.variable} ${caveat.variable}`}>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }
