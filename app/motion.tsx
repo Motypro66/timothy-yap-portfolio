@@ -1,13 +1,10 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Pause, Play, RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function MotionSystem(){
  const [enabled,setEnabled]=useState(true);
- const intro=useRef<gsap.core.Timeline|null>(null);
  useEffect(()=>{const q=matchMedia("(prefers-reduced-motion: reduce)");setEnabled(!q.matches);const change=()=>setEnabled(!q.matches);q.addEventListener("change",change);return()=>q.removeEventListener("change",change);},[]);
  useEffect(()=>{
   document.documentElement.dataset.motion=enabled?"on":"off";
@@ -16,7 +13,7 @@ export default function MotionSystem(){
   const mm=gsap.matchMedia();
   mm.add("(prefers-reduced-motion: no-preference)",()=>{
    const ctx=gsap.context(()=>{
-    intro.current=gsap.timeline({defaults:{ease:"power3.out"}})
+    gsap.timeline({defaults:{ease:"power3.out"}})
      .from(".hero .letter",{yPercent:115,rotation:8,duration:0.9,stagger:0.028},0.1)
      .from(".hero-intro",{y:25,opacity:0,duration:0.7},0.7)
      .from(".hero-character",{y:130,rotation:-12,scale:0.8,opacity:0,duration:1.1,ease:"back.out(1.5)"},0.5)
@@ -39,7 +36,7 @@ export default function MotionSystem(){
    let active=true;document.fonts.ready.then(()=>{if(active)ScrollTrigger.refresh();});
    return()=>{active=false;ctx.revert();};
   });
-  return()=>{mm.revert();intro.current=null;};
+  return()=>{mm.revert();};
  },[enabled]);
- return <div className="motion-controls"><Button className="motion-replay" variant="outline" aria-label="Replay the opening animation" disabled={!enabled} onClick={()=>{document.getElementById("top")?.scrollIntoView({behavior:"smooth"});intro.current?.restart();}}><RotateCcw size={14}/></Button><Button variant="outline" className="motion-control" onClick={()=>setEnabled(v=>!v)} aria-pressed={enabled} aria-label={enabled?"Pause animations":"Enable animations"}>{enabled?<Pause size={13}/>:<Play size={13}/>}<span>Motion {enabled?"on":"off"}</span></Button></div>;
+ return null;
 }
