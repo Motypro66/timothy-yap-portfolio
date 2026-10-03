@@ -4,7 +4,7 @@ import { bricolage, dmSans, caveat } from './fonts'
 import './globals.css'
 
 const siteUrl = 'https://motypro66.github.io/timothy-yap-portfolio/'
-const title = 'Timothy — This is an ad. For a human.'
+const title = 'Timothy — This Is An Ad About Me'
 const description = 'Meet Timothy Yap: a performance marketer in Kuala Lumpur connecting ads, data and ideas. Experience, approach and the Kongsi personal project.'
 
 export const metadata: Metadata = {
