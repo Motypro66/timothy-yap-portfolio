@@ -33,8 +33,24 @@ export default function MotionSystem(){
     gsap.from(".about-photo",{rotation:-12,y:30,scrollTrigger:{trigger:".about-section",start:"top 90%",end:"center center",scrub:0.8}});
     gsap.from(".contact-title .letter",{yPercent:110,rotation:-10,stagger:0.05,duration:0.9,ease:"back.out(1.5)",scrollTrigger:{trigger:".contact-title",start:"top 90%"}});
    },document.querySelector("#site")!);
-   let active=true;document.fonts.ready.then(()=>{if(active)ScrollTrigger.refresh();});
-   return()=>{active=false;ctx.revert();};
+   let active=true;
+   let refreshTimer:ReturnType<typeof setTimeout>|undefined;
+   const refreshLayout=()=>{if(active)ScrollTrigger.refresh(true);};
+   // Accordion transitions change page height without a window resize.
+   // Measure again after the layout settles, rather than on every animation frame.
+   const layoutObserver=new ResizeObserver(()=>{
+    if(refreshTimer!==undefined)clearTimeout(refreshTimer);
+    refreshTimer=setTimeout(refreshLayout,160);
+   });
+   const site=document.querySelector("#site");
+   if(site)layoutObserver.observe(site);
+   document.fonts.ready.then(refreshLayout);
+   return()=>{
+    active=false;
+    layoutObserver.disconnect();
+    if(refreshTimer!==undefined)clearTimeout(refreshTimer);
+    ctx.revert();
+   };
   });
   return()=>{mm.revert();};
  },[enabled]);
