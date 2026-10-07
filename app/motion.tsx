@@ -28,8 +28,8 @@ export default function MotionSystem(){
     gsap.from(".thinking-board",{rotation:8,y:46,scale:0.9,scrollTrigger:{trigger:".skills-section",start:"top 85%",end:"center center",scrub:0.8}});
     gsap.from(".experience-row",{x:-40,opacity:0,stagger:0.15,duration:0.75,scrollTrigger:{trigger:".experience-list",start:"top 88%"}});
     gsap.from(".stat-number",{yPercent:70,opacity:0,stagger:0.2,ease:"back.out(1.5)",duration:0.9,scrollTrigger:{trigger:".stats-strip",start:"top 88%"}});
-    gsap.from(".kongsi-title",{xPercent:-8,opacity:0.3,scrollTrigger:{trigger:".project-section",start:"top 88%",end:"top 15%",scrub:0.7}});
-    gsap.from(".split-demo",{rotation:8,y:48,scrollTrigger:{trigger:".project-section",start:"top 88%",end:"center 65%",scrub:0.7}});
+    gsap.from(".campaign-title",{xPercent:-8,opacity:0.3,scrollTrigger:{trigger:".campaign-section",start:"top 88%",end:"top 15%",scrub:0.7}});
+    gsap.from(".campaign-notebook",{rotation:8,y:48,scrollTrigger:{trigger:".campaign-section",start:"top 88%",end:"center 65%",scrub:0.7}});
     gsap.from(".about-photo",{rotation:-12,y:30,scrollTrigger:{trigger:".about-section",start:"top 90%",end:"center center",scrub:0.8}});
     gsap.from(".contact-title .letter",{yPercent:110,rotation:-10,stagger:0.05,duration:0.9,ease:"back.out(1.5)",scrollTrigger:{trigger:".contact-title",start:"top 90%"}});
    },document.querySelector("#site")!);
